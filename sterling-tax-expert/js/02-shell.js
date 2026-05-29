@@ -201,7 +201,7 @@ function donutSVG(data, total, opts = {}){
     <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--g100)" stroke-width="${stroke}"/>
     ${slices.join('')}
     <text x="${cx}" y="${cy-6}" text-anchor="middle" font-size="11" fill="var(--t3)">${opts.label || main.name || ''}</text>
-    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--navy)" font-family="Georgia,serif">${pct}%</text>
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--navy)" font-family="Inter,system-ui,sans-serif">${pct}%</text>
   </svg>`;
 }
 
