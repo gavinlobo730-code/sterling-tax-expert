@@ -232,11 +232,11 @@ window.addEventListener('scroll', () => {
   if (nav) nav.classList.toggle('scrolled', scrollY > 8);
 });
 
-// ── Contact form — real email delivery via EmailJS ─────────
-// Configuration lives in window.STERLING_CONFIG (see js/config.js).
-// Falls back to a mailto: link if EmailJS isn't configured yet, so the
-// form is never a dead end.
-function submitContact(){
+// ── Contact form ────────────────────────────────────────────
+// Primary:  POST /api/enquiry (Worker — stores in D1, sends via Resend)
+// Fallback: EmailJS (requires config.emailjs keys to be filled in)
+// Last resort: mailto link pre-addressed to the Sterling inbox
+async function submitContact(){
   const cfg = window.STERLING_CONFIG || {};
   const get = id => (document.getElementById(id) || {}).value || '';
   const fn = get('cf-fn').trim();
@@ -245,58 +245,85 @@ function submitContact(){
   const ph = get('cf-ph').trim();
   const sv = get('cf-sv');
   const msg = get('cf-msg').trim();
-  const honey = get('cf-website').trim(); // honeypot — must stay empty
+  const honey = get('cf-website').trim();
 
-  // Spam protection: bots fill hidden fields.
-  if (honey) { showToast('Submission blocked', 'err'); return; }
+  if (honey) return;
 
-  // Validation
   if (!fn || !em || !sv) { showToast('Please fill in all required fields', 'err'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { showToast('Please enter a valid email address', 'err'); return; }
+  if (msg.length > 2000) { showToast('Message is too long (max 2000 characters)', 'err'); return; }
 
   const btn = document.getElementById('cf-submit');
-  const setBtn = (txt, disabled) => { if (btn){ btn.textContent = txt; btn.disabled = disabled; btn.style.opacity = disabled ? '0.7' : '1'; } };
+  if (btn) { btn.textContent = 'Sending…'; btn.disabled = true; btn.style.opacity = '0.7'; }
 
-  const onSuccess = () => {
+  const name    = (fn + ' ' + ln).trim();
+  const payload = { name, email: em, phone: ph || null, service: sv, message: msg || null };
+
+  function onSuccess() {
     const suc = document.getElementById('cf-suc');
     if (suc) suc.classList.add('show');
-    setBtn('Sent ✓', true);
+    if (btn) btn.textContent = 'Sent ✓';
     showToast("Enquiry sent — we'll be in touch within 48 hours", 'ok');
-    ['cf-fn','cf-ln','cf-em','cf-ph','cf-msg'].forEach(id => { const el = document.getElementById(id); if (el) el.value=''; });
-    const sel = document.getElementById('cf-sv'); if (sel) sel.value='';
-  };
-  const onError = (err) => {
-    console.error('Contact send failed:', err);
-    setBtn('Send enquiry →', false);
-    // Graceful fallback: open the user's mail client pre-filled.
-    const to = cfg.contactEmail || 'sterlingtaxexpert@gmail.com';
-    const subject = encodeURIComponent('Website enquiry: ' + sv);
-    const body = encodeURIComponent(`Name: ${fn} ${ln}\nEmail: ${em}\nPhone: ${ph}\nService: ${sv}\n\n${msg}`);
-    showToast('Could not send automatically — opening your email app', 'err');
-    window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
-  };
-
-  const params = {
-    from_name: `${fn} ${ln}`.trim(),
-    reply_to: em,
-    phone: ph || '—',
-    service: sv,
-    message: msg || '(no message)',
-    to_email: cfg.contactEmail || 'sterlingtaxexpert@gmail.com',
-  };
-
-  const ready = window.emailjs && cfg.emailjs && cfg.emailjs.serviceId
-    && cfg.emailjs.templateId && !/^YOUR_/.test(cfg.emailjs.serviceId);
-
-  if (ready) {
-    setBtn('Sending…', true);
-    window.emailjs.send(cfg.emailjs.serviceId, cfg.emailjs.templateId, params)
-      .then(onSuccess)
-      .catch(onError);
-  } else {
-    // EmailJS not configured — use the mailto fallback immediately.
-    onError(new Error('EmailJS not configured'));
+    ['cf-fn','cf-ln','cf-em','cf-ph','cf-msg'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    const sel = document.getElementById('cf-sv'); if (sel) sel.value = '';
   }
+
+  function onFail(errMsg) {
+    if (btn) { btn.textContent = 'Send enquiry →'; btn.disabled = false; btn.style.opacity = '1'; }
+    showToast(errMsg || 'Could not send. Please email sterlingtaxexpert@gmail.com directly.', 'err');
+  }
+
+  // ── 1. Try Worker endpoint ──────────────────────────────
+  const apiBase = (cfg.cmsApiBase || '/api').replace(/\/api$/, '');
+  try {
+    const res = await fetch(apiBase + '/api/enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(8000),
+    });
+    if (res.ok) { onSuccess(); return; }
+    // 4xx = validation error from Worker — surface to user, do not fall through
+    if (res.status >= 400 && res.status < 500) {
+      const data = await res.json().catch(() => ({}));
+      onFail(data.error || 'Please check your details and try again.');
+      return;
+    }
+    // 5xx — fall through to EmailJS
+  } catch (_) { /* network error or timeout — fall through */ }
+
+  // ── 2. Fallback: EmailJS ────────────────────────────────
+  const ejs = cfg.emailjs || {};
+  if (window.emailjs && ejs.publicKey && !/^YOUR_/.test(ejs.publicKey) &&
+      ejs.serviceId && !/^YOUR_/.test(ejs.serviceId) &&
+      ejs.templateId && !/^YOUR_/.test(ejs.templateId)) {
+    try {
+      await window.emailjs.send(ejs.serviceId, ejs.templateId, {
+        from_name: name,
+        reply_to:  em,
+        phone:     ph || 'Not provided',
+        service:   sv,
+        message:   msg || '',
+        to_email:  cfg.contactEmail || 'sterlingtaxexpert@gmail.com',
+      });
+      onSuccess();
+      return;
+    } catch (_) { /* EmailJS failed — fall through to mailto */ }
+  }
+
+  // ── 3. Last resort: mailto ──────────────────────────────
+  const to      = cfg.contactEmail || 'sterlingtaxexpert@gmail.com';
+  const subject = encodeURIComponent('Website enquiry — ' + sv);
+  const body    = encodeURIComponent(
+    'Name: ' + name + '\nEmail: ' + em +
+    (ph ? '\nPhone: ' + ph : '') +
+    '\nService: ' + sv +
+    (msg ? '\n\nMessage:\n' + msg : '')
+  );
+  window.location.href = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
+  if (btn) { btn.textContent = 'Send enquiry →'; btn.disabled = false; btn.style.opacity = '1'; }
 }
 
 // ── FAQ toggle ─────────────────────────────────────────────

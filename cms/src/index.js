@@ -53,6 +53,8 @@ import {
   publicSitemap,
 } from './routes/public.js';
 
+import { submitEnquiry } from './routes/enquiries.js';
+
 // ── ENTRY POINT ───────────────────────────────────────────────────────────────
 
 export default {
@@ -97,6 +99,11 @@ export default {
     // ── Sitemap ─────────────────────────────────────────────────────────────
     if (path === '/sitemap.xml' && method === 'GET') {
       return publicSitemap(request, env);
+    }
+
+    // ── Public enquiry submission ───────────────────────────────────────────
+    if (path === '/api/enquiry' && method === 'POST') {
+      return wrap(await submitEnquiry(request, env), request, env);
     }
 
     // ── Public API ──────────────────────────────────────────────────────────
