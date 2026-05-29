@@ -43,6 +43,13 @@ ENVIRONMENT     = "production"
 [triggers]
 crons = ["0 2 * * *"]
 
+# ── MODULE RULES ──────────────────────────────────────────────────────────────
+# Allows: import adminHtml from '../admin/index.html'
+# The HTML string is bundled into the Worker at deploy time.
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+
 # ── LOCAL DEVELOPMENT ─────────────────────────────────────────────────────────
 # Run locally with: wrangler dev
 # The D1 database is persisted locally at .wrangler/state/

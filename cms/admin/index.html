@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Sterling Tax Expert — Admin</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B1E3D;--navy2:#1B3461;--midnight:#050D1A;
+  --indigo:#6366F1;--indigo2:#4F46E5;--indigo3:#818CF8;--indigol:#EEF2FF;
+  --teal:#14B8A6;--canvas:#F8F9FB;--white:#fff;
+  --border:#E5E7EB;--mid:#6B7280;--dark:#111827;
+  --green:#10B981;--greenl:#ECFDF5;--greenb:#6EE7B7;
+  --amber:#F59E0B;--amberl:#FFFBEB;
+  --red:#EF4444;--redl:#FEF2F2;--redb:#FCA5A5;
+  --serif:'Georgia',serif;
+  --r8:8px;--r10:10px;--r12:12px;
+}
+body{font-family:'Inter',system-ui,sans-serif;font-size:14px;background:var(--canvas);color:var(--dark);min-height:100vh}
+
+/* ── LOGIN ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--midnight);position:relative;overflow:hidden}
+#login-screen::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.12) 0%,transparent 70%);top:-100px;right:-100px;pointer-events:none}
+.login-card{background:var(--white);border-radius:16px;padding:40px 44px;width:360px;box-shadow:0 24px 80px rgba(0,0,0,.5);position:relative;z-index:1}
+.login-logo .name{font-family:var(--serif);font-size:20px;color:var(--navy)}
+.login-logo .sub{font-size:10px;color:var(--indigo);letter-spacing:2px;font-weight:600;margin-top:3px}
+.login-lock{font-size:28px;margin:18px 0 6px}
+.login-title{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--mid);margin-bottom:22px}
+.login-footer{font-size:11px;color:var(--mid);text-align:center;margin-top:16px;line-height:1.6}
+
+/* ── APP SHELL ── */
+#app{display:none;min-height:100vh;flex-direction:row}
+.sidebar{width:210px;flex:0 0 210px;background:var(--navy);display:flex;flex-direction:column;padding:18px 0;min-height:100vh;position:fixed;top:0;left:0;bottom:0}
+.sb-logo{padding:0 18px 18px;border-bottom:1px solid rgba(255,255,255,.08)}
+.sb-logo .name{font-family:var(--serif);font-size:16px;color:var(--white)}
+.sb-logo .sub{font-size:10px;color:var(--indigo3);letter-spacing:1.5px;margin-top:2px}
+.sb-nav{flex:1;padding-top:10px}
+.sb-nav a{display:flex;align-items:center;gap:9px;padding:9px 18px;font-size:13px;color:#94A3B8;cursor:pointer;text-decoration:none;transition:all .12s;border:none;background:none;width:100%;text-align:left}
+.sb-nav a:hover{background:rgba(255,255,255,.05);color:var(--white)}
+.sb-nav a.active{background:rgba(99,102,241,.2);color:var(--white);border-left:3px solid var(--indigo3);padding-left:15px}
+.sb-nav .sec{font-size:10px;font-weight:600;letter-spacing:1.5px;color:#475569;padding:14px 18px 5px;text-transform:uppercase}
+.sb-nav .icon{font-size:14px;width:16px;text-align:center}
+.sb-bottom{border-top:1px solid rgba(255,255,255,.08);padding:12px 18px}
+.sb-user{font-size:12px;color:#94A3B8;margin-bottom:8px}
+.main{margin-left:210px;flex:1;padding:28px 32px;max-width:1100px}
+
+/* ── COMPONENTS ── */
+.page-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.page-title{font-size:20px;font-weight:600;color:var(--navy)}
+.page-sub{font-size:13px;color:var(--mid);margin-top:3px}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r8);font-size:13px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all .12s;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--indigo);color:var(--white);border-color:var(--indigo)}
+.btn-primary:hover{background:var(--indigo2)}
+.btn-outline{background:var(--white);color:var(--navy);border-color:var(--border)}
+.btn-outline:hover{border-color:var(--indigo);color:var(--indigo)}
+.btn-danger{background:var(--redl);color:var(--red);border-color:var(--redb)}
+.btn-danger:hover{background:#FEE2E2}
+.btn-success{background:var(--greenl);color:#065F46;border-color:var(--greenb)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-ghost{background:transparent;color:var(--mid);border-color:transparent}
+.btn-ghost:hover{background:var(--white);border-color:var(--border)}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r10);padding:16px 18px}
+.stat-card .lbl{font-size:11px;color:var(--mid);font-weight:500;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.stat-card .val{font-size:26px;font-weight:700;color:var(--navy)}
+.stat-card .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r10);overflow:hidden;margin-bottom:16px}
+.card-hdr{padding:12px 18px;border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--navy);background:var(--canvas);display:flex;align-items:center;justify-content:space-between}
+
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid var(--border)}
+th{padding:9px 16px;font-size:11px;font-weight:600;color:var(--mid);text-align:left;text-transform:uppercase;letter-spacing:.5px}
+td{padding:12px 16px;font-size:13px;border-bottom:1px solid #F3F4F6}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAFA}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-published{background:var(--greenl);color:#065F46}
+.badge-draft{background:var(--amberl);color:#92400E}
+.badge-scheduled{background:var(--indigol);color:var(--indigo2)}
+.badge-archived{background:#F3F4F6;color:var(--mid)}
+
+.toolbar{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.search{flex:1;max-width:260px;padding:7px 10px 7px 30px;border:1px solid var(--border);border-radius:var(--r8);font-size:13px;background:var(--canvas) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' fill='none' stroke='%239CA3AF' stroke-width='2' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 9px center;color:var(--dark);outline:none}
+.search:focus{border-color:var(--indigo)}
+.fselect{padding:7px 9px;border:1px solid var(--border);border-radius:var(--r8);font-size:13px;color:var(--dark);background:var(--canvas);cursor:pointer;outline:none}
+
+/* ── FORMS ── */
+.editor-layout{display:grid;grid-template-columns:1fr 268px;gap:18px;align-items:start}
+.form-row{margin-bottom:16px}
+.form-row label{display:block;font-size:12px;font-weight:600;color:var(--navy);margin-bottom:5px}
+.form-row .hint{font-size:11px;color:var(--mid);margin-top:4px}
+input[type=text],input[type=password],select,textarea{width:100%;padding:8px 11px;border:1px solid var(--border);border-radius:var(--r8);font-size:13px;color:var(--dark);background:var(--white);outline:none;font-family:inherit;transition:border-color .12s}
+input:focus,select:focus,textarea:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,.08)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+.slug-row{font-family:'Courier New',monospace;font-size:11px;background:var(--canvas);border:1px solid var(--border);border-radius:6px;padding:5px 9px;color:var(--mid);margin-top:4px}
+.slug-row .slug{color:var(--indigo2);font-weight:600}
+.char-cnt{font-size:11px;text-align:right;margin-top:3px}
+.char-ok{color:var(--green)} .char-warn{color:var(--amber)} .char-over{color:var(--red)}
+
+.panel{background:var(--white);border:1px solid var(--border);border-radius:var(--r10);overflow:hidden;margin-bottom:12px}
+.panel-hdr{padding:10px 14px;background:var(--canvas);border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--navy)}
+.panel-body{padding:13px 14px}
+
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+.toggle-row label{font-size:13px;color:var(--dark)}
+.toggle{position:relative;width:34px;height:18px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--border);border-radius:9px;transition:.2s}
+.toggle input:checked~.toggle-track{background:var(--indigo)}
+.toggle-thumb{position:absolute;width:12px;height:12px;background:var(--white);border-radius:50%;top:3px;left:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked~.toggle-track~.toggle-thumb{left:19px}
+
+.notice{padding:10px 14px;border-radius:var(--r8);font-size:12px;display:flex;align-items:flex-start;gap:8px;margin-bottom:14px;line-height:1.5}
+.notice-info{background:var(--indigol);color:var(--indigo2);border:1px solid var(--indigo3)}
+.notice-success{background:var(--greenl);color:#065F46;border:1px solid var(--greenb)}
+.notice-warn{background:var(--amberl);color:#92400E;border:1px solid #FCD34D}
+.notice-err{background:var(--redl);color:#991B1B;border:1px solid var(--redb)}
+
+.modal-bg{position:fixed;inset:0;background:rgba(5,13,26,.55);backdrop-filter:blur(2px);z-index:100;display:flex;align-items:center;justify-content:center}
+.modal{background:var(--white);border-radius:14px;padding:28px 30px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.modal-icon{font-size:28px;margin-bottom:12px}
+.modal-title{font-size:17px;font-weight:700;color:var(--navy);margin-bottom:8px}
+.modal-body{font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:20px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mid);margin-bottom:16px}
+.breadcrumb .crumb{cursor:pointer;color:var(--indigo)}
+.breadcrumb .crumb:hover{text-decoration:underline}
+.breadcrumb .sep{color:#D1D5DB}
+.breadcrumb .cur{color:var(--dark);font-weight:500}
+
+.row-actions{display:flex;gap:5px}
+.hidden{display:none!important}
+
+/* categories */
+.cat-row{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid #F3F4F6}
+.cat-row:last-child{border-bottom:none}
+.cat-info{display:flex;align-items:center;gap:10px}
+.cat-swatch{width:12px;height:12px;border-radius:3px;flex-shrink:0}
+.cat-name{font-size:13px;font-weight:500}
+.cat-slug{font-size:11px;color:var(--mid);font-family:monospace}
+.cat-cnt{font-size:11px;color:var(--mid);margin-left:6px}
+.color-grid{display:flex;gap:7px;flex-wrap:wrap;margin-top:5px}
+.color-opt{width:22px;height:22px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:.12s}
+.color-opt.sel{border-color:var(--dark);transform:scale(1.15)}
+
+@media(max-width:860px){.editor-layout{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}.sidebar{width:180px}.main{margin-left:180px;padding:20px}}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo"><div class="name">Sterling Tax Expert</div><div class="sub">ADMIN ACCESS</div></div>
+    <div class="login-lock">🔐</div>
+    <div class="login-title">Sign in</div>
+    <div class="login-sub">Enter your admin password to continue.</div>
+    <div id="login-err" class="notice notice-err hidden"></div>
+    <div class="form-row"><label>Password</label><input type="password" id="pw-input" autocomplete="current-password" /></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" id="login-btn">Sign in</button>
+    <div class="login-footer">Session expires after 4 hours. Authentication uses a secure HttpOnly cookie.</div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="app">
+  <aside class="sidebar">
+    <div class="sb-logo"><div class="name">Sterling Tax Expert</div><div class="sub">CMS ADMIN</div></div>
+    <nav class="sb-nav">
+      <div class="sec">Content</div>
+      <button onclick="nav('dashboard')" id="nav-dashboard"><span class="icon">📊</span> Dashboard</button>
+      <button onclick="nav('articles')"  id="nav-articles"> <span class="icon">📝</span> Articles</button>
+      <button onclick="nav('categories')" id="nav-categories"><span class="icon">📁</span> Categories</button>
+      <div class="sec">Account</div>
+      <button onclick="doLogout()"><span class="icon">↩</span> Sign out</button>
+    </nav>
+    <div class="sb-bottom"><div class="sb-user">Sterling Admin</div></div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="hidden">
+      <div class="page-hdr">
+        <div><div class="page-title">Dashboard</div><div class="page-sub" id="dash-date"></div></div>
+        <button class="btn btn-primary" onclick="nav('article-edit','new')">+ New Article</button>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="lbl"><span class="dot" style="background:var(--green)"></span>Published</div><div class="val" id="cnt-published">—</div></div>
+        <div class="stat-card"><div class="lbl"><span class="dot" style="background:var(--amber)"></span>Drafts</div><div class="val" id="cnt-draft">—</div></div>
+        <div class="stat-card"><div class="lbl"><span class="dot" style="background:var(--indigo)"></span>Scheduled</div><div class="val" id="cnt-scheduled">—</div></div>
+        <div class="stat-card"><div class="lbl"><span class="dot" style="background:var(--mid)"></span>Total</div><div class="val" id="cnt-total">—</div></div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">Recently edited</div>
+        <table><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+        <tbody id="dash-recent"></tbody></table>
+      </div>
+    </section>
+
+    <!-- ARTICLES LIST -->
+    <section id="view-articles" class="hidden">
+      <div class="page-hdr">
+        <div><div class="page-title">Articles</div><div class="page-sub" id="articles-count"></div></div>
+        <button class="btn btn-primary" onclick="nav('article-edit','new')">+ New Article</button>
+      </div>
+      <div class="card">
+        <div class="toolbar">
+          <input class="search" type="text" id="art-search" placeholder="Search…" oninput="filterArticles()" />
+          <select class="fselect" id="art-status-filter" onchange="loadArticles()">
+            <option value="all">All statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Drafts</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+        <table><thead><tr><th>Title</th><th>Category</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+        <tbody id="articles-tbody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- ARTICLE EDITOR -->
+    <section id="view-article-edit" class="hidden">
+      <div class="breadcrumb">
+        <span class="crumb" onclick="nav('articles')">Articles</span>
+        <span class="sep">›</span>
+        <span class="cur" id="editor-crumb">New article</span>
+      </div>
+      <div id="editor-notice" class="hidden"></div>
+      <div class="editor-layout">
+        <!-- LEFT: main content -->
+        <div>
+          <div class="form-row">
+            <label>Title <span style="color:var(--red)">*</span></label>
+            <input type="text" id="f-title" placeholder="Article title" oninput="onTitleInput()" style="font-size:15px;font-weight:600;padding:10px" />
+            <div class="slug-row">sterling-tax.co.uk/insights/<span id="slug-preview" class="slug">…</span></div>
+          </div>
+          <div class="form-row">
+            <label>Slug <span style="color:var(--red)">*</span></label>
+            <input type="text" id="f-slug" placeholder="url-slug" oninput="onSlugInput()" />
+            <div class="hint">Lowercase letters, numbers and hyphens only. Changing a published article's slug creates a 301 redirect automatically.</div>
+          </div>
+          <div class="form-row">
+            <label>Excerpt <span style="font-weight:400;color:var(--mid)">(shown in article cards)</span></label>
+            <textarea id="f-excerpt" rows="3" placeholder="One or two sentences summarising the article…"></textarea>
+          </div>
+          <div class="form-row">
+            <label>Content</label>
+            <textarea id="f-content" rows="14" placeholder="Article body text…"></textarea>
+          </div>
+          <hr style="border:none;border-top:1px solid var(--border);margin:18px 0">
+          <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px">SEO</div>
+          <div class="form-row">
+            <label>Meta title</label>
+            <input type="text" id="f-meta-title" oninput="charCount('f-meta-title','mc-mt',60)" />
+            <div class="char-cnt" id="mc-mt">0 / 60</div>
+          </div>
+          <div class="form-row">
+            <label>Meta description</label>
+            <textarea id="f-meta-desc" rows="3" oninput="charCount('f-meta-desc','mc-md',160)"></textarea>
+            <div class="char-cnt" id="mc-md">0 / 160</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: sidebar panels -->
+        <div>
+          <div class="panel">
+            <div class="panel-hdr">Publish</div>
+            <div class="panel-body">
+              <div id="editor-status-badge" style="margin-bottom:12px"></div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <button class="btn btn-outline btn-sm" id="btn-save-draft" onclick="saveArticle(false)">💾 Save draft</button>
+                <button class="btn btn-success btn-sm" id="btn-publish"    onclick="saveAndPublish()">🚀 Publish</button>
+                <button class="btn btn-outline btn-sm" id="btn-unpublish"  onclick="doUnpublish()" style="display:none">↩ Unpublish</button>
+                <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
+                <button class="btn btn-danger btn-sm"  id="btn-delete"     onclick="confirmDelete()" style="display:none">🗑 Delete article</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-hdr">Category</div>
+            <div class="panel-body">
+              <select id="f-category"><option value="">— Uncategorised —</option></select>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-hdr">Options</div>
+            <div class="panel-body">
+              <div class="toggle-row">
+                <label for="f-featured">Feature on homepage</label>
+                <label class="toggle"><input type="checkbox" id="f-featured"><span class="toggle-track"></span><span class="toggle-thumb"></span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section id="view-categories" class="hidden">
+      <div class="page-hdr">
+        <div><div class="page-title">Categories</div><div class="page-sub">Each category generates a public listing page.</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start">
+        <div class="card">
+          <div class="card-hdr">All categories <span id="cat-count-lbl" style="font-weight:400;font-size:11px;color:var(--mid)"></span></div>
+          <div id="cat-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr" id="cat-form-title">Add new category</div>
+          <div style="padding:14px 16px">
+            <input type="hidden" id="cat-edit-id" value="" />
+            <div class="form-row"><label>Name <span style="color:var(--red)">*</span></label><input type="text" id="cat-name" oninput="onCatNameInput()" /></div>
+            <div class="form-row"><label>Slug</label><input type="text" id="cat-slug" /><div class="hint">Auto-generated. Edit if needed.</div></div>
+            <div class="form-row">
+              <label>Colour</label>
+              <div class="color-grid" id="color-grid"></div>
+            </div>
+            <div class="form-row"><label>Description <span style="font-weight:400;color:var(--mid)">(optional)</span></label><textarea id="cat-desc" rows="2"></textarea></div>
+            <div id="cat-form-err" class="notice notice-err hidden"></div>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-primary btn-sm" onclick="submitCatForm()" id="cat-submit-btn">+ Create</button>
+              <button class="btn btn-ghost btn-sm" id="cat-cancel-btn" onclick="resetCatForm()" style="display:none">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ── CONFIRM MODAL ── -->
+<div class="modal-bg hidden" id="confirm-modal">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title" id="modal-title">Are you sure?</div>
+    <div class="modal-body"  id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger"  id="modal-confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let articles    = [];
+let categories  = [];
+let editingId   = null;   // null = new article
+let slugManual  = false;  // true once user has manually edited the slug field
+
+const COLOURS = ['#6366F1','#14B8A6','#F59E0B','#EF4444','#8B5CF6','#10B981','#0B1E3D','#EC4899'];
+let selectedColour = COLOURS[0];
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+(async () => {
+  try {
+    const r = await api('GET', '/api/admin/ping');
+    if (r.authenticated) showApp();
+  } catch {}
+})();
+
+// ── AUTH ───────────────────────────────────────────────────────────────────────
+document.getElementById('login-btn').addEventListener('click', doLogin);
+document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+async function doLogin() {
+  const pw  = document.getElementById('pw-input').value;
+  const err = document.getElementById('login-err');
+  err.classList.add('hidden');
+  if (!pw) { showErr(err, 'Please enter your password.'); return; }
+  try {
+    const r = await api('POST', '/api/admin/login', { password: pw });
+    if (r.ok) { showApp(); }
+  } catch (e) {
+    const msg = e.status === 423 ? 'Account locked — too many failed attempts. Try again in 15 minutes.'
+              : e.status === 401 ? 'Invalid password.' : 'Login failed. Please try again.';
+    showErr(err, msg);
+  }
+}
+
+async function doLogout() {
+  await api('POST', '/api/admin/logout').catch(() => {});
+  location.reload();
+}
+
+function showApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  const app = document.getElementById('app');
+  app.style.display = 'flex';
+  nav('dashboard');
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────────────────────
+function nav(view, param) {
+  document.querySelectorAll('.sb-nav button').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nav-' + view.replace('-edit','').replace('-new',''));
+  if (nb) nb.classList.add('active');
+
+  document.querySelectorAll('[id^="view-"]').forEach(s => s.classList.add('hidden'));
+
+  if (view === 'dashboard')    { loadDashboard(); document.getElementById('view-dashboard').classList.remove('hidden'); }
+  else if (view === 'articles'){ loadArticles();  document.getElementById('view-articles').classList.remove('hidden'); }
+  else if (view === 'article-edit') { openEditor(param); document.getElementById('view-article-edit').classList.remove('hidden'); }
+  else if (view === 'categories'){ loadCategories(); document.getElementById('view-categories').classList.remove('hidden'); }
+}
+
+// ── DASHBOARD ──────────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  try {
+    const d = await api('GET', '/api/admin/dashboard');
+    document.getElementById('cnt-published').textContent = d.counts.published;
+    document.getElementById('cnt-draft').textContent     = d.counts.draft;
+    document.getElementById('cnt-scheduled').textContent = d.counts.scheduled;
+    document.getElementById('cnt-total').textContent     = d.counts.total;
+    const tbody = document.getElementById('dash-recent');
+    tbody.innerHTML = d.recent.length ? d.recent.map(a => `
+      <tr>
+        <td style="font-weight:500;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.title)}</td>
+        <td>${a.category_name ? `<span style="background:var(--indigol);color:var(--indigo2);padding:2px 8px;border-radius:12px;font-size:11px">${esc(a.category_name)}</span>` : '<span style="color:var(--mid);font-size:11px">—</span>'}</td>
+        <td>${statusBadge(a.status)}</td>
+        <td style="color:var(--mid)">${fmtDate(a.updated_at)}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="nav('article-edit',${a.id})">Edit</button></td>
+      </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--mid);padding:24px">No articles yet.</td></tr>';
+  } catch {}
+}
+
+// ── ARTICLES LIST ──────────────────────────────────────────────────────────────
+async function loadArticles() {
+  const status = document.getElementById('art-status-filter').value;
+  try {
+    const d = await api('GET', `/api/admin/articles?status=${status}`);
+    articles = d.articles;
+    document.getElementById('articles-count').textContent = `${d.total} article${d.total !== 1 ? 's' : ''}`;
+    renderArticleRows(articles);
+  } catch {}
+}
+
+function filterArticles() {
+  const q = document.getElementById('art-search').value.toLowerCase();
+  renderArticleRows(q ? articles.filter(a => a.title.toLowerCase().includes(q) || (a.category_name||'').toLowerCase().includes(q)) : articles);
+}
+
+function renderArticleRows(rows) {
+  document.getElementById('articles-tbody').innerHTML = rows.length ? rows.map(a => `
+    <tr>
+      <td style="font-weight:500;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(a.title)}</td>
+      <td>${a.category_name ? `<span style="background:var(--indigol);color:var(--indigo2);padding:2px 8px;border-radius:12px;font-size:11px">${esc(a.category_name)}</span>` : '<span style="color:var(--mid);font-size:11px">—</span>'}</td>
+      <td>${statusBadge(a.status)}</td>
+      <td style="color:var(--mid)">${fmtDate(a.updated_at)}</td>
+      <td><div class="row-actions">
+        <button class="btn btn-ghost btn-sm" onclick="nav('article-edit',${a.id})">Edit</button>
+        ${a.status==='published'
+          ? `<button class="btn btn-ghost btn-sm" onclick="quickUnpublish(${a.id})">Unpublish</button>`
+          : `<button class="btn btn-success btn-sm" onclick="quickPublish(${a.id})">Publish</button>`}
+        <button class="btn btn-danger btn-sm" onclick="confirmDeleteArticle(${a.id},'${esc(a.title)}')">Delete</button>
+      </div></td>
+    </tr>`).join('')
+  : '<tr><td colspan="5" style="text-align:center;color:var(--mid);padding:24px">No articles found.</td></tr>';
+}
+
+async function quickPublish(id) {
+  try { await api('POST', `/api/admin/articles/${id}/publish`); await loadArticles(); }
+  catch (e) { alert(e.message || 'Could not publish — check all required fields are filled.'); }
+}
+async function quickUnpublish(id) {
+  try { await api('POST', `/api/admin/articles/${id}/unpublish`); await loadArticles(); }
+  catch {}
+}
+function confirmDeleteArticle(id, title) {
+  openModal('Delete article', `Permanently delete "<strong>${esc(title)}</strong>"? This cannot be undone.`, async () => {
+    await api('DELETE', `/api/admin/articles/${id}`);
+    await loadArticles();
+  });
+}
+
+// ── ARTICLE EDITOR ─────────────────────────────────────────────────────────────
+async function openEditor(param) {
+  slugManual = false;
+  editingId  = (param && param !== 'new') ? parseInt(param, 10) : null;
+
+  // Populate category dropdown
+  await ensureCategories();
+  const catSel = document.getElementById('f-category');
+  catSel.innerHTML = '<option value="">— Uncategorised —</option>' +
+    categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+
+  const n = document.getElementById('editor-notice');
+  n.className = 'hidden';
+
+  if (editingId) {
+    document.getElementById('editor-crumb').textContent = 'Editing…';
+    try {
+      const d = await api('GET', `/api/admin/articles/${editingId}`);
+      fillEditor(d.article);
+    } catch { alert('Could not load article.'); nav('articles'); }
+  } else {
+    clearEditor();
+  }
+  updateEditorButtons();
+}
+
+function fillEditor(a) {
+  document.getElementById('f-title').value      = a.title      || '';
+  document.getElementById('f-slug').value       = a.slug       || '';
+  document.getElementById('f-excerpt').value    = a.excerpt    || '';
+  document.getElementById('f-content').value    = a.content    || '';
+  document.getElementById('f-meta-title').value = a.meta_title || '';
+  document.getElementById('f-meta-desc').value  = a.meta_desc  || '';
+  document.getElementById('f-featured').checked = !!a.featured;
+  document.getElementById('f-category').value   = a.category_id || '';
+  document.getElementById('slug-preview').textContent = a.slug || '…';
+  document.getElementById('editor-crumb').textContent = a.title || 'Editing…';
+  charCount('f-meta-title','mc-mt',60);
+  charCount('f-meta-desc','mc-md',160);
+  slugManual = true; // slug already exists — don't overwrite
+  updateEditorButtons(a.status);
+}
+
+function clearEditor() {
+  ['f-title','f-slug','f-excerpt','f-content','f-meta-title','f-meta-desc'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-featured').checked = false;
+  document.getElementById('f-category').value   = '';
+  document.getElementById('slug-preview').textContent = '…';
+  document.getElementById('editor-crumb').textContent = 'New article';
+  charCount('f-meta-title','mc-mt',60);
+  charCount('f-meta-desc','mc-md',160);
+}
+
+function updateEditorButtons(status) {
+  const isNew       = !editingId;
+  const isPublished = status === 'published';
+  document.getElementById('btn-publish').style.display    = isPublished ? 'none' : '';
+  document.getElementById('btn-unpublish').style.display  = isPublished ? '' : 'none';
+  document.getElementById('btn-delete').style.display     = isNew ? 'none' : '';
+  const badge = document.getElementById('editor-status-badge');
+  if (!isNew && status) badge.innerHTML = statusBadge(status);
+  else badge.innerHTML = '';
+}
+
+function onTitleInput() {
+  const title = document.getElementById('f-title').value;
+  if (!slugManual) {
+    const slug = titleToSlug(title);
+    document.getElementById('f-slug').value = slug;
+    document.getElementById('slug-preview').textContent = slug || '…';
+  }
+  document.getElementById('editor-crumb').textContent = title || 'New article';
+}
+
+function onSlugInput() {
+  slugManual = true;
+  document.getElementById('slug-preview').textContent = document.getElementById('f-slug').value || '…';
+}
+
+function collectArticleForm() {
+  return {
+    title:      document.getElementById('f-title').value,
+    slug:       document.getElementById('f-slug').value,
+    excerpt:    document.getElementById('f-excerpt').value,
+    content:    document.getElementById('f-content').value,
+    meta_title: document.getElementById('f-meta-title').value,
+    meta_desc:  document.getElementById('f-meta-desc').value,
+    featured:   document.getElementById('f-featured').checked,
+    category_id: document.getElementById('f-category').value || null,
+  };
+}
+
+async function saveArticle(andPublish) {
+  const notice = document.getElementById('editor-notice');
+  notice.className = 'hidden';
+  const data = collectArticleForm();
+  try {
+    let result;
+    if (editingId) {
+      result = await api('PUT', `/api/admin/articles/${editingId}`, data);
+    } else {
+      result = await api('POST', '/api/admin/articles', data);
+      editingId = result.article.id;
+    }
+    if (andPublish) {
+      result = await api('POST', `/api/admin/articles/${editingId}/publish`);
+    }
+    fillEditor(result.article);
+    showNotice(notice, andPublish ? 'Article published.' : 'Draft saved.', andPublish ? 'success' : 'info');
+  } catch (e) {
+    showNotice(notice, e.message || 'Could not save article. Check all required fields.', 'err');
+  }
+}
+
+async function saveAndPublish() {
+  await saveArticle(true);
+}
+
+async function doUnpublish() {
+  if (!editingId) return;
+  const notice = document.getElementById('editor-notice');
+  try {
+    const r = await api('POST', `/api/admin/articles/${editingId}/unpublish`);
+    fillEditor(r.article);
+    showNotice(notice, 'Article unpublished and returned to draft.', 'info');
+  } catch { showNotice(notice, 'Could not unpublish.', 'err'); }
+}
+
+function confirmDelete() {
+  if (!editingId) return;
+  const title = document.getElementById('f-title').value;
+  openModal('Delete article', `Permanently delete "<strong>${esc(title)}</strong>"? This cannot be undone.`, async () => {
+    await api('DELETE', `/api/admin/articles/${editingId}`);
+    nav('articles');
+  });
+}
+
+// ── CATEGORIES ─────────────────────────────────────────────────────────────────
+async function ensureCategories() {
+  if (!categories.length) await loadCategories(true);
+}
+
+async function loadCategories(silent) {
+  try {
+    const d = await api('GET', '/api/admin/categories');
+    categories = d.categories;
+    if (!silent) renderCategories();
+  } catch {}
+}
+
+function renderCategories() {
+  document.getElementById('cat-count-lbl').textContent =
+    `${categories.length} ${categories.length === 1 ? 'category' : 'categories'}`;
+
+  document.getElementById('cat-list').innerHTML = categories.length
+    ? categories.map(c => `
+        <div class="cat-row">
+          <div class="cat-info">
+            <span class="cat-swatch" style="background:${esc(c.colour)}"></span>
+            <div>
+              <span class="cat-name">${esc(c.name)}</span>
+              <span class="cat-cnt">${c.article_count} article${c.article_count !== 1 ? 's' : ''}</span>
+              <div class="cat-slug">/insights/${esc(c.slug)}</div>
+            </div>
+          </div>
+          <div class="row-actions">
+            <button class="btn btn-ghost btn-sm" onclick="editCat(${c.id})">Rename</button>
+            <button class="btn btn-danger btn-sm" onclick="confirmDeleteCat(${c.id},'${esc(c.name)}',${c.article_count})">Delete</button>
+          </div>
+        </div>`).join('')
+    : '<div style="padding:20px;text-align:center;color:var(--mid)">No categories yet.</div>';
+
+  buildColourGrid();
+}
+
+function buildColourGrid() {
+  document.getElementById('color-grid').innerHTML = COLOURS.map(c =>
+    `<div class="color-opt${c===selectedColour?' sel':''}" style="background:${c}" onclick="selectColour('${c}')"></div>`
+  ).join('');
+}
+
+function selectColour(c) {
+  selectedColour = c;
+  buildColourGrid();
+}
+
+function onCatNameInput() {
+  const v = document.getElementById('cat-name').value;
+  if (!document.getElementById('cat-edit-id').value) {
+    document.getElementById('cat-slug').value = titleToSlug(v);
+  }
+}
+
+async function submitCatForm() {
+  const errEl = document.getElementById('cat-form-err');
+  errEl.classList.add('hidden');
+  const id   = document.getElementById('cat-edit-id').value;
+  const data = {
+    name:        document.getElementById('cat-name').value,
+    slug:        document.getElementById('cat-slug').value,
+    colour:      selectedColour,
+    description: document.getElementById('cat-desc').value,
+  };
+  try {
+    if (id) {
+      await api('PUT', `/api/admin/categories/${id}`, data);
+    } else {
+      await api('POST', '/api/admin/categories', data);
+    }
+    resetCatForm();
+    await loadCategories();
+  } catch (e) {
+    showErr(errEl, e.message || 'Could not save category.');
+  }
+}
+
+function editCat(id) {
+  const cat = categories.find(c => c.id === id);
+  if (!cat) return;
+  document.getElementById('cat-edit-id').value = id;
+  document.getElementById('cat-name').value    = cat.name;
+  document.getElementById('cat-slug').value    = cat.slug;
+  document.getElementById('cat-desc').value    = cat.description || '';
+  selectedColour = cat.colour || COLOURS[0];
+  document.getElementById('cat-form-title').textContent = 'Edit category';
+  document.getElementById('cat-submit-btn').textContent  = '✓ Save changes';
+  document.getElementById('cat-cancel-btn').style.display = '';
+  buildColourGrid();
+}
+
+function resetCatForm() {
+  document.getElementById('cat-edit-id').value = '';
+  document.getElementById('cat-name').value    = '';
+  document.getElementById('cat-slug').value    = '';
+  document.getElementById('cat-desc').value    = '';
+  selectedColour = COLOURS[0];
+  document.getElementById('cat-form-title').textContent  = 'Add new category';
+  document.getElementById('cat-submit-btn').textContent  = '+ Create';
+  document.getElementById('cat-cancel-btn').style.display = 'none';
+  document.getElementById('cat-form-err').classList.add('hidden');
+  buildColourGrid();
+}
+
+function confirmDeleteCat(id, name, count) {
+  const warn = count > 0 ? ` ${count} article${count!==1?'s':''} will be moved to Uncategorised.` : '';
+  openModal('Delete category', `Delete "<strong>${esc(name)}</strong>"?${warn} This cannot be undone.`, async () => {
+    await api('DELETE', `/api/admin/categories/${id}`);
+    await loadCategories();
+  });
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────────────────
+let _modalCb = null;
+function openModal(title, body, cb) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML    = body;
+  _modalCb = cb;
+  document.getElementById('confirm-modal').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('confirm-modal').classList.add('hidden'); _modalCb = null; }
+document.getElementById('modal-confirm').addEventListener('click', async () => {
+  closeModal();
+  if (_modalCb) try { await _modalCb(); } catch (e) { alert(e.message || 'Operation failed.'); }
+});
+
+// ── API ────────────────────────────────────────────────────────────────────────
+async function api(method, path, body) {
+  const opts = {
+    method,
+    credentials: 'include',
+    headers: body ? { 'Content-Type': 'application/json' } : {},
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(path, opts);
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const err = new Error(data.error || `HTTP ${r.status}`);
+    err.status = r.status;
+    throw err;
+  }
+  return data;
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────────
+function titleToSlug(t) {
+  return t.toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(ts) {
+  if (!ts) return '—';
+  return new Date(ts * 1000).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+}
+function statusBadge(s) {
+  const map={published:'badge-published ● Published',draft:'badge-draft ● Draft',scheduled:'badge-scheduled ● Scheduled',archived:'badge-archived ● Archived'};
+  const v = map[s]||'badge-archived ● '+s;
+  const [cls,...rest]=v.split(' ');
+  return `<span class="badge ${cls}">${rest.join(' ')}</span>`;
+}
+function charCount(inputId, countId, max) {
+  const len = document.getElementById(inputId).value.length;
+  const el  = document.getElementById(countId);
+  el.textContent = `${len} / ${max}`;
+  el.className   = 'char-cnt ' + (len > max ? 'char-over' : len >= max * 0.85 ? 'char-warn' : 'char-ok');
+}
+function showNotice(el, msg, type) {
+  el.className   = `notice notice-${type}`;
+  el.textContent = msg;
+}
+function showErr(el, msg) {
+  el.className   = 'notice notice-err';
+  el.textContent = msg;
+  el.classList.remove('hidden');
+}
+</script>
+</body>
+</html>
