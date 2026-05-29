@@ -643,41 +643,155 @@ function triggerDownload(text, filename, mime){
 function mountAbout(){
   const wrap = document.getElementById('page-about');
   if (!wrap) return;
+
+  const principles = [
+    { icon:'✓', text:'Every calculator runs in your browser — nothing you enter leaves your device' },
+    { icon:'✓', text:'Rates, thresholds and statutory amounts are sourced from HMRC, GOV.UK and Statutory Instruments' },
+    { icon:'✓', text:'Every formula is documented inline — open the notes panel on any tool to see the working' },
+    { icon:'✓', text:'All tools are updated on 6 April each year, and on any in-year HMRC announcement' },
+    { icon:'✓', text:'Estimates and projections are flagged explicitly — nothing is presented as definitive advice' },
+    { icon:'✓', text:'Free and accessible — no account, no paywall, no usage caps' },
+  ];
+
+  const audiences = [
+    { label:'Small businesses', desc:'Run payroll calculations, check employer NI, track compliance deadlines and understand what you owe — without guesswork.' },
+    { label:'Company directors', desc:'Model salary vs dividend decisions, understand corporation tax and marginal relief, and keep on top of filing obligations.' },
+    { label:'Sole traders', desc:'Calculate self-assessment liability, payments on account, Class 2 and Class 4 NI, and statutory pay entitlements.' },
+    { label:'Individuals', desc:'Check your take-home pay, understand your tax position, calculate student loan repayments and plan for the tax year ahead.' },
+  ];
+
+  const services = [
+    { title:'Payroll', desc:'RTI submissions, P60s, P45s, auto-enrolment and monthly payroll management — fully aligned with 2026/27 rules.' },
+    { title:'Accounting', desc:'Management accounts, year-end accounts and cloud bookkeeping, giving you a clear picture of your business throughout the year.' },
+    { title:'Self Assessment', desc:'Personal tax returns filed accurately and on time, including sole traders, directors, landlords and those with complex income.' },
+    { title:'Compliance', desc:'CIS management, VAT returns, corporation tax and HMRC liaison — keeping your business on the right side of every obligation.' },
+  ];
+
+  const toolCount = (window.TOOLS||[]).length;
+  const dlCount   = (window.DEADLINES||[]).length;
+
   wrap.innerHTML = `
     <div class="crumbs"></div>
-    <div style="background:var(--g50);border-bottom:1px solid var(--br)">
-      <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
-        <div class="eyebrow ey-blue">About</div>
-        <h1 style="font-family:var(--serif);font-size:34px;font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:11px">A working toolkit for UK tax &amp; payroll</h1>
-        <p style="font-size:14.5px;color:var(--t2);max-width:620px;line-height:1.8">Sterling Tax Expert is a public platform of HMRC-aligned calculators, statutory deadlines, and plain-English guidance for the 2026/27 UK tax year. It exists because the official tools are scattered, the commercial ones gate basic answers behind paywalls, and accountants needed something they could share with clients without caveat.</p>
+
+    <!-- ── Hero ── -->
+    <div class="about-hero">
+      <div class="about-hero-bg"></div>
+      <div class="about-hero-inner">
+        <div class="eyebrow ey-indigo-light">About Sterling Tax Expert</div>
+        <h1 class="about-hero-h">Built to make UK tax <em>easier to understand</em></h1>
+        <p class="about-hero-p">UK tax rules are precise, frequently updated, and spread across a landscape of HMRC guidance, statutory instruments and Finance Acts. Businesses and individuals deserve clear, accurate, free access to that information — not locked behind paywalls or buried in jargon.</p>
+        <p class="about-hero-p" style="margin-top:12px">Sterling Tax Expert exists to provide that access: practical tools, plain-English insights, and professional services — all built on the same foundation of accuracy and transparency.</p>
       </div>
     </div>
-    <div class="sec"><div class="sec-inner">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start" class="about-grid">
-        <div>
-          <div class="eyebrow ey-gold">What's here</div>
-          <div class="sec-h">A focused, transparent toolkit</div>
-          <p style="font-size:14px;color:var(--t2);line-height:1.85;margin-bottom:14px">Everything on this site is free, requires no signup, and runs entirely in your browser — nothing you enter into a calculator leaves your device. The source data (rates, thresholds, deadlines) is published on the platform itself; you can see exactly what each tool does.</p>
-          <p style="font-size:14px;color:var(--t2);line-height:1.85;margin-bottom:22px">Where calculators apply HMRC formulae verbatim (PAYE, NI, CT marginal relief, statutory pay), they are documented inline, with the exact 2026/27 thresholds, rates and bands shown on each tool so you can sanity-check before relying on it.</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px">
-            <div style="background:var(--g50);border:1px solid var(--br);border-radius:var(--r);padding:16px"><div style="font-family:var(--serif);font-size:22px;font-weight:700;color:var(--navy)">${(window.TOOLS||[]).length}</div><div style="font-size:11px;color:var(--t3)">Live calculators</div></div>
-            <div style="background:var(--g50);border:1px solid var(--br);border-radius:var(--r);padding:16px"><div style="font-family:var(--serif);font-size:22px;font-weight:700;color:var(--navy)">${(window.DEADLINES||[]).length}</div><div style="font-size:11px;color:var(--t3)">Deadlines tracked</div></div>
-            <div style="background:var(--g50);border:1px solid var(--br);border-radius:var(--r);padding:16px"><div style="font-family:var(--serif);font-size:22px;font-weight:700;color:var(--navy)">2026/27</div><div style="font-size:11px;color:var(--t3)">Tax year covered</div></div>
-          </div>
+
+    <!-- ── Platform facts strip ── -->
+    <div class="about-facts">
+      <div class="about-facts-inner">
+        <div class="about-fact">
+          <div class="about-fact-n">${toolCount}</div>
+          <div class="about-fact-l">Free calculators</div>
+          <div class="about-fact-s">Live · no signup</div>
         </div>
-        <div>
-          <div style="background:var(--w);border:1px solid var(--br);border-radius:14px;padding:24px">
-            <div class="eyebrow ey-blue">Operating principles</div>
-            <div class="sec-h" style="font-size:21px">How we work</div>
-            <ul style="list-style:none;padding:0;margin:16px 0 0">
-              ${['Free — every calculator, every deadline, no paywall','No data leaves your device — calculations run client-side','Sources cited — rates, thresholds, statutory amounts','Projections flagged — estimates labelled explicitly','Refreshed each tax year on 6 April','Print-ready outputs on every tool'].map(p => `
-                <li style="display:flex;gap:9px;font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:10px"><span style="color:var(--teal2);font-weight:700">✓</span>${p}</li>
+        <div class="about-fact-sep"></div>
+        <div class="about-fact">
+          <div class="about-fact-n">${dlCount}</div>
+          <div class="about-fact-l">Deadlines tracked</div>
+          <div class="about-fact-s">2026/27 calendar</div>
+        </div>
+        <div class="about-fact-sep"></div>
+        <div class="about-fact">
+          <div class="about-fact-n">6 Apr</div>
+          <div class="about-fact-l">Annual update date</div>
+          <div class="about-fact-s">Last updated 2026</div>
+        </div>
+        <div class="about-fact-sep"></div>
+        <div class="about-fact">
+          <div class="about-fact-n">£0</div>
+          <div class="about-fact-l">Cost to use</div>
+          <div class="about-fact-s">Every tool, always free</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Why this platform exists ── -->
+    <div class="sec"><div class="sec-inner">
+      <div class="about-split">
+        <div class="about-split-main">
+          <div class="eyebrow ey-blue">Why it exists</div>
+          <div class="sec-h">Accurate tax information should not be a privilege</div>
+          <p class="about-body-p">Tax rules in the UK change every April. Rates shift, thresholds move, statutory amounts are updated by statutory instrument. Keeping up requires constant attention to HMRC guidance, GOV.UK publications, and the Finance Acts that underpin them.</p>
+          <p class="about-body-p">Most free tools on the internet lag behind by months, apply approximate formulae, or hide the key edge cases — the personal allowance taper above £100,000, the Class 2 NI reform that took effect in April 2024, the day-one SSP entitlement introduced by the Employment Rights Act 2025. These details matter. Getting them wrong costs money.</p>
+          <p class="about-body-p">Sterling Tax Expert is built on the principle that clarity and precision are not luxuries. Every calculator documents its source. Every rate is cited. Every known limitation is disclosed. The goal is tools you can actually rely on — and insights that help you understand <em>why</em> the numbers are what they are, not just what they are.</p>
+        </div>
+        <div class="about-split-side">
+          <div class="about-methodology-card">
+            <div class="eyebrow ey-blue" style="margin-bottom:14px">How accuracy is maintained</div>
+            <ul class="about-method-list">
+              ${principles.map(p => `
+                <li class="about-method-item">
+                  <span class="about-method-ck">✓</span>
+                  <span>${p.text}</span>
+                </li>
               `).join('')}
             </ul>
           </div>
         </div>
       </div>
     </div></div>
+
+    <!-- ── Who it is for ── -->
+    <div class="sec" style="background:var(--g50);border-top:1px solid var(--br);border-bottom:1px solid var(--br)">
+      <div class="sec-inner">
+        <div style="text-align:center;margin-bottom:40px">
+          <div class="eyebrow ey-blue">Who it is for</div>
+          <div class="sec-h">Practical tools for anyone navigating UK tax</div>
+          <p class="sec-p" style="margin:0 auto;text-align:center;max-width:520px">Whether you run a business, file your own tax return, or are trying to understand what you actually take home — the platform is built for you.</p>
+        </div>
+        <div class="about-audience-grid">
+          ${audiences.map(a => `
+            <div class="about-audience-card">
+              <div class="about-audience-label">${a.label}</div>
+              <div class="about-audience-desc">${a.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Services ── -->
+    <div class="sec"><div class="sec-inner">
+      <div class="row-hdr">
+        <div>
+          <div class="eyebrow ey-blue">Professional services</div>
+          <div class="sec-h" style="margin-bottom:0">Beyond the free tools</div>
+        </div>
+        <button class="btn btn-indigo" onclick="navigate('contact')">Book a free consultation</button>
+      </div>
+      <p class="about-body-p" style="margin-bottom:32px;max-width:640px">The calculators and insights are free for everyone. For those who want professional support — someone to handle the filings, review the numbers, and be accountable for the outcomes — Sterling Tax Expert offers a focused range of services.</p>
+      <div class="about-services-grid">
+        ${services.map(s => `
+          <div class="about-service-card">
+            <div class="about-service-title">${s.title}</div>
+            <div class="about-service-desc">${s.desc}</div>
+            <button class="btn btn-ghost btn-sm" style="margin-top:16px" onclick="navigate('contact')">Enquire →</button>
+          </div>
+        `).join('')}
+      </div>
+    </div></div>
+
+    <!-- ── Transparency note ── -->
+    <div class="about-transparency">
+      <div class="about-transparency-inner">
+        <div class="eyebrow ey-indigo-light" style="margin-bottom:12px">A note on transparency</div>
+        <p class="about-transparency-p">This platform does not use fake reviews, fabricated client numbers, invented awards or fictional company history. The credentials here are the tools themselves — if they calculate correctly, cite their sources, and disclose their limitations, that is a more honest signal of quality than anything else we could say about ourselves.</p>
+        <p class="about-transparency-p" style="margin-top:12px">If you find an error in a calculator — a wrong rate, a missing edge case, an outdated threshold — please get in touch. Accuracy is the only thing that matters.</p>
+        <div style="margin-top:24px">
+          <button class="btn btn-indigo" onclick="navigate('contact')">Contact us</button>
+          <button class="btn btn-ghost" style="margin-left:9px" onclick="navigate('tools')">Browse free tools</button>
+        </div>
+      </div>
+    </div>
+
     ${renderCTABand()}
     ${renderFooter()}
   `;
