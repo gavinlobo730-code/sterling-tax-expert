@@ -7,8 +7,8 @@
     "dev":     "wrangler dev",
     "deploy":  "wrangler deploy",
     "tail":    "wrangler tail",
-    "db:migrate":       "wrangler d1 execute sterling-cms --file=migrations/0001_initial.sql",
-    "db:migrate:local": "wrangler d1 execute sterling-cms --local --file=migrations/0001_initial.sql",
+    "db:migrate":       "wrangler d1 execute sterling-cms --local --file=migrations/0001_initial.sql",
+    "db:migrate:prod":  "wrangler d1 execute sterling-cms --file=migrations/0001_initial.sql",
     "db:query":         "wrangler d1 execute sterling-cms --command",
     "db:query:local":   "wrangler d1 execute sterling-cms --local --command",
     "health":  "curl -s http://localhost:8787/health | jq"

@@ -2,9 +2,6 @@
 -- Run with: wrangler d1 execute sterling-cms --file=migrations/0001_initial.sql
 -- For local dev: wrangler d1 execute sterling-cms --local --file=migrations/0001_initial.sql
 
-PRAGMA journal_mode = WAL;
-PRAGMA foreign_keys = ON;
-
 -- ── CATEGORIES ────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS categories (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -27,6 +24,8 @@ CREATE TABLE IF NOT EXISTS articles (
   content         TEXT    NOT NULL DEFAULT '',
   excerpt         TEXT    NOT NULL DEFAULT '',
   featured_image  TEXT,
+  -- D1 does not enforce FK constraints or ON DELETE cascades at the DB level.
+  -- Phase 3 Worker code must handle category deletion manually (set category_id = NULL).
   category_id     INTEGER REFERENCES categories(id) ON DELETE SET NULL,
   status          TEXT    NOT NULL DEFAULT 'draft'
                   CHECK (status IN ('draft','published','scheduled','archived')),
@@ -42,10 +41,6 @@ CREATE TABLE IF NOT EXISTS articles (
 -- Index for the public API's most common query pattern
 CREATE INDEX IF NOT EXISTS idx_articles_status_published
   ON articles(status, published_at DESC);
-
--- Index for slug lookups (public article page + redirect check)
-CREATE INDEX IF NOT EXISTS idx_articles_slug
-  ON articles(slug);
 
 -- Index for category listing pages
 CREATE INDEX IF NOT EXISTS idx_articles_category

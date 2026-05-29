@@ -49,32 +49,13 @@ async function handleHealth(request, env) {
     errors.push(`D1: ${e.message}`);
   }
 
-  // Verify R2 is reachable by attempting a head on a known key
+  // Verify R2 is reachable — head() returns null for missing keys (does not throw)
   try {
     await env.ASSETS.head('health-check-probe');
+    // Returns null (key absent) or an object (key present) — either proves R2 is reachable
     checks.r2 = true;
   } catch (e) {
-    // head() throws when the key doesn't exist — that still proves R2 is reachable
-    if (e.message?.includes('NoSuchKey') || e.name === 'NoSuchKey') {
-      checks.r2 = true;
-    } else {
-      errors.push(`R2: ${e.message}`);
-    }
-  }
-
-  // Also confirm the admin row exists (password not yet set is fine at this stage)
-  let adminStatus = 'unknown';
-  try {
-    const adminRow = await env.DB.prepare('SELECT password_hash FROM admin WHERE id = 1').first();
-    if (!adminRow) {
-      adminStatus = 'missing — re-run migrations';
-    } else if (adminRow.password_hash === 'NOT_SET') {
-      adminStatus = 'password not set — run scripts/hash-password.js';
-    } else {
-      adminStatus = 'configured';
-    }
-  } catch (e) {
-    adminStatus = `error: ${e.message}`;
+    errors.push(`R2: ${e.message}`);
   }
 
   const allOk = checks.worker && checks.d1 && checks.r2;
@@ -83,7 +64,6 @@ async function handleHealth(request, env) {
     status:  allOk ? 'ok' : 'degraded',
     phase:   1,
     checks,
-    admin:   adminStatus,
     errors:  errors.length ? errors : undefined,
     ts:      new Date().toISOString(),
   }, allOk ? 200 : 503);
