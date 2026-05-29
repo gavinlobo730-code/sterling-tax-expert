@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 120" width="640" height="120">
+  <!-- Sterling Tax Expert — Concept A Full Lockup (Primary Brand Mark) -->
+  <!-- Use for: website nav, email headers, documents, letterhead -->
+  <!-- Icon mark -->
+  <rect width="96" height="96" x="0" y="12" rx="22" fill="#0B1E3D"/>
+  <!-- Inner glow -->
+  <radialGradient id="a-glow" cx="30%" cy="20%" r="70%">
+    <stop offset="0%" stop-color="#6366F1" stop-opacity="0.25"/>
+    <stop offset="100%" stop-color="#6366F1" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="96" height="96" x="0" y="12" rx="22" fill="url(#a-glow)"/>
+  <!-- S letterform: fluid arc, variable weight (heavier at terminals) -->
+  <path d="M28 36 Q50 26 62 40 Q69 50 57 60 L38 67 Q26 72 30 84 Q38 94 64 90" stroke="white" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <!-- Indigo underline rule -->
+  <rect x="16" y="100" width="64" height="4" rx="2" fill="#6366F1"/>
+  <!-- Wordmark -->
+  <text x="116" y="55" font-family="'Instrument Serif', Georgia, serif" font-size="36" font-weight="400" fill="#0B1E3D" letter-spacing="-0.5">Sterling</text>
+  <text x="118" y="82" font-family="'Inter', system-ui, sans-serif" font-size="16" font-weight="500" fill="#374151" letter-spacing="0.5">Tax Expert</text>
+  <!-- Indigo accent rule under sub-line -->
+  <rect x="118" y="89" width="128" height="1.5" rx="0.75" fill="#6366F1" opacity="0.35"/>
+  <!-- Tagline -->
+  <text x="118" y="108" font-family="'Inter', system-ui, sans-serif" font-size="11" font-weight="400" fill="#9CA3AF" letter-spacing="2.5">UK TAX INTELLIGENCE</text>
+</svg>

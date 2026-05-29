@@ -1,0 +1,23 @@
+# Sterling Tax Expert CMS — Local Development Variables
+#
+# Copy this file to .dev.vars before running `wrangler dev`.
+# .dev.vars is excluded from git (.gitignore) — never commit it.
+#
+# These values override the [vars] block in wrangler.toml for local dev only.
+# Production values are set via `wrangler secret put` or the Cloudflare dashboard.
+#
+# Usage:
+#   cp .dev.vars.example .dev.vars
+#   # edit .dev.vars with your local values
+#   wrangler dev
+
+# ── ORIGINS ───────────────────────────────────────────────────────────────────
+# Override the production URLs so CORS works against localhost during development.
+ADMIN_ORIGIN=http://localhost:8787
+PUBLIC_ORIGIN=http://localhost:3000
+ENVIRONMENT=development
+
+# ── PHASE 4: BACKUP SIGNING (not yet required) ────────────────────────────────
+# A random secret used to sign backup download URLs so they cannot be guessed.
+# Generate with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+# BACKUP_SIGNING_SECRET=replace_with_64_char_hex_string

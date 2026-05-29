@@ -1,0 +1,11 @@
+# Cloudflare Pages _redirects
+#
+# /insights/:slug  →  serves index.html so the SPA can mount the article.
+# The JS in 02-shell.js detects the pathname on DOMContentLoaded and
+# calls navigate('article', slug) automatically.
+#
+# All other paths fall through to the SPA root so hash-based routes work.
+
+/insights/:slug   /index.html   200
+/insights         /index.html   200
+/*                /index.html   200

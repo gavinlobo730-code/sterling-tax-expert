@@ -1,0 +1,58 @@
+name = "sterling-cms-api"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ── ROUTES ────────────────────────────────────────────────────────────────────
+# Public API:   sterling-tax.co.uk/api/*
+# Admin API:    admin.sterling-tax.co.uk/*
+#
+# Uncomment and set these after connecting your domain in the Cloudflare dashboard.
+# routes = [
+#   { pattern = "sterling-tax.co.uk/api/*", zone_name = "sterling-tax.co.uk" },
+#   { pattern = "admin.sterling-tax.co.uk/*", zone_name = "sterling-tax.co.uk" },
+# ]
+
+# ── D1 DATABASE ───────────────────────────────────────────────────────────────
+# After running: wrangler d1 create sterling-cms
+# paste the database_id printed by that command below.
+[[d1_databases]]
+binding  = "DB"
+database_name = "sterling-cms"
+database_id   = "REPLACE_WITH_DATABASE_ID_FROM_WRANGLER_D1_CREATE"
+
+# ── R2 BUCKET ─────────────────────────────────────────────────────────────────
+# After running: wrangler r2 bucket create sterling-assets
+[[r2_buckets]]
+binding     = "ASSETS"
+bucket_name = "sterling-assets"
+
+# ── ENVIRONMENT VARIABLES ─────────────────────────────────────────────────────
+# ADMIN_ORIGIN: the URL of the admin panel (used for CORS on admin routes).
+# Set this to the URL you will serve the admin HTML from.
+[vars]
+ADMIN_ORIGIN    = "https://admin.sterling-tax.co.uk"
+PUBLIC_ORIGIN   = "https://sterling-tax.co.uk"
+ENVIRONMENT     = "production"
+
+# ── CRON TRIGGERS ─────────────────────────────────────────────────────────────
+# Fires daily at 02:00 UTC:
+#   • Creates a JSON backup and writes it to R2 /backups/YYYY-MM-DD.json
+#   • Publishes any scheduled articles whose scheduled_at has passed
+#   • Deletes backup files older than 30 days
+[triggers]
+crons = ["0 2 * * *"]
+
+# ── MODULE RULES ──────────────────────────────────────────────────────────────
+# Allows: import adminHtml from '../admin/index.html'
+# The HTML string is bundled into the Worker at deploy time.
+[[rules]]
+type = "Text"
+globs = ["**/*.html"]
+
+# ── LOCAL DEVELOPMENT ─────────────────────────────────────────────────────────
+# Run locally with: wrangler dev
+# The D1 database is persisted locally at .wrangler/state/
+[dev]
+port = 8787
+local_protocol = "http"

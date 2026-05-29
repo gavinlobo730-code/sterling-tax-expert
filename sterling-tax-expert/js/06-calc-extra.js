@@ -1,0 +1,310 @@
+/* ═══════════════════════════════════════════════════════════
+   Sterling Tax Expert — Extra calculators (v4)
+   Employee NI, Gross-to-Net, Marginal Relief, SPP, SAP, ShPP
+   ─────────────────────────────────────────────────────────── */
+
+// ─────────────────────────────────────────────────────────
+// EMPLOYEE NI CALCULATOR (Class 1 primary, standalone)
+// ─────────────────────────────────────────────────────────
+CALCS['employee-ni'] = {
+  id: 'employee-ni',
+  title: 'Employee NI Calculator',
+  subtitle: 'Class 1 primary contributions — 8% main rate between £12,570 and £50,270, plus 2% on anything above.',
+  inputs: [
+    { id:'salary', type:'currency', label:'Annual salary (gross)', default:35000 },
+  ],
+  calculate(s){
+    const T = window.TAX;
+    const ni = employeeNI(s.salary);
+    let mainBand = 0, addlBand = 0;
+    if (s.salary > T.NI_PT) {
+      mainBand = (Math.min(s.salary, T.NI_UEL) - T.NI_PT) * T.NI_MAIN;
+      if (s.salary > T.NI_UEL) addlBand = (s.salary - T.NI_UEL) * T.NI_ADDL;
+    }
+    const effectiveRate = s.salary > 0 ? (ni / s.salary * 100) : 0;
+    return { ni, mainBand, addlBand, effectiveRate, monthly:ni/12, weekly:ni/52, salary:s.salary };
+  },
+  render(r){
+    return `
+      ${kpiRow([
+        kpi('Annual employee NI', fmt(r.ni), { color:'primary', sub:`${r.effectiveRate.toFixed(2)}% effective` }),
+        kpi('Monthly NI',         fmt(r.monthly), { color:'gold' }),
+        kpi('Weekly NI',          fmt(r.weekly),  { color:'navy' }),
+      ])}
+      <div class="breakdown">
+        <div class="bk-header"><div class="bk-title">Band-by-band</div></div>
+        ${bkRow(`Tax-free (up to £${fmtInt(window.TAX.NI_PT)})`,        '#9DA0A8', Math.min(r.salary, window.TAX.NI_PT),                                  r.salary)}
+        ${r.mainBand > 0 ? bkRow(`Main rate 8% (£${fmtInt(window.TAX.NI_PT)}\u2013£${fmtInt(window.TAX.NI_UEL)})`, '#14B8A6', r.mainBand, r.salary) : ''}
+        ${r.addlBand > 0 ? bkRow(`Additional 2% (above £${fmtInt(window.TAX.NI_UEL)})`,        '#876B14', r.addlBand, r.salary) : ''}
+        ${bkRow('Total employee NI', '#123458', r.ni, r.salary, false, true)}
+      </div>
+      ${notesCard('Class 1 primary in 2026/27', `The Primary Threshold (£${fmtInt(window.TAX.NI_PT)}) aligns with the personal allowance. The Upper Earnings Limit (£${fmtInt(window.TAX.NI_UEL)}) aligns with the basic-rate threshold. The 2% rate above the UEL is the additional Class 1 primary rate \u2014 it continues for all earnings above that point.`)}
+      ${actionsRow()}
+    `;
+  },
+  related: ['paye','employer-ni','net-to-gross']
+};
+
+// ─────────────────────────────────────────────────────────
+// GROSS-TO-NET — multi-frequency converter
+// ─────────────────────────────────────────────────────────
+CALCS['gross-to-net'] = {
+  id: 'gross-to-net',
+  title: 'Gross-to-Net Salary Calculator',
+  subtitle: 'Convert any UK gross salary into net take-home across annual, monthly, weekly, daily and hourly frequencies.',
+  inputs: [
+    { id:'amount', type:'currency', label:'Gross amount', default:45000 },
+    { id:'freq',   type:'select',   label:'Frequency',   default:'annual', options:[
+      {v:'annual',l:'Annual'},{v:'monthly',l:'Monthly'},{v:'weekly',l:'Weekly'},{v:'daily',l:'Daily (220 days/yr)'},{v:'hourly',l:'Hourly (37.5h × 52)'}
+    ]},
+    { id:'plan',   type:'select',   label:'Student loan plan', default:'0', options:[
+      {v:'0',l:'None'},{v:'1',l:'Plan 1'},{v:'2',l:'Plan 2'},{v:'4',l:'Plan 4'},{v:'5',l:'Plan 5'},{v:'PG',l:'Postgrad'}
+    ]},
+  ],
+  calculate(s){
+    let annual;
+    if (s.freq === 'annual') annual = s.amount;
+    else if (s.freq === 'monthly') annual = s.amount * 12;
+    else if (s.freq === 'weekly')  annual = s.amount * 52;
+    else if (s.freq === 'daily')   annual = s.amount * 220;
+    else if (s.freq === 'hourly')  annual = s.amount * 37.5 * 52;
+    const { tax } = incomeTaxOn(annual);
+    const ni = employeeNI(annual);
+    const sl = studentLoan(annual, s.plan);
+    const net = annual - tax - ni - sl;
+    return {
+      annual:    { gross:annual,       tax,            ni,            sl,            net },
+      monthly:   { gross:annual/12,    tax:tax/12,     ni:ni/12,      sl:sl/12,      net:net/12 },
+      weekly:    { gross:annual/52,    tax:tax/52,     ni:ni/52,      sl:sl/52,      net:net/52 },
+      daily:     { gross:annual/220,   tax:tax/220,    ni:ni/220,     sl:sl/220,     net:net/220 },
+      hourly:    { gross:annual/(37.5*52), tax:tax/(37.5*52), ni:ni/(37.5*52), sl:sl/(37.5*52), net:net/(37.5*52) },
+    };
+  },
+  render(r){
+    const rows = [
+      ['Gross',         r.annual.gross,   r.monthly.gross,   r.weekly.gross,   r.daily.gross,   r.hourly.gross],
+      ['Income tax',    r.annual.tax,     r.monthly.tax,     r.weekly.tax,     r.daily.tax,     r.hourly.tax],
+      ['Employee NI',   r.annual.ni,      r.monthly.ni,      r.weekly.ni,      r.daily.ni,      r.hourly.ni],
+      ...(r.annual.sl > 0 ? [['Student loan', r.annual.sl, r.monthly.sl, r.weekly.sl, r.daily.sl, r.hourly.sl]] : []),
+      ['Net take-home', r.annual.net,     r.monthly.net,     r.weekly.net,     r.daily.net,     r.hourly.net],
+    ];
+    return `
+      ${kpiRow([
+        kpi('Net annual',  fmt(r.annual.net),  { color:'primary' }),
+        kpi('Net monthly', fmt(r.monthly.net), { color:'navy' }),
+        kpi('Net hourly',  fmt(r.hourly.net,2),{ color:'gold' }),
+      ])}
+      <div class="breakdown">
+        <div class="bk-header"><div class="bk-title">Gross-to-net across frequencies</div></div>
+        <div class="adm-tbl-scroll">
+          <table style="min-width:auto;width:100%">
+            <thead><tr><th>Component</th><th style="text-align:right">Annual</th><th style="text-align:right">Monthly</th><th style="text-align:right">Weekly</th><th style="text-align:right">Daily</th><th style="text-align:right">Hourly</th></tr></thead>
+            <tbody>
+              ${rows.map((row, i) => `
+                <tr style="${i===rows.length-1?'background:var(--bluel);font-weight:700':''}">
+                  <td>${row[0]}</td>
+                  <td style="text-align:right;font-family:var(--mono);font-size:12px">${fmt(row[1])}</td>
+                  <td style="text-align:right;font-family:var(--mono);font-size:12px">${fmt(row[2])}</td>
+                  <td style="text-align:right;font-family:var(--mono);font-size:12px">${fmt(row[3])}</td>
+                  <td style="text-align:right;font-family:var(--mono);font-size:12px">${fmt(row[4])}</td>
+                  <td style="text-align:right;font-family:var(--mono);font-size:12px">${fmt(row[5], 2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      ${notesCard('Frequency assumptions', `Daily uses <strong>220 working days/year</strong> (a common UK convention after weekends/holidays). Hourly uses <strong>37.5 hours × 52 weeks = 1,950 hours/year</strong>. Adjust to your contract if needed. Pension contributions are not modelled here \u2014 see the PAYE calculator for a fuller breakdown.`)}
+      ${actionsRow()}
+    `;
+  },
+  related: ['paye','net-to-gross','employer-ni','employee-ni']
+};
+
+// ─────────────────────────────────────────────────────────
+// MARGINAL RELIEF — standalone CT marginal-relief explorer
+// ─────────────────────────────────────────────────────────
+CALCS['marginal'] = {
+  id: 'marginal',
+  title: 'Corporation Tax Marginal Relief Calculator',
+  subtitle: 'Standalone marginal-relief explorer for profits between £50,000 and £250,000 — the awkward CT band.',
+  inputs: [
+    { id:'profit',  type:'currency', label:'Taxable profit', default:120000 },
+    { id:'assoc',   type:'number',   label:'Associated companies', default:0, min:0, max:50 },
+    { id:'period',  type:'number',   label:'Accounting period (months)', default:12, min:1, max:18, suffix:'mo' },
+  ],
+  calculate(s){
+    const T = window.TAX;
+    const div = s.assoc + 1;
+    const lo = (T.CT_LOWER / div) * (s.period / 12);
+    const hi = (T.CT_UPPER / div) * (s.period / 12);
+    let ct = 0, mr = 0, band = '';
+    if (s.profit <= lo)      { ct = s.profit * T.CT_SMALL; band = `Small profits (${(T.CT_SMALL*100)}%)`; }
+    else if (s.profit >= hi) { ct = s.profit * T.CT_MAIN;  band = `Main rate (${(T.CT_MAIN*100)}%)`; }
+    else                     { mr = (hi - s.profit) * T.CT_MR_FRACTION; ct = s.profit * T.CT_MAIN - mr; band = 'Marginal relief'; }
+    const eff = s.profit > 0 ? ct/s.profit*100 : 0;
+    return { ct, mr, band, lo, hi, eff, profit:s.profit };
+  },
+  render(r){
+    return `
+      ${kpiRow([
+        kpi('Corporation tax due', fmt(r.ct),  { color:'red',  sub:r.band }),
+        kpi('Marginal relief',     fmt(r.mr),  { color:'green', sub:r.mr > 0 ? 'Applied to your profit' : 'Not in band' }),
+        kpi('Effective rate',      r.eff.toFixed(2)+'%', { color:'primary', sub:`Profit \u00a3${fmtInt(r.profit)}` }),
+      ])}
+      <div class="chart-section">
+        <div class="chart-title">Your profit on the marginal relief gradient</div>
+        <div class="corp-band">
+          <div class="corp-band-row">
+            <span class="corp-band-label">Small profits (19%) \u2014 up to ${fmt(r.lo,0)}</span>
+            <div class="corp-band-bar"><div class="corp-band-fill" style="width:${r.profit<=r.lo?100:0}%;background:var(--green)"></div></div>
+            <span class="corp-band-val">${r.profit<=r.lo?'\u25cf':''}</span>
+          </div>
+          <div class="corp-band-row">
+            <span class="corp-band-label">Marginal relief \u2014 ${fmt(r.lo,0)} to ${fmt(r.hi,0)}</span>
+            <div class="corp-band-bar"><div class="corp-band-fill" style="width:${r.profit>r.lo&&r.profit<r.hi?Math.min((r.profit-r.lo)/(r.hi-r.lo)*100,100):0}%;background:var(--goldd)"></div></div>
+            <span class="corp-band-val">${r.profit>r.lo&&r.profit<r.hi?'\u25cf':''}</span>
+          </div>
+          <div class="corp-band-row">
+            <span class="corp-band-label">Main rate (25%) \u2014 above ${fmt(r.hi,0)}</span>
+            <div class="corp-band-bar"><div class="corp-band-fill" style="width:${r.profit>=r.hi?100:0}%;background:var(--red)"></div></div>
+            <span class="corp-band-val">${r.profit>=r.hi?'\u25cf':''}</span>
+          </div>
+        </div>
+      </div>
+      ${notesCard('The marginal relief formula', `For 2026/27 the relief = <strong>(Upper limit \u2212 Augmented profit) \u00d7 3/200</strong>. With no associated companies and a 12-month period, the upper limit is \u00a3250,000 and the lower limit is \u00a350,000. The fraction 3/200 produces an effective rate of <strong>26.5%</strong> on profits in the band \u2014 higher than the 25% main rate. The reason: it claws back the small-profits relief that small companies enjoy.`)}
+      ${actionsRow()}
+    `;
+  },
+  related: ['corp','sal-vs-div','self-assess']
+};
+
+// ─────────────────────────────────────────────────────────
+// SPP — Statutory Paternity Pay
+// ─────────────────────────────────────────────────────────
+CALCS['spp'] = {
+  id: 'spp',
+  title: 'Statutory Paternity Pay (SPP) Calculator',
+  subtitle: 'SPP for fathers, partners and adoptive parents — paid for up to 2 weeks at £194.32 or 90% AWE (whichever lower).',
+  inputs: [
+    { id:'awe',     type:'currency', label:'Average weekly earnings (AWE)',  default:500 },
+    { id:'weeks',   type:'number',   label:'Weeks of paternity leave',        default:2, min:1, max:2 },
+  ],
+  calculate(s){
+    const T = window.TAX;
+    const eligible = s.awe >= T.LEL;
+    const weeklyRate = Math.min(s.awe * 0.90, T.SPP_RATE);
+    const total = weeklyRate * s.weeks;
+    return { eligible, weeklyRate, total, lel:T.LEL };
+  },
+  render(r){
+    if (!r.eligible) {
+      return `<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:12px;padding:24px">
+        <div style="font-size:14px;font-weight:700;color:#991B1B;margin-bottom:6px">Not eligible for SPP</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.7">AWE must be at least <strong>\u00a3${r.lel}/week</strong>.</div>
+      </div>${actionsRow()}`;
+    }
+    return `
+      ${kpiRow([
+        kpi('Total SPP payable', fmt(r.total),       { color:'primary', sub:'Capped at 2 weeks' }),
+        kpi('Weekly rate',       fmt(r.weeklyRate),  { color:'gold',    sub:'Lower of 90% AWE or \u00a3' + window.TAX.SPP_RATE }),
+        kpi('Statutory cap',     fmt(window.TAX.SPP_RATE), { color:'navy', sub:'2026/27' }),
+      ])}
+      ${notesCard('Eligibility', `To qualify, the employee must have continuous employment of at least <strong>26 weeks</strong> ending with the 15th week before the expected week of childbirth, and earn at least the LEL. SPP can be taken as 1 block of 1 week or 2 consecutive weeks, within 52 weeks of birth or placement.`)}
+      ${actionsRow()}
+    `;
+  },
+  related: ['smp','ssp','holiday']
+};
+
+// ─────────────────────────────────────────────────────────
+// SAP — Statutory Adoption Pay
+// ─────────────────────────────────────────────────────────
+CALCS['sap'] = {
+  id: 'sap',
+  title: 'Statutory Adoption Pay (SAP) Calculator',
+  subtitle: 'SAP follows the SMP structure — 90% AWE for 6 weeks, then £194.32 or 90% AWE (whichever lower) for 33 weeks.',
+  inputs: [
+    { id:'awe', type:'currency', label:'Average weekly earnings (AWE)', default:500 },
+  ],
+  calculate(s){
+    const T = window.TAX;
+    const eligible = s.awe >= T.LEL;
+    const first6 = s.awe * T.SMP_HIGHER * 6;
+    const lowerRate = Math.min(s.awe * 0.90, T.SAP_RATE);
+    const next33 = lowerRate * 33;
+    const total = first6 + next33;
+    return { eligible, first6, weeklyHigher:s.awe*0.90, lowerRate, next33, total, lel:T.LEL };
+  },
+  render(r){
+    if (!r.eligible) {
+      return `<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:12px;padding:24px">
+        <div style="font-size:14px;font-weight:700;color:#991B1B;margin-bottom:6px">Not eligible for SAP</div>
+        <div style="font-size:13px;color:var(--t2);line-height:1.7">AWE must be at least <strong>\u00a3${r.lel}/week</strong>.</div>
+      </div>${actionsRow()}`;
+    }
+    return `
+      ${kpiRow([
+        kpi('Total SAP (39 weeks)',  fmt(r.total),         { color:'primary' }),
+        kpi('Weeks 1\u20136 (90% AWE)', fmt(r.weeklyHigher), { color:'green',  sub:fmt(r.first6) + ' total' }),
+        kpi('Weeks 7\u201339',         fmt(r.lowerRate),    { color:'gold',   sub:fmt(r.next33) + ' total' }),
+      ])}
+      <div class="breakdown">
+        <div class="bk-header"><div class="bk-title">Period-by-period</div></div>
+        ${bkRow('First 6 weeks @ 90% AWE',  '#0E7C70', r.first6, r.total)}
+        ${bkRow('Weeks 7\u201339 @ lower rate', '#876B14', r.next33, r.total)}
+        ${bkRow('Total SAP',                 '#123458', r.total,  r.total, false, true)}
+      </div>
+      ${notesCard('Eligibility', `Available to one parent of an adopted child (the other may take Statutory Paternity Pay). Employee must have at least 26 weeks of continuous service ending with the week they are matched, and earn at least the LEL. Statutory adoption leave is 52 weeks total \u2014 SAP covers the first 39.`)}
+      ${actionsRow()}
+    `;
+  },
+  related: ['smp','spp','shpp']
+};
+
+// ─────────────────────────────────────────────────────────
+// SHPP — Shared Parental Pay
+// ─────────────────────────────────────────────────────────
+CALCS['shpp'] = {
+  id: 'shpp',
+  title: 'Shared Parental Pay (ShPP) Calculator',
+  subtitle: 'Up to 37 weeks of shared parental pay at £194.32 or 90% AWE (whichever lower) — divisible between parents.',
+  inputs: [
+    { id:'aweA',   type:'currency', label:'Parent A — average weekly earnings', default:550 },
+    { id:'weeksA', type:'number',   label:'Weeks taken by Parent A',             default:20, min:0, max:37 },
+    { id:'aweB',   type:'currency', label:'Parent B — average weekly earnings', default:450 },
+    { id:'weeksB', type:'number',   label:'Weeks taken by Parent B',             default:17, min:0, max:37 },
+  ],
+  calculate(s){
+    const T = window.TAX;
+    const overAllocated = (s.weeksA + s.weeksB) > 37;
+    const eligibleA = s.aweA >= T.LEL;
+    const eligibleB = s.aweB >= T.LEL;
+    const rateA = eligibleA ? Math.min(s.aweA * 0.90, T.SHPP_RATE) : 0;
+    const rateB = eligibleB ? Math.min(s.aweB * 0.90, T.SHPP_RATE) : 0;
+    // Cap weeks when over-allocated: Parent A takes priority, Parent B gets the remainder.
+    // This ensures the displayed total never exceeds the statutory 37-week maximum.
+    const effectiveWeeksA = overAllocated ? Math.min(s.weeksA, 37) : s.weeksA;
+    const effectiveWeeksB = overAllocated ? Math.min(s.weeksB, Math.max(0, 37 - effectiveWeeksA)) : s.weeksB;
+    const totalWeeks = effectiveWeeksA + effectiveWeeksB;
+    const payA = rateA * effectiveWeeksA;
+    const payB = rateB * effectiveWeeksB;
+    const total = payA + payB;
+    const inputWeeksA = s.weeksA;
+    const inputWeeksB = s.weeksB;
+    return { totalWeeks, eligibleA, eligibleB, rateA, rateB, payA, payB, total, overAllocated, effectiveWeeksA, effectiveWeeksB, inputWeeksA, inputWeeksB };
+  },
+  render(r){
+    return `
+      ${r.overAllocated ? `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:14px 18px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.65"><strong>\u26a0 Over 37-week cap.</strong> Combined ShPP cannot exceed 37 weeks. You entered ${r.inputWeeksA + r.inputWeeksB} weeks total. Figures below are capped: Parent A ${r.effectiveWeeksA} weeks, Parent B ${r.effectiveWeeksB} weeks. Reduce one parent's allocation to match your intended split.</div>` : ''}
+      ${kpiRow([
+        kpi('Total ShPP payable', fmt(r.total),  { color:'primary', sub:`${r.totalWeeks} weeks total (statutory max 37)` }),
+        kpi('Parent A',           fmt(r.payA),   { color:'gold',  sub:r.eligibleA ? `${fmt(r.rateA)}/week \u00d7 ${r.effectiveWeeksA} weeks` : 'Not eligible (AWE below LEL)' }),
+        kpi('Parent B',           fmt(r.payB),   { color:'green', sub:r.eligibleB ? `${fmt(r.rateB)}/week \u00d7 ${r.effectiveWeeksB} weeks` : 'Not eligible (AWE below LEL)' }),
+      ])}
+      ${notesCard('How Shared Parental Leave works', `Available when both parents qualify and the mother/primary adopter curtails their maternity/adoption leave. Total available ShPP is <strong>52 \u2212 weeks of SMP/SAP already taken</strong>, up to a max of 37 weeks. Both parents must meet the employment and earnings tests independently. Notice of leave intervals (SPLIT notices) must be given to employers at least 8 weeks in advance.`)}
+      ${actionsRow()}
+    `;
+  },
+  related: ['smp','spp','sap']
+};
