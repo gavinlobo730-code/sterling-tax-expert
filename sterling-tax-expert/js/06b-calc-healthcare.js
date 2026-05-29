@@ -3,27 +3,7 @@
    NHS Payroll & Pension Calculator (2026/27)
    ─────────────────────────────────────────────────────────── */
 
-// ── Scottish income tax helper ─────────────────────────────
-function scottishIncomeTaxOn(gross) {
-  const T = window.TAX;
-  let pa = T.PA;
-  if (gross > T.PA_TAPER_START) {
-    pa = Math.max(0, T.PA - Math.floor((gross - T.PA_TAPER_START) / 2));
-  }
-  const taxable = Math.max(0, gross - pa);
-  let tax = 0;
-  const s1 = Math.min(taxable, T.SCOT_STARTER_LIMIT - pa);
-  const s2 = Math.min(Math.max(0, taxable - (T.SCOT_STARTER_LIMIT - pa)), T.SCOT_BASIC_LIMIT - T.SCOT_STARTER_LIMIT);
-  const s3 = Math.min(Math.max(0, taxable - (T.SCOT_BASIC_LIMIT - pa)), T.SCOT_INTER_LIMIT - T.SCOT_BASIC_LIMIT);
-  const s4 = Math.min(Math.max(0, taxable - (T.SCOT_INTER_LIMIT - pa)), T.SCOT_HR_LIMIT - T.SCOT_INTER_LIMIT);
-  const s5 = Math.max(0, taxable - (T.SCOT_HR_LIMIT - pa));
-  if (s1 > 0) tax += s1 * T.SCOT_STARTER;
-  if (s2 > 0) tax += s2 * T.SCOT_BASIC;
-  if (s3 > 0) tax += s3 * T.SCOT_INTER;
-  if (s4 > 0) tax += s4 * T.SCOT_HR;
-  if (s5 > 0) tax += s5 * T.SCOT_TOP;
-  return { tax: Math.max(0, tax), paUsed: pa };
-}
+// scottishIncomeTaxOn() is defined in 04-calc-payroll.js (loads first).
 
 // ── NHS pension tier lookup ────────────────────────────────
 function nhsPensionTier(pensionablePay) {

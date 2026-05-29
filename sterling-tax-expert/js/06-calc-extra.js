@@ -26,19 +26,22 @@ CALCS['employee-ni'] = {
   },
   render(r){
     return `
-      ${kpiRow([
-        kpi('Annual employee NI', fmt(r.ni), { color:'primary', sub:`${r.effectiveRate.toFixed(2)}% effective` }),
-        kpi('Monthly NI',         fmt(r.monthly), { color:'gold' }),
-        kpi('Weekly NI',          fmt(r.weekly),  { color:'navy' }),
-      ])}
-      <div class="breakdown">
-        <div class="bk-header"><div class="bk-title">Band-by-band</div></div>
-        ${bkRow(`Tax-free (up to £${fmtInt(window.TAX.NI_PT)})`,        '#9DA0A8', Math.min(r.salary, window.TAX.NI_PT),                                  r.salary)}
-        ${r.mainBand > 0 ? bkRow(`Main rate 8% (£${fmtInt(window.TAX.NI_PT)}\u2013£${fmtInt(window.TAX.NI_UEL)})`, '#14B8A6', r.mainBand, r.salary) : ''}
-        ${r.addlBand > 0 ? bkRow(`Additional 2% (above £${fmtInt(window.TAX.NI_UEL)})`,        '#876B14', r.addlBand, r.salary) : ''}
-        ${bkRow('Total employee NI', '#123458', r.ni, r.salary, false, true)}
+      <div style="border:2px solid var(--indigo);border-radius:14px;padding:28px 32px;background:var(--indigol);margin-bottom:18px">
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <div style="font-size:32px;flex-shrink:0">💷</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px">This calculator has moved</div>
+            <p style="font-size:13.5px;color:var(--t2);line-height:1.65;margin-bottom:16px">
+              Employee NI calculations — including the full band-by-band breakdown, monthly and weekly figures, and effective rate — are now included within the <strong>PAYE Tax &amp; NI Calculator</strong>.<br><br>
+              The PAYE calculator also shows income tax, pension, student loan, employer NI and total employer cost in a single view.
+            </p>
+            <button class="btn btn-indigo" onclick="navigate('calc','paye')" style="font-size:13px;padding:10px 20px">
+              Open PAYE Tax &amp; NI Calculator →
+            </button>
+          </div>
+        </div>
       </div>
-      ${notesCard('Class 1 primary in 2026/27', `The Primary Threshold (£${fmtInt(window.TAX.NI_PT)}) aligns with the personal allowance. The Upper Earnings Limit (£${fmtInt(window.TAX.NI_UEL)}) aligns with the basic-rate threshold. The 2% rate above the UEL is the additional Class 1 primary rate \u2014 it continues for all earnings above that point.`)}
+      ${notesCard('Employee NI in 2026/27', `Class 1 primary contributions: <strong>8%</strong> on earnings between £${fmtInt(window.TAX.NI_PT)} and £${fmtInt(window.TAX.NI_UEL)}, then <strong>2%</strong> on anything above. For salary £${fmtInt(r.salary)}: annual NI is <strong>${fmt(r.ni)}</strong> (${r.effectiveRate.toFixed(2)}% effective rate). Use the PAYE calculator for the full picture including income tax and employer costs.`)}
       ${actionsRow()}
     `;
   },

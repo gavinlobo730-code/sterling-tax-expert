@@ -4,6 +4,29 @@
    ─────────────────────────────────────────────────────────── */
 
 // ── Shared tax functions ───────────────────────────────────
+function scottishIncomeTaxOn(gross){
+  // Scottish income tax 2026/27 — confirmed by Scottish Budget.
+  // Rates: starter 19%, basic 20%, intermediate 21%, higher 42%, top 48%.
+  const T = window.TAX;
+  let pa = T.PA;
+  if (gross > T.PA_TAPER_START) {
+    pa = Math.max(0, T.PA - Math.floor((gross - T.PA_TAPER_START) / 2));
+  }
+  const taxable = Math.max(0, gross - pa);
+  let tax = 0;
+  const s1 = Math.min(taxable, T.SCOT_STARTER_LIMIT - pa);
+  const s2 = Math.min(Math.max(0, taxable - (T.SCOT_STARTER_LIMIT - pa)), T.SCOT_BASIC_LIMIT - T.SCOT_STARTER_LIMIT);
+  const s3 = Math.min(Math.max(0, taxable - (T.SCOT_BASIC_LIMIT - pa)), T.SCOT_INTER_LIMIT - T.SCOT_BASIC_LIMIT);
+  const s4 = Math.min(Math.max(0, taxable - (T.SCOT_INTER_LIMIT - pa)), T.SCOT_HR_LIMIT - T.SCOT_INTER_LIMIT);
+  const s5 = Math.max(0, taxable - (T.SCOT_HR_LIMIT - pa));
+  if (s1 > 0) tax += s1 * T.SCOT_STARTER;
+  if (s2 > 0) tax += s2 * T.SCOT_BASIC;
+  if (s3 > 0) tax += s3 * T.SCOT_INTER;
+  if (s4 > 0) tax += s4 * T.SCOT_HR;
+  if (s5 > 0) tax += s5 * T.SCOT_TOP;
+  return { tax: Math.max(0, tax), paUsed: pa };
+}
+
 function incomeTaxOn(gross){
   // English/Welsh/NI rates. Personal allowance taper above £100k.
   const T = window.TAX;
@@ -54,56 +77,69 @@ function studentLoan(gross, plan){
 CALCS['paye'] = {
   id: 'paye',
   title: 'PAYE Tax & NI Calculator',
-  subtitle: 'Work out income tax, employee NI, net take-home pay and the employer\'s total cost — for any UK salary at 2026/27 rates.',
+  subtitle: 'Income tax, employee NI, employer NI, pension contributions and full employer cost — for any UK salary at 2026/27 rates.',
   inputs: [
-    { id:'salary',    type:'currency', label:'Annual salary (gross)',    default:45000, hint:'Before tax & NI' },
-    { id:'freq',      type:'toggle',   label:'Salary frequency',          default:'annual', options:[{v:'annual',l:'Annual'},{v:'monthly',l:'Monthly'}] },
-    { type:'section', label:'Deductions' },
-    { id:'pension',   type:'number',   label:'Pension contribution',      default:5, suffix:'% of gross', step:0.5, min:0, max:100, hint:'Salary sacrifice (reduces taxable pay)' },
-    { id:'plan',      type:'select',   label:'Student loan plan',         default:'0', options:[
+    { id:'salary',    type:'currency', label:'Annual salary (gross)',              default:45000, hint:'Before tax & NI' },
+    { id:'freq',      type:'toggle',   label:'Salary frequency',                   default:'annual', options:[{v:'annual',l:'Annual'},{v:'monthly',l:'Monthly'}] },
+    { id:'regime',    type:'toggle',   label:'Tax regime',                         default:'england', options:[{v:'england',l:'England & Wales'},{v:'scotland',l:'Scotland'}] },
+    { type:'section', label:'Employee deductions' },
+    { id:'pension',   type:'number',   label:'Employee pension contribution',       default:5, suffix:'% of gross', step:0.5, min:0, max:100, hint:'Salary sacrifice (reduces taxable pay and NI)' },
+    { id:'plan',      type:'select',   label:'Student loan plan',                  default:'0', options:[
       {v:'0',l:'No student loan'},{v:'1',l:'Plan 1'},{v:'2',l:'Plan 2'},
       {v:'4',l:'Plan 4 (Scottish)'},{v:'5',l:'Plan 5 (post-Aug 2023)'},{v:'PG',l:'Postgraduate loan'}
     ]},
+    { type:'section', label:'Employer costs' },
+    { id:'erPension', type:'number',   label:'Employer pension contribution',       default:3, suffix:'% of gross', step:0.5, min:0, max:25, hint:'Added to total employer cost' },
     { id:'allowance', type:'checkbox', label:'Employer claims Employment Allowance (£10,500)', default:true },
   ],
   calculate(s){
     const annual = s.freq === 'monthly' ? s.salary * 12 : s.salary;
     const pensionAmt = annual * (s.pension / 100);
     const taxablePay = annual - pensionAmt;
-    const { tax: incomeTax, paUsed } = incomeTaxOn(taxablePay);
+    const taxCalc = s.regime === 'scotland'
+      ? scottishIncomeTaxOn(taxablePay)
+      : incomeTaxOn(taxablePay);
+    const incomeTax = taxCalc.tax;
+    const paUsed = taxCalc.paUsed;
+    // NI is on post-sacrifice gross
     const empNI = employeeNI(taxablePay);
-    // Employer NI is on the sacrificed (reduced) gross — pension is salary sacrifice.
     const erNI = employerNI(taxablePay, s.allowance);
     const sl = studentLoan(annual, s.plan);
+    const erPensionAmt = annual * ((s.erPension || 0) / 100);
     const netPay = annual - pensionAmt - incomeTax - empNI - sl;
     const totalDeductions = incomeTax + empNI + sl;
-    const employerCost = annual + erNI;
+    const employerCost = annual + erNI + erPensionAmt;
     const effRate = annual > 0 ? ((incomeTax + empNI + sl) / annual * 100) : 0;
-    return { annual, pensionAmt, taxablePay, incomeTax, empNI, erNI, sl, netPay, totalDeductions, employerCost, effRate, paUsed };
+    return { annual, pensionAmt, erPensionAmt, taxablePay, incomeTax, empNI, erNI, sl, netPay, totalDeductions, employerCost, effRate, paUsed, regime: s.regime };
   },
   render(r){
-    const colors = { net:'#16A34A', tax:'#C0392B', ni:'#C49A2E', pension:'#7C3AED', sl:'#EA580C' };
+    const colors = { net:'#16A34A', tax:'#C0392B', ni:'#C49A2E', pension:'#7C3AED', erPension:'#0EA5E9', sl:'#EA580C', erNI:'#EA580C' };
     const donutData = [
       { name:'Net pay',      val:r.netPay,     color:colors.net },
       { name:'Income tax',   val:r.incomeTax,  color:colors.tax },
       { name:'Employee NI',  val:r.empNI,      color:colors.ni },
-      ...(r.pensionAmt > 0 ? [{ name:'Pension', val:r.pensionAmt, color:colors.pension }] : []),
+      ...(r.pensionAmt > 0 ? [{ name:'Employee pension', val:r.pensionAmt, color:colors.pension }] : []),
       ...(r.sl > 0 ? [{ name:'Student loan', val:r.sl, color:colors.sl }] : []),
     ];
     return `
       ${kpiRow([
-        kpi('Net annual pay',     fmt(r.netPay),     { color:'primary', monthly: fmt(r.netPay/12) + ' / month' }),
-        kpi('Total deductions',   fmt(r.totalDeductions + r.pensionAmt), { color:'red', monthly: fmt((r.totalDeductions + r.pensionAmt)/12) + ' / month' }),
-        kpi('Employer total cost',fmt(r.employerCost),{ color:'navy', monthly: fmt(r.employerCost/12) + ' / month' }),
+        kpi('Net take-home',      fmt(r.netPay),        { color:'primary', monthly: fmt(r.netPay/12) + ' / month' }),
+        kpi('Total employer cost',fmt(r.employerCost),  { color:'navy',    monthly: fmt(r.employerCost/12) + ' / month' }),
+        kpi('Effective tax rate', r.effRate.toFixed(1) + '%', { color:'gold', sub:'Income tax + NI' + (r.sl > 0 ? ' + SL' : '') }),
       ])}
       ${kpiRow([
-        kpi('Income tax',  fmt(r.incomeTax), { color:'gold',  monthly: fmt(r.incomeTax/12) + ' / month' }),
-        kpi('Employee NI', fmt(r.empNI),     { color:'green', monthly: fmt(r.empNI/12) + ' / month' }),
-        kpi('Effective rate', r.effRate.toFixed(1) + '%', { color:'navy', sub:'Combined income tax + NI + SL' }),
+        kpi('Income tax',       fmt(r.incomeTax),   { color:'red',   monthly: fmt(r.incomeTax/12) + ' / month' }),
+        kpi('Employee NI',      fmt(r.empNI),        { color:'green', monthly: fmt(r.empNI/12) + ' / month' }),
+        kpi('Employer NI',      fmt(r.erNI),         { color:'navy',  monthly: fmt(r.erNI/12) + ' / month' }),
+        kpi('Employee pension', fmt(r.pensionAmt),   { color:'gold',  monthly: fmt(r.pensionAmt/12) + ' / month' }),
       ])}
+      ${r.erPensionAmt > 0 || r.sl > 0 ? kpiRow([
+        ...(r.erPensionAmt > 0 ? [kpi('Employer pension', fmt(r.erPensionAmt), { color:'navy', monthly: fmt(r.erPensionAmt/12) + ' / month' })] : []),
+        ...(r.sl > 0 ? [kpi('Student loan', fmt(r.sl), { color:'gold', monthly: fmt(r.sl/12) + ' / month' })] : []),
+      ]) : ''}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="paye-charts">
         <div class="chart-section">
-          <div class="chart-title"><span>Salary breakdown</span><span style="font-size:11px;color:var(--t3)">Annual</span></div>
+          <div class="chart-title"><span>Employee salary breakdown</span><span style="font-size:11px;color:var(--t3)">Annual</span></div>
           <div class="donut-wrap">
             ${donutSVG(donutData, r.annual)}
             <div class="donut-legend">${donutData.map(d => `
@@ -117,18 +153,25 @@ CALCS['paye'] = {
           </div>
         </div>
         <div class="breakdown">
-          <div class="bk-header"><div class="bk-title">Full breakdown</div></div>
+          <div class="bk-header"><div class="bk-title">Full employee breakdown</div></div>
           ${bkRow('Gross salary', '#6B748F', r.annual, r.annual, true)}
-          ${r.pensionAmt > 0 ? bkRow('Pension (salary sacrifice)', colors.pension, r.pensionAmt, r.annual) : ''}
+          ${r.pensionAmt > 0 ? bkRow('Employee pension (sacrifice)', colors.pension, r.pensionAmt, r.annual) : ''}
           ${bkRow('Income tax', colors.tax, r.incomeTax, r.annual)}
           ${bkRow('Employee NI', colors.ni, r.empNI, r.annual)}
           ${r.sl > 0 ? bkRow('Student loan', colors.sl, r.sl, r.annual) : ''}
           ${bkRow('Total deductions', '#C0392B', r.totalDeductions + r.pensionAmt, r.annual, true)}
-          ${bkRow('Net take-home pay', '#1A55CC', r.netPay, r.annual, false, true)}
+          ${bkRow('Net take-home', '#16A34A', r.netPay, r.annual, false, true)}
         </div>
       </div>
-      <div class="chart-section">
-        <div class="chart-title"><span>Monthly summary</span></div>
+      <div class="breakdown" style="margin-top:14px">
+        <div class="bk-header"><div class="bk-title">Total employer cost</div></div>
+        ${bkRow('Gross salary',        '#6B748F', r.annual,       r.employerCost)}
+        ${bkRow('Employer NI (15%)',   colors.ni,  r.erNI,         r.employerCost)}
+        ${r.erPensionAmt > 0 ? bkRow('Employer pension', colors.erPension, r.erPensionAmt, r.employerCost) : ''}
+        ${bkRow('Total employer cost', '#0B1E3D', r.employerCost, r.employerCost, false, true)}
+      </div>
+      <div class="chart-section" style="margin-top:14px">
+        <div class="chart-title"><span>Monthly summary</span>${r.regime === 'scotland' ? '<span style="font-size:11px;color:var(--indigo);font-weight:600">Scottish income tax applied</span>' : ''}</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:9px" class="paye-monthly">
           <div style="text-align:center;background:var(--g50);border:1px solid var(--br);border-radius:9px;padding:14px"><div style="font-family:var(--sans);font-size:18px;font-weight:800;color:var(--navy)">${fmt(r.annual/12,0)}</div><div style="font-size:10px;color:var(--t3);margin-top:3px">Gross / month</div></div>
           <div style="text-align:center;background:var(--g50);border:1px solid var(--br);border-radius:9px;padding:14px"><div style="font-family:var(--sans);font-size:18px;font-weight:800;color:var(--red)">${fmt(r.incomeTax/12,0)}</div><div style="font-size:10px;color:var(--t3);margin-top:3px">Tax / month</div></div>
@@ -137,11 +180,12 @@ CALCS['paye'] = {
         </div>
       </div>
       ${r.paUsed < window.TAX.PA ? notesCard('Personal allowance tapered', `Your gross income exceeds £100,000, so your personal allowance has tapered from £${fmtInt(window.TAX.PA)} to <strong>£${fmtInt(r.paUsed)}</strong> (£1 lost for every £2 above £100,000). This produces an effective marginal rate of 60% in the taper band.`) : ''}
-      ${r.pensionAmt > 0 ? notesCard('Salary sacrifice & employer NI', `Employer NI is calculated on the <strong>post-sacrifice gross</strong> (${fmt(r.taxablePay)}). If your company has other employees, the £${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)} Employment Allowance is a <strong>company-wide</strong> offset against the total employer NI bill — not a per-employee reduction. This calculator applies it to this one employee\'s NI, which is correct for single-employee companies only.`) : notesCard('Employment Allowance', `The £${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)} Employment Allowance offsets your <strong>total</strong> employer NI liability across all employees — not each individual\'s NI separately. For multi-employee companies, use the Employer NI calculator which models the allowance against the whole pay-bill.`)}
+      ${r.regime === 'scotland' ? notesCard('Scottish income tax (2026/27)', `Scottish rates applied: starter 19% (up to £15,397), basic 20% (£15,398–£27,491), intermediate 21% (£27,492–£43,662), higher 42% (£43,663–£125,140), top 48% (above £125,140). Confirmed by Scottish Budget 2026/27.`) : ''}
+      ${r.pensionAmt > 0 ? notesCard('Salary sacrifice & NI', `Employer NI is calculated on the <strong>post-sacrifice gross</strong> (${fmt(r.taxablePay)}). The £${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)} Employment Allowance is a <strong>company-wide</strong> offset — not a per-employee reduction. For multi-employee companies, use the Employer NI calculator.`) : notesCard('Employment Allowance', `The £${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)} Employment Allowance offsets your <strong>total</strong> employer NI liability across all employees. For multi-employee scenarios, use the Employer NI calculator which models the allowance against the whole pay-bill.`)}
       ${actionsRow()}
     `;
   },
-  related: ['employer-ni','net-to-gross','salary-sacrifice','dividend','sal-vs-div']
+  related: ['employer-ni','net-to-gross','salary-sacrifice','nhs-payroll','sal-vs-div']
 };
 
 // ─────────────────────────────────────────────────────────
