@@ -265,7 +265,6 @@ async function handleLogin(request, env) {
 
   if (result.error === 'invalid') return json({ error: 'Invalid credentials' }, 401);
 
-  const ip = request.headers.get('CF-Connecting-IP') ?? null;
   const { token, expiresAt } = await createSession(env.DB, ip);
 
   return json({ ok: true }, 200, { 'Set-Cookie': buildSessionCookie(token, expiresAt) });
