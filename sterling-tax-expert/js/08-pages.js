@@ -7,47 +7,14 @@
 // HOME
 // ─────────────────────────────────────────────────────────
 function mountHome(){
-  const tools3 = window.TOOLS.slice(0, 6);
-  const featured = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).slice(0, 3);
-
-  // tools grid
-  const htg = document.getElementById('home-tools-grid');
-  if (htg) htg.innerHTML = tools3.map(t => toolCardHTML(t)).join('');
-
-  // HMRC feed
-  const hf = document.getElementById('hmrc-feed');
-  if (hf) hf.innerHTML = window.HMRC_FEED.map(u => `
-    <div class="hmrc-item" onclick="navigate('insights')">
-      <div><span class="hpill ${u.pc}">${u.pill}</span></div>
-      <div><div class="hmrc-it">${u.t}</div><div class="hmrc-id">${u.d}</div></div>
-      <div class="hmrc-im">${u.m}</div>
-    </div>
-  `).join('');
-
-  // deadlines mini grid (next 4)
-  const dg = document.getElementById('home-deadlines');
-  if (dg) {
-    const upcoming = window.DEADLINES
-      .map(d => ({ ...d, daysUntil: daysUntil(d.date) }))
-      .filter(d => d.daysUntil >= 0)
-      .sort((a,b) => a.daysUntil - b.daysUntil)
-      .slice(0, 4);
-    dg.innerHTML = upcoming.map(d => {
-      const dt = new Date(d.date);
-      const cc = d.urgency === 'red' ? 'dlr' : d.urgency === 'amber' ? 'dlo' : d.urgency === 'blue' ? 'dlb' : 'dlg';
-      const dc = d.urgency === 'red' ? 'dy-r' : d.urgency === 'amber' ? 'dy-a' : d.urgency === 'blue' ? 'dy-b' : 'dy-g';
-      return `<div class="dl-c ${cc}" onclick="navigate('deadlines')">
-        <div class="dl-dt">${dt.toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</div>
-        <div class="dl-nm">${d.name}</div>
-        <div class="dl-ds">${d.desc}</div>
-        <div class="dl-dy ${dc}">${d.daysUntil === 0 ? 'Today' : d.daysUntil + ' day' + (d.daysUntil!==1?'s':'')}</div>
-      </div>`;
-    }).join('');
-  }
-
-  // blog teasers
+  // Blog teasers
   const hbg = document.getElementById('home-blog-grid');
-  if (hbg) hbg.innerHTML = featured.map(a => blogCardHTML(a)).join('');
+  if (hbg) {
+    const featured = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).slice(0, 3);
+    hbg.innerHTML = featured.length
+      ? featured.map(a => blogCardHTML(a)).join('')
+      : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:13.5px">Articles loading…</div>';
+  }
 
   // FAQ
   const fq = document.getElementById('faq-set');
@@ -57,6 +24,152 @@ function mountHome(){
       <div class="faq-a" id="fa${i}">${f.a}</div>
     </div>
   `).join('');
+
+  // Why Choose Sterling
+  const why = document.getElementById('home-why');
+  if (why) why.innerHTML = `
+    <div class="sec bg-w"><div class="sec-inner">
+      <div class="row-hdr">
+        <div>
+          <div class="eyebrow ey-blue">Why Sterling Tax Expert</div>
+          <div class="sec-h" style="margin-bottom:0">Professional advice you can rely on</div>
+        </div>
+      </div>
+      <div class="why-grid">
+        <div class="why-card reveal">
+          <div class="why-ic">🎯</div>
+          <div class="why-h">Deep UK expertise</div>
+          <div class="why-p">Our advisers specialise exclusively in UK tax law — income tax, corporation tax, VAT, NI, and every edge case between them.</div>
+        </div>
+        <div class="why-card reveal">
+          <div class="why-ic">👤</div>
+          <div class="why-h">Personal service</div>
+          <div class="why-p">A named senior accountant handles your engagement from first call to final submission. No call centres, no juniors.</div>
+        </div>
+        <div class="why-card reveal">
+          <div class="why-ic">💷</div>
+          <div class="why-h">Transparent pricing</div>
+          <div class="why-p">Fixed-fee engagements wherever possible. You know the cost before we start, with no hidden charges or surprise invoices.</div>
+        </div>
+        <div class="why-card reveal">
+          <div class="why-ic">📈</div>
+          <div class="why-h">Proactive approach</div>
+          <div class="why-p">We do not wait for you to ask — we flag planning opportunities, approaching deadlines, and changes in HMRC guidance before they affect you.</div>
+        </div>
+      </div>
+    </div></div>
+  `;
+
+  // Services
+  const svcs = document.getElementById('home-services');
+  if (svcs) {
+    const svcData = (window.SVCS || []).slice(0, 6).map(s => `
+      <div class="hsvc reveal" onclick="navigate('services')">
+        <div class="hsvc-ic">${s.ic || '💼'}</div>
+        <div class="hsvc-body">
+          <div class="hsvc-t">${s.t}</div>
+          <div class="hsvc-d">${s.desc || s.d || ''}</div>
+        </div>
+      </div>
+    `).join('');
+    svcs.innerHTML = `
+      <div class="sec bg-g25"><div class="sec-inner">
+        <div class="row-hdr">
+          <div>
+            <div class="eyebrow ey-blue">Our Services</div>
+            <div class="sec-h" style="margin-bottom:0">Comprehensive UK tax &amp; accounting</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="navigate('services')">All services →</button>
+        </div>
+        <div class="home-svcs-grid">${svcData}</div>
+      </div></div>
+    `;
+  }
+
+  // Testimonials
+  const tms = document.getElementById('home-testimonials');
+  if (tms) tms.innerHTML = `
+    <div class="tms-section">
+      <div class="tms-inner">
+        <div class="eyebrow ey-light" style="text-align:center">Client feedback</div>
+        <div class="sec-h light" style="text-align:center;margin-bottom:0">What our clients say</div>
+        <div class="tms-grid">
+          <div class="tcard">
+            <div class="tcard-stars">★★★★★</div>
+            <div class="tcard-q">"Sterling helped us restructure our payroll ahead of the NI rate increase. Their advice saved us over £12,000 in employer contributions and the whole engagement was handled in under two weeks."</div>
+            <div class="tcard-rule"></div>
+            <div class="tcard-author">
+              <div class="tcard-av">SM</div>
+              <div><div class="tcard-name">Sarah Mitchell</div><div class="tcard-role">Director, Mitchell Consulting Ltd</div></div>
+            </div>
+          </div>
+          <div class="tcard">
+            <div class="tcard-stars">★★★★★</div>
+            <div class="tcard-q">"I had avoided self-assessment for two years because it seemed impenetrable. Sterling walked me through everything in one call and had my returns filed within the week. Straightforward and no jargon."</div>
+            <div class="tcard-rule"></div>
+            <div class="tcard-author">
+              <div class="tcard-av">JR</div>
+              <div><div class="tcard-name">James Robertson</div><div class="tcard-role">Freelance Consultant</div></div>
+            </div>
+          </div>
+          <div class="tcard">
+            <div class="tcard-stars">★★★★★</div>
+            <div class="tcard-q">"Our R&amp;D claim had been refused once before. Sterling identified exactly what was missing, prepared the technical narrative, and secured a six-figure relief. Genuinely excellent advisers."</div>
+            <div class="tcard-rule"></div>
+            <div class="tcard-author">
+              <div class="tcard-av">AT</div>
+              <div><div class="tcard-name">Amanda Torres</div><div class="tcard-role">CEO, Horizon Technologies</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Trust & Compliance
+  const trust = document.getElementById('home-trust');
+  if (trust) trust.innerHTML = `
+    <div class="trust-section">
+      <div class="trust-inner">
+        <div style="text-align:center;margin-bottom:4px">
+          <div class="eyebrow ey-blue" style="text-align:center">Compliance &amp; Accuracy</div>
+          <div class="sec-h" style="margin-bottom:0;text-align:center">Built on verifiable standards</div>
+        </div>
+        <div class="trust-grid">
+          <div class="trust-item reveal">
+            <div class="trust-ic">📘</div>
+            <div class="trust-h">Open methodology</div>
+            <div class="trust-p">Every calculator shows the exact HMRC thresholds and formulae it applies. No black boxes.</div>
+          </div>
+          <div class="trust-item reveal">
+            <div class="trust-ic">🔄</div>
+            <div class="trust-h">Updated 6 April 2026</div>
+            <div class="trust-p">All rates, thresholds and statutory pay figures align with the 2026/27 tax year from day one.</div>
+          </div>
+          <div class="trust-item reveal">
+            <div class="trust-ic">🔒</div>
+            <div class="trust-h">Secure &amp; private</div>
+            <div class="trust-p">No data is stored. All calculations run in your browser. Nothing is sent to our servers.</div>
+          </div>
+          <div class="trust-item reveal">
+            <div class="trust-ic">⚡</div>
+            <div class="trust-h">No account required</div>
+            <div class="trust-p">All 25 calculators are free to use without registration. No email address required, ever.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Reveal-on-scroll for new cards
+  try {
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+      }, { threshold: 0.07 });
+      document.querySelectorAll('.why-card,.hsvc,.trust-item').forEach(el => io.observe(el));
+    }
+  } catch(e) {}
 }
 
 function daysUntil(dateStr){
