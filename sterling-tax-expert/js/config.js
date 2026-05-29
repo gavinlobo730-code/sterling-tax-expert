@@ -39,4 +39,8 @@ window.STERLING_CONFIG = {
   // Optional fullscreen hero background video (MP4). Blank = gradient only.
   // Example (self-hosted): 'assets/hero.mp4'
   heroVideo: '',
+
+  // CMS public API base URL. Points to the Cloudflare Worker.
+  // Change to 'http://localhost:8787/api' for local development.
+  cmsApiBase: 'https://sterling-tax.co.uk/api',
 };

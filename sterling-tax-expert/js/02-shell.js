@@ -32,8 +32,9 @@ function navigate(page, param = null, opts = {}){
   showLoader(() => {
     document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
     let target = 'page-' + page;
-    if (page === 'calc') target = 'page-calc';
-    if (page === 'post') target = 'page-post';
+    if (page === 'calc')    target = 'page-calc';
+    if (page === 'post')    target = 'page-post';
+    if (page === 'article') target = 'page-article';
     const pg = document.getElementById(target);
     if (pg) {
       pg.classList.add('active');
@@ -56,13 +57,14 @@ function navigate(page, param = null, opts = {}){
     if (page === 'deadlines') mountDeadlines();
     if (page === 'about') mountAbout();
     if (page === 'contact') mountContact();
-    if (page === 'admin') mountAdmin();
-    if (page === 'calc') mountCalc(param);
+    if (page === 'admin')   mountAdmin();
+    if (page === 'calc')    mountCalc(param);
+    if (page === 'article') mountArticle(param);
 
     // Reading bar
     const rb = document.getElementById('rbar');
     if (rb) rb.style.width = '0';
-    if (page === 'post') startReadingProgress();
+    if (page === 'post' || page === 'article') startReadingProgress();
   }, 220);
 }
 
@@ -80,7 +82,7 @@ function updateNavActive(page){
   document.querySelectorAll('.mob a').forEach(x => x.classList.remove('on'));
   const map = {
     home:'nl-home', services:'nl-services', tools:'nl-tools-link', calc:'nl-tools-link',
-    insights:'nl-insights', post:'nl-insights', deadlines:'nl-deadlines',
+    insights:'nl-insights', post:'nl-insights', article:'nl-insights', deadlines:'nl-deadlines',
     about:'nl-about', contact:'nl-contact'
   };
   const cls = map[page];
@@ -107,7 +109,12 @@ function updateBreadcrumbs(page, param){
     deadlines: [{ l:'Home', p:'home' }, { l:'Deadlines', h:1 }],
     about: [{ l:'Home', p:'home' }, { l:'About', h:1 }],
     contact: [{ l:'Home', p:'home' }, { l:'Contact', h:1 }],
-    admin: [{ l:'Home', p:'home' }, { l:'Admin', h:1 }],
+    admin:   [{ l:'Home', p:'home' }, { l:'Admin', h:1 }],
+    article: param ? [
+      { l:'Home', p:'home' },
+      { l:'Insights', p:'insights' },
+      { l: param, h:1 },
+    ] : null,
   };
   const path = crumbs[page];
   const wraps = document.querySelectorAll('.crumbs');
@@ -304,6 +311,15 @@ function toggleFAQ(i){
 
 // ── Init ───────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
+  // Path-based routing for /insights/:slug (Cloudflare Pages serves these via _redirects)
+  const pathMatch = location.pathname.match(/^\/insights\/([^/]+)\/?$/);
+  if (pathMatch) {
+    mountHome();
+    updateNavActive('article');
+    navigate('article', decodeURIComponent(pathMatch[1]), { skipHistory: true });
+    return;
+  }
+
   // Mount home content immediately (default page)
   mountHome();
   updateNavActive('home');

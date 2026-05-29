@@ -38,6 +38,13 @@ import {
   deleteCategory,
 } from './routes/categories.js';
 
+import {
+  publicListArticles,
+  publicGetArticle,
+  publicListCategories,
+  publicSitemap,
+} from './routes/public.js';
+
 // ── ENTRY POINT ───────────────────────────────────────────────────────────────
 
 export default {
@@ -59,6 +66,20 @@ export default {
           'X-Frame-Options': 'DENY',
         },
       });
+    }
+
+    // ── Sitemap ─────────────────────────────────────────────────────────────
+    if (path === '/sitemap.xml' && method === 'GET') {
+      return publicSitemap(request, env);
+    }
+
+    // ── Public API ──────────────────────────────────────────────────────────
+    if (path === '/api/articles'    && method === 'GET') return publicListArticles(request, env);
+    if (path === '/api/categories'  && method === 'GET') return publicListCategories(request, env);
+
+    {
+      const m = path.match(/^\/api\/articles\/([^/]+)$/);
+      if (m && method === 'GET') return publicGetArticle(request, env, decodeURIComponent(m[1]));
     }
 
     // ── Public diagnostic ───────────────────────────────────────────────────
@@ -197,13 +218,61 @@ async function handleHealth(request, env) {
   } catch (e) { errors.push(`R2: ${e.message}`); }
 
   const allOk = checks.worker && checks.d1 && checks.r2;
-  return json({ status: allOk ? 'ok' : 'degraded', phase: 3, checks, errors: errors.length ? errors : undefined, ts: new Date().toISOString() }, allOk ? 200 : 503);
+  return json({ status: allOk ? 'ok' : 'degraded', phase: 4, checks, errors: errors.length ? errors : undefined, ts: new Date().toISOString() }, allOk ? 200 : 503);
 }
 
 // ── CRON STUB ─────────────────────────────────────────────────────────────────
 
 async function handleCron(event, env) {
-  console.log('[cron] trigger fired at', new Date().toISOString(), '— Phase 4 not yet implemented');
+  const now = Math.floor(Date.now() / 1000);
+  console.log('[cron] trigger fired at', new Date().toISOString());
+
+  // ── Publish scheduled articles ──────────────────────────────────────────
+  const scheduled = await env.DB
+    .prepare(`SELECT id, published_at FROM articles WHERE status = 'scheduled' AND scheduled_at <= ?`)
+    .bind(now)
+    .all();
+
+  for (const row of scheduled.results) {
+    const publishedAt = row.published_at ?? now;
+    await env.DB
+      .prepare(`UPDATE articles SET status = 'published', published_at = ?, updated_at = ? WHERE id = ?`)
+      .bind(publishedAt, now, row.id)
+      .run();
+    console.log('[cron] published scheduled article id=' + row.id);
+  }
+
+  // ── Daily backup to R2 ──────────────────────────────────────────────────
+  try {
+    const [artRows, catRows] = await Promise.all([
+      env.DB.prepare('SELECT * FROM articles ORDER BY id').all(),
+      env.DB.prepare('SELECT * FROM categories ORDER BY id').all(),
+    ]);
+    const dateKey = new Date().toISOString().split('T')[0];
+    const payload = JSON.stringify({
+      exported_at: new Date().toISOString(),
+      articles:    artRows.results,
+      categories:  catRows.results,
+    });
+    await env.ASSETS.put(`backups/${dateKey}.json`, payload, {
+      httpMetadata: { contentType: 'application/json' },
+    });
+    console.log('[cron] backup written to backups/' + dateKey + '.json');
+
+    // Delete backups older than 30 days
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 30);
+    const list = await env.ASSETS.list({ prefix: 'backups/' });
+    for (const obj of (list.objects || [])) {
+      const fileDateStr = obj.key.replace('backups/', '').replace('.json', '');
+      if (fileDateStr < cutoff.toISOString().split('T')[0]) {
+        await env.ASSETS.delete(obj.key);
+        console.log('[cron] deleted old backup', obj.key);
+      }
+    }
+  } catch (e) {
+    console.error('[cron] backup failed:', e.message);
+  }
 }
 
 // ── CORS PREFLIGHT ────────────────────────────────────────────────────────────
