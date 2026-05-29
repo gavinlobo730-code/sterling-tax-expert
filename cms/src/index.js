@@ -29,7 +29,15 @@ import {
   deleteArticle,
   publishArticle,
   unpublishArticle,
+  previewArticle,
 } from './routes/articles.js';
+
+import {
+  serveMedia,
+  uploadMedia,
+  listMedia,
+  deleteMedia,
+} from './routes/media.js';
 
 import {
   listCategories,
@@ -66,6 +74,12 @@ export default {
           'X-Frame-Options': 'DENY',
         },
       });
+    }
+
+    // ── Public media proxy ──────────────────────────────────────────────────
+    // Serves R2 objects for <img src="/media/..."> on the public site.
+    if (path.startsWith('/media/') && method === 'GET') {
+      return serveMedia(request, env, path.slice('/media/'.length));
     }
 
     // ── Sitemap ─────────────────────────────────────────────────────────────
@@ -140,6 +154,20 @@ async function dispatchAdmin(path, method, request, env) {
   m = path.match(/^\/api\/admin\/articles\/(\d+)\/unpublish$/);
   if (m && method === 'POST') return unpublishArticle(request, env, parseInt(m[1], 10));
 
+  // /api/admin/articles/:id/preview
+  m = path.match(/^\/api\/admin\/articles\/(\d+)\/preview$/);
+  if (m && method === 'GET') return previewArticle(request, env, parseInt(m[1], 10));
+
+  // ── Media ─────────────────────────────────────────────────────────────────
+  if (path === '/api/admin/media') {
+    if (method === 'GET')  return listMedia(request, env);
+    if (method === 'POST') return uploadMedia(request, env);
+  }
+
+  // /api/admin/media/:encodedKey*
+  m = path.match(/^\/api\/admin\/media\/(.+)$/);
+  if (m && method === 'DELETE') return deleteMedia(request, env, decodeURIComponent(m[1]));
+
   // ── Categories ────────────────────────────────────────────────────────────
   if (path === '/api/admin/categories') {
     if (method === 'GET')  return listCategories(request, env);
@@ -157,11 +185,69 @@ async function dispatchAdmin(path, method, request, env) {
   return json({ error: 'Not found' }, 404);
 }
 
+// ── IP RATE LIMITER ───────────────────────────────────────────────────────────
+
+/**
+ * IP-level rate limit for the login endpoint.
+ * Allows 10 attempts per 15-minute window before blocking for 30 minutes.
+ * Uses the rate_limits D1 table (created in migration 0002_phase5.sql).
+ * Silently skips (allows) if the table doesn't exist yet.
+ */
+async function checkIpRateLimit(db, ip) {
+  if (!ip) return null;
+  const key        = `login:${ip}`;
+  const now        = Math.floor(Date.now() / 1000);
+  const WINDOW     = 900;   // 15 min sliding window
+  const MAX        = 10;    // attempts before block
+  const BLOCK_SECS = 1800;  // 30 min block
+
+  try {
+    const row = await db
+      .prepare('SELECT attempts, window_start, blocked_until FROM rate_limits WHERE key = ?')
+      .bind(key)
+      .first();
+
+    if (row) {
+      if (row.blocked_until > now) {
+        return { blockedUntil: row.blocked_until };
+      }
+      const inWindow = (now - row.window_start) < WINDOW;
+      if (inWindow && row.attempts >= MAX) {
+        const bu = now + BLOCK_SECS;
+        await db.prepare('UPDATE rate_limits SET blocked_until = ? WHERE key = ?').bind(bu, key).run();
+        return { blockedUntil: bu };
+      }
+      if (inWindow) {
+        await db.prepare('UPDATE rate_limits SET attempts = attempts + 1 WHERE key = ?').bind(key).run();
+      } else {
+        // New window
+        await db.prepare('UPDATE rate_limits SET attempts = 1, window_start = ?, blocked_until = 0 WHERE key = ?')
+          .bind(now, key).run();
+      }
+    } else {
+      await db.prepare('INSERT INTO rate_limits (key, attempts, window_start, blocked_until) VALUES (?, 1, ?, 0)')
+        .bind(key, now).run();
+    }
+    return null;
+  } catch {
+    // Table doesn't exist (migration not yet run) — fail open
+    return null;
+  }
+}
+
 // ── AUTH HANDLERS ─────────────────────────────────────────────────────────────
 
 async function handleLogin(request, env) {
   const ct = request.headers.get('Content-Type') ?? '';
   if (!ct.includes('application/json')) return json({ error: 'Content-Type must be application/json' }, 400);
+
+  // IP-based rate limiting (belt-and-braces on top of per-account lockout)
+  const ip        = request.headers.get('CF-Connecting-IP') ?? null;
+  const rateLimit = await checkIpRateLimit(env.DB, ip);
+  if (rateLimit) {
+    const retryIn = Math.max(0, rateLimit.blockedUntil - Math.floor(Date.now() / 1000));
+    return json({ error: 'Too many requests. Try again later.' }, 429, { 'Retry-After': String(retryIn) });
+  }
 
   let body;
   try   { body = await request.json(); }
@@ -226,6 +312,23 @@ async function handleHealth(request, env) {
 async function handleCron(event, env) {
   const now = Math.floor(Date.now() / 1000);
   console.log('[cron] trigger fired at', new Date().toISOString());
+
+  // ── Session cleanup ─────────────────────────────────────────────────────
+  try {
+    const del = await env.DB
+      .prepare('DELETE FROM sessions WHERE expires_at < ?')
+      .bind(now)
+      .run();
+    console.log('[cron] deleted', del.meta.changes, 'expired sessions');
+  } catch (e) { console.error('[cron] session cleanup failed:', e.message); }
+
+  // ── Rate limit cleanup (older than 2 hours) ──────────────────────────────
+  try {
+    await env.DB
+      .prepare('DELETE FROM rate_limits WHERE window_start < ? AND blocked_until < ?')
+      .bind(now - 7200, now)
+      .run();
+  } catch { /* table may not exist yet */ }
 
   // ── Publish scheduled articles ──────────────────────────────────────────
   const scheduled = await env.DB

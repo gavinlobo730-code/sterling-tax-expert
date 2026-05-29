@@ -184,6 +184,14 @@
 
       const catColour = a.category_colour || 'var(--blue2)';
       const pubDate   = a.published_at ? new Date(a.published_at * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+      const updDate   = a.updated_at && a.updated_at !== a.published_at
+        ? new Date(a.updated_at * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : null;
+      const readTag   = a.reading_time ? `${a.reading_time} min read` : null;
+
+      const heroImage = a.featured_image
+        ? `<div style="max-width:900px;margin:0 auto;padding:0 28px 24px"><img src="/media/${esc(a.featured_image)}" alt="${esc(a.title)}" style="width:100%;max-height:420px;object-fit:cover;border-radius:12px;display:block"></div>`
+        : '';
 
       wrap.innerHTML = `
         <div class="crumbs"></div>
@@ -194,9 +202,12 @@
             <div class="post-meta">
               <span>By <strong>Sterling Tax Expert</strong></span>
               ${pubDate ? `<span>·</span><span>${pubDate}</span>` : ''}
+              ${readTag ? `<span>·</span><span>${readTag}</span>` : ''}
+              ${updDate ? `<span>·</span><span style="font-style:italic">Updated ${updDate}</span>` : ''}
             </div>
           </div>
         </div>
+        ${heroImage}
         <article class="post-body" id="article-body">
           ${a.content || ''}
           <hr style="margin:32px 0;border:none;border-top:1px solid var(--br)">
@@ -255,14 +266,20 @@
   // ── Render helpers ───────────────────────────────────────────
 
   function renderInsightsFeatured(a) {
-    const colour = a.category_colour || 'var(--blue2)';
-    const tint   = hexTint(a.category_colour);
+    const colour  = a.category_colour || 'var(--blue2)';
+    const tint    = hexTint(a.category_colour);
     const pubDate = a.published_at ? new Date(a.published_at * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    const readTag = a.reading_time ? `${a.reading_time} min read` : '';
+    const thumbHtml = a.featured_image
+      ? `<div class="fa-thumb" style="background:${tint}">
+           <img src="/media/${esc(a.featured_image)}" alt="${esc(a.title)}" style="width:100%;height:100%;object-fit:cover;display:block">
+         </div>`
+      : `<div class="fa-thumb" style="background:${tint}">
+           <div class="fa-thumb-grid"></div>
+           <div class="fa-thumb-ic" style="background:${tint};font-size:36px">📰</div>
+         </div>`;
     return `<div class="featured-art" onclick="navigate('article','${esc(a.slug)}');history.pushState(null,'','/insights/${esc(a.slug)}')">
-      <div class="fa-thumb" style="background:${tint}">
-        <div class="fa-thumb-grid"></div>
-        <div class="fa-thumb-ic" style="background:${tint};font-size:36px">📰</div>
-      </div>
+      ${thumbHtml}
       <div class="fa-body">
         ${a.category_name ? `<div class="fa-tag" style="color:${colour}">⭐ Featured · ${esc(a.category_name)}</div>` : '<div class="fa-tag">⭐ Featured</div>'}
         <h2 class="fa-h">${esc(a.title)}</h2>
@@ -270,26 +287,33 @@
         <div class="fa-meta">
           <span>Sterling Tax Expert</span>
           ${pubDate ? `<span>·</span><span>${pubDate}</span>` : ''}
+          ${readTag ? `<span>·</span><span>${readTag}</span>` : ''}
         </div>
       </div>
     </div>`;
   }
 
   function renderInsightsCard(a) {
-    const colour = a.category_colour || 'var(--blue2)';
-    const tint   = hexTint(a.category_colour);
+    const colour  = a.category_colour || 'var(--blue2)';
+    const tint    = hexTint(a.category_colour);
     const pubDate = a.published_at ? new Date(a.published_at * 1000).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+    const readTag = a.reading_time ? `${a.reading_time} min read` : '';
+    const thumbHtml = a.featured_image
+      ? `<div class="bc-th">
+           <img src="/media/${esc(a.featured_image)}" alt="${esc(a.title)}" style="width:100%;height:100%;object-fit:cover;display:block">
+         </div>`
+      : `<div class="bc-th" style="background:${tint}">
+           <div class="bc-tg"></div>
+           <div class="bc-ti" style="background:${tint};font-size:24px">📄</div>
+         </div>`;
     return `<div class="bc" onclick="navigate('article','${esc(a.slug)}');history.pushState(null,'','/insights/${esc(a.slug)}')">
-      <div class="bc-th" style="background:${tint}">
-        <div class="bc-tg"></div>
-        <div class="bc-ti" style="background:${tint};font-size:24px">📄</div>
-      </div>
+      ${thumbHtml}
       <div class="bc-body">
         ${a.category_name ? `<div class="bc-cat" style="color:${colour}">${esc(a.category_name)}</div>` : ''}
         <div class="bc-t">${esc(a.title)}</div>
         ${a.excerpt ? `<div style="font-size:12.5px;color:var(--t3);line-height:1.55;margin-bottom:10px">${esc(a.excerpt)}</div>` : ''}
         <div class="bc-ft">
-          <span class="bc-m">${pubDate}</span>
+          <span class="bc-m">${pubDate}${readTag ? ` · ${readTag}` : ''}</span>
           <span class="bc-r">Read →</span>
         </div>
       </div>

@@ -151,6 +151,30 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 .color-opt{width:22px;height:22px;border-radius:5px;cursor:pointer;border:2px solid transparent;transition:.12s}
 .color-opt.sel{border-color:var(--dark);transform:scale(1.15)}
 
+/* ── MEDIA LIBRARY ── */
+.media-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;padding:16px}
+.media-item{position:relative;border:2px solid var(--border);border-radius:var(--r8);overflow:hidden;cursor:pointer;transition:.12s;background:var(--canvas)}
+.media-item:hover{border-color:var(--indigo)}
+.media-item.sel{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,.15)}
+.media-thumb{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.media-info{padding:6px 8px;font-size:11px;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.media-del{position:absolute;top:4px;right:4px;background:rgba(239,68,68,.9);color:#fff;border:none;border-radius:4px;padding:2px 6px;font-size:10px;cursor:pointer;opacity:0;transition:.12s;line-height:1.5}
+.media-item:hover .media-del{opacity:1}
+.drop-zone{border:2px dashed var(--border);border-radius:var(--r10);padding:40px 20px;text-align:center;color:var(--mid);cursor:pointer;transition:.15s;margin-bottom:18px}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--indigo);background:var(--indigol)}
+/* ── PREVIEW MODAL ── */
+.preview-modal-inner{background:var(--white);border-radius:14px;max-width:760px;width:95%;max-height:90vh;overflow-y:auto;padding:40px 48px;box-shadow:0 24px 80px rgba(0,0,0,.45);position:relative}
+.preview-article-title{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--navy);line-height:1.3;margin-bottom:12px}
+.preview-article-body{font-size:15px;line-height:1.8;color:#1F2937}
+.preview-article-body p{margin-bottom:1em}
+.preview-article-body h2{font-family:var(--serif);font-size:20px;font-weight:700;margin:1.5em 0 .5em;color:var(--navy)}
+.preview-article-body h3{font-size:16px;font-weight:700;margin:1.2em 0 .4em;color:var(--navy)}
+.preview-article-body ul,.preview-article-body ol{padding-left:24px;margin-bottom:1em}
+.preview-article-body li{margin-bottom:.4em}
+/* ── FEATURED IMAGE PANEL ── */
+.fi-preview-img{width:100%;max-height:120px;object-fit:cover;border-radius:6px;display:block;margin-bottom:8px}
+.fi-placeholder{height:80px;background:var(--canvas);border:2px dashed var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--mid);margin-bottom:8px}
+
 @media(max-width:860px){.editor-layout{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}.sidebar{width:180px}.main{margin-left:180px;padding:20px}}
 </style>
 </head>
@@ -179,6 +203,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
       <button onclick="nav('dashboard')" id="nav-dashboard"><span class="icon">📊</span> Dashboard</button>
       <button onclick="nav('articles')"  id="nav-articles"> <span class="icon">📝</span> Articles</button>
       <button onclick="nav('categories')" id="nav-categories"><span class="icon">📁</span> Categories</button>
+      <div class="sec">Assets</div>
+      <button onclick="nav('media')"  id="nav-media"><span class="icon">📷</span> Media</button>
       <div class="sec">Account</div>
       <button onclick="doLogout()"><span class="icon">↩</span> Sign out</button>
     </nav>
@@ -255,7 +281,8 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
           </div>
           <div class="form-row">
             <label>Content</label>
-            <textarea id="f-content" rows="14" placeholder="Article body text…"></textarea>
+            <textarea id="f-content" rows="14" placeholder="Article body text…" oninput="updateReadingTime()"></textarea>
+            <div class="hint" id="reading-time-hint" style="display:flex;justify-content:space-between"><span id="rt-display">Reading time: —</span><span id="wc-display" style="color:var(--mid)"></span></div>
           </div>
           <hr style="border:none;border-top:1px solid var(--border);margin:18px 0">
           <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:12px">SEO</div>
@@ -281,9 +308,26 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
                 <button class="btn btn-outline btn-sm" id="btn-save-draft" onclick="saveArticle(false)">💾 Save draft</button>
                 <button class="btn btn-success btn-sm" id="btn-publish"    onclick="saveAndPublish()">🚀 Publish</button>
                 <button class="btn btn-outline btn-sm" id="btn-unpublish"  onclick="doUnpublish()" style="display:none">↩ Unpublish</button>
+                <button class="btn btn-outline btn-sm" id="btn-preview"    onclick="previewArticle()" style="display:none">👁 Preview</button>
                 <hr style="border:none;border-top:1px solid var(--border);margin:4px 0">
                 <button class="btn btn-danger btn-sm"  id="btn-delete"     onclick="confirmDelete()" style="display:none">🗑 Delete article</button>
               </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-hdr">Featured Image</div>
+            <div class="panel-body">
+              <div id="fi-preview-wrap" style="display:none;margin-bottom:8px">
+                <img id="fi-img" src="" alt="" class="fi-preview-img">
+                <div id="fi-key-label" style="font-size:11px;color:var(--mid);word-break:break-all;margin-top:3px"></div>
+              </div>
+              <div id="fi-placeholder" class="fi-placeholder">No image selected</div>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-outline btn-sm" style="flex:1" onclick="openMediaPicker()">📷 Pick image</button>
+                <button class="btn btn-ghost btn-sm" id="fi-remove-btn" onclick="clearFeaturedImage()" style="display:none">✕</button>
+              </div>
+              <input type="hidden" id="f-featured-image" value="">
             </div>
           </div>
 
@@ -307,8 +351,30 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
       </div>
     </section>
 
+    <!-- MEDIA LIBRARY -->
+    <section id="view-media" class="hidden">
+      <div class="page-hdr">
+        <div><div class="page-title">Media Library</div><div class="page-sub" id="media-count-lbl">Upload images to use as article featured images.</div></div>
+        <label class="btn btn-primary" for="media-upload-input" style="cursor:pointer">⬆ Upload image</label>
+        <input type="file" id="media-upload-input" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" style="display:none" onchange="handleFileSelect(this)">
+      </div>
+      <div id="media-notice" class="hidden"></div>
+      <div class="drop-zone" id="media-drop-zone"
+           onclick="document.getElementById('media-upload-input').click()"
+           ondragover="event.preventDefault();this.classList.add('drag-over')"
+           ondragleave="this.classList.remove('drag-over')"
+           ondrop="handleFileDrop(event)">
+        <div style="font-size:36px;margin-bottom:10px">📷</div>
+        <div style="font-weight:600;margin-bottom:4px;color:var(--dark)">Drop images here or click to upload</div>
+        <div style="font-size:12px">JPEG, PNG, WebP, GIF, SVG · Max 5 MB per file</div>
+      </div>
+      <div class="card">
+        <div class="card-hdr">Uploaded images <span id="media-total-lbl" style="font-weight:400;font-size:11px;color:var(--mid)"></span></div>
+        <div id="media-grid" class="media-grid"></div>
+      </div>
+    </section>
+
     <!-- CATEGORIES -->
-    <section id="view-categories" class="hidden">
       <div class="page-hdr">
         <div><div class="page-title">Categories</div><div class="page-sub">Each category generates a public listing page.</div></div>
       </div>
@@ -341,6 +407,33 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
   </main>
 </div>
 
+<!-- ── PREVIEW MODAL ── -->
+<div class="modal-bg hidden" id="preview-modal" onclick="if(event.target===this)closePreview()">
+  <div class="preview-modal-inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)">
+      <div style="font-size:12px;font-weight:600;color:var(--indigo);letter-spacing:1px;text-transform:uppercase">Article preview</div>
+      <button class="btn btn-ghost btn-sm" onclick="closePreview()">✕ Close</button>
+    </div>
+    <div id="preview-content"></div>
+  </div>
+</div>
+
+<!-- ── MEDIA PICKER MODAL ── -->
+<div class="modal-bg hidden" id="media-picker-modal" onclick="if(event.target===this)closeMediaPicker()">
+  <div style="background:var(--white);border-radius:14px;max-width:800px;width:95%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.4)">
+    <div style="padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div style="font-size:15px;font-weight:600;color:var(--navy)">Select image</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <label class="btn btn-outline btn-sm" for="picker-upload-input" style="cursor:pointer">⬆ Upload new</label>
+        <input type="file" id="picker-upload-input" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" style="display:none" onchange="handlePickerUpload(this)">
+        <button class="btn btn-ghost btn-sm" onclick="closeMediaPicker()">✕</button>
+      </div>
+    </div>
+    <div id="picker-grid" style="padding:16px;overflow-y:auto;flex:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px"></div>
+    <div style="padding:10px 20px;border-top:1px solid var(--border);font-size:12px;color:var(--mid);flex-shrink:0" id="picker-status">Click an image to select it.</div>
+  </div>
+</div>
+
 <!-- ── CONFIRM MODAL ── -->
 <div class="modal-bg hidden" id="confirm-modal">
   <div class="modal">
@@ -358,8 +451,10 @@ textarea{resize:vertical;min-height:80px;line-height:1.6}
 // ── STATE ──────────────────────────────────────────────────────────────────────
 let articles    = [];
 let categories  = [];
-let editingId   = null;   // null = new article
-let slugManual  = false;  // true once user has manually edited the slug field
+let mediaItems  = [];          // cached media library
+let editingId   = null;        // null = new article
+let slugManual  = false;       // true once user has manually edited the slug field
+let _pickerCb   = null;        // callback when image selected from media picker
 
 const COLOURS = ['#6366F1','#14B8A6','#F59E0B','#EF4444','#8B5CF6','#10B981','#0B1E3D','#EC4899'];
 let selectedColour = COLOURS[0];
@@ -415,6 +510,7 @@ function nav(view, param) {
   else if (view === 'articles'){ loadArticles();  document.getElementById('view-articles').classList.remove('hidden'); }
   else if (view === 'article-edit') { openEditor(param); document.getElementById('view-article-edit').classList.remove('hidden'); }
   else if (view === 'categories'){ loadCategories(); document.getElementById('view-categories').classList.remove('hidden'); }
+  else if (view === 'media')   { loadMedia(); document.getElementById('view-media').classList.remove('hidden'); }
 }
 
 // ── DASHBOARD ──────────────────────────────────────────────────────────────────
@@ -524,8 +620,10 @@ function fillEditor(a) {
   document.getElementById('f-category').value   = a.category_id || '';
   document.getElementById('slug-preview').textContent = a.slug || '…';
   document.getElementById('editor-crumb').textContent = a.title || 'Editing…';
+  setFeaturedImagePreview(a.featured_image || null);
   charCount('f-meta-title','mc-mt',60);
   charCount('f-meta-desc','mc-md',160);
+  updateReadingTime();
   slugManual = true; // slug already exists — don't overwrite
   updateEditorButtons(a.status);
 }
@@ -536,8 +634,10 @@ function clearEditor() {
   document.getElementById('f-category').value   = '';
   document.getElementById('slug-preview').textContent = '…';
   document.getElementById('editor-crumb').textContent = 'New article';
+  setFeaturedImagePreview(null);
   charCount('f-meta-title','mc-mt',60);
   charCount('f-meta-desc','mc-md',160);
+  updateReadingTime();
 }
 
 function updateEditorButtons(status) {
@@ -545,6 +645,7 @@ function updateEditorButtons(status) {
   const isPublished = status === 'published';
   document.getElementById('btn-publish').style.display    = isPublished ? 'none' : '';
   document.getElementById('btn-unpublish').style.display  = isPublished ? '' : 'none';
+  document.getElementById('btn-preview').style.display    = isNew ? 'none' : '';
   document.getElementById('btn-delete').style.display     = isNew ? 'none' : '';
   const badge = document.getElementById('editor-status-badge');
   if (!isNew && status) badge.innerHTML = statusBadge(status);
@@ -568,14 +669,15 @@ function onSlugInput() {
 
 function collectArticleForm() {
   return {
-    title:      document.getElementById('f-title').value,
-    slug:       document.getElementById('f-slug').value,
-    excerpt:    document.getElementById('f-excerpt').value,
-    content:    document.getElementById('f-content').value,
-    meta_title: document.getElementById('f-meta-title').value,
-    meta_desc:  document.getElementById('f-meta-desc').value,
-    featured:   document.getElementById('f-featured').checked,
-    category_id: document.getElementById('f-category').value || null,
+    title:          document.getElementById('f-title').value,
+    slug:           document.getElementById('f-slug').value,
+    excerpt:        document.getElementById('f-excerpt').value,
+    content:        document.getElementById('f-content').value,
+    meta_title:     document.getElementById('f-meta-title').value,
+    meta_desc:      document.getElementById('f-meta-desc').value,
+    featured:       document.getElementById('f-featured').checked,
+    category_id:    document.getElementById('f-category').value || null,
+    featured_image: document.getElementById('f-featured-image').value || null,
   };
 }
 
@@ -801,6 +903,249 @@ function showErr(el, msg) {
   el.className   = 'notice notice-err';
   el.textContent = msg;
   el.classList.remove('hidden');
+}
+
+// ── READING TIME ───────────────────────────────────────────────────────────────
+function updateReadingTime() {
+  const content = document.getElementById('f-content').value;
+  const text    = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  const words   = text.split(' ').filter(w => w.length > 0).length;
+  const mins    = Math.max(1, Math.round(words / 200));
+  document.getElementById('rt-display').textContent = `~${mins} min read`;
+  document.getElementById('wc-display').textContent = `${words.toLocaleString()} words`;
+}
+
+// ── FEATURED IMAGE ─────────────────────────────────────────────────────────────
+function setFeaturedImagePreview(key) {
+  const hidden   = document.getElementById('f-featured-image');
+  const preview  = document.getElementById('fi-preview-wrap');
+  const img      = document.getElementById('fi-img');
+  const label    = document.getElementById('fi-key-label');
+  const placeholder = document.getElementById('fi-placeholder');
+  const removeBtn   = document.getElementById('fi-remove-btn');
+  if (key) {
+    hidden.value          = key;
+    img.src               = `/media/${key}`;
+    label.textContent     = key.split('/').pop();
+    preview.style.display = '';
+    placeholder.style.display = 'none';
+    removeBtn.style.display   = '';
+  } else {
+    hidden.value               = '';
+    img.src                    = '';
+    preview.style.display      = 'none';
+    placeholder.style.display  = '';
+    removeBtn.style.display    = 'none';
+  }
+}
+function clearFeaturedImage() {
+  setFeaturedImagePreview(null);
+}
+
+// ── PREVIEW ────────────────────────────────────────────────────────────────────
+async function previewArticle() {
+  if (!editingId) return;
+  // Save first so preview reflects latest content
+  const notice = document.getElementById('editor-notice');
+  const data   = collectArticleForm();
+  try {
+    let r;
+    if (editingId) {
+      r = await api('PUT', `/api/admin/articles/${editingId}`, data);
+    } else {
+      r = await api('POST', '/api/admin/articles', data);
+      editingId = r.article.id;
+    }
+    fillEditor(r.article);
+    showNotice(notice, 'Saved. Rendering preview…', 'info');
+  } catch (e) {
+    showNotice(notice, (e.message || 'Could not save before preview.'), 'err');
+    return;
+  }
+  // Fetch the saved article for preview
+  let article;
+  try {
+    const d = await api('GET', `/api/admin/articles/${editingId}/preview`);
+    article  = d.article;
+  } catch { return; }
+
+  const catColour = article.category_colour || 'var(--indigo)';
+  const pubDate   = article.published_at
+    ? new Date(article.published_at * 1000).toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' })
+    : 'Not yet published';
+  const updDate   = article.updated_at
+    ? new Date(article.updated_at * 1000).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' })
+    : '';
+
+  const imgHtml = article.featured_image
+    ? `<img src="/media/${esc(article.featured_image)}" alt="${esc(article.title)}" style="width:100%;max-height:320px;object-fit:cover;border-radius:10px;margin-bottom:24px">`
+    : '';
+
+  document.getElementById('preview-content').innerHTML = `
+    ${article.category_name ? `<div style="font-size:11px;font-weight:600;color:${catColour};letter-spacing:1px;text-transform:uppercase;margin-bottom:12px">${esc(article.category_name)}</div>` : ''}
+    <div class="preview-article-title">${esc(article.title)}</div>
+    <div style="font-size:12px;color:var(--mid);margin-bottom:20px">
+      ${pubDate}${updDate && updDate !== pubDate ? ` · Updated ${updDate}` : ''}
+      ${article.reading_time ? ` · ${article.reading_time} min read` : ''}
+    </div>
+    ${imgHtml}
+    ${article.excerpt ? `<div style="font-size:15px;color:var(--mid);font-style:italic;border-left:3px solid var(--border);padding-left:14px;margin-bottom:24px">${esc(article.excerpt)}</div>` : ''}
+    <div class="preview-article-body">${article.content || '<em>No content yet.</em>'}</div>
+    <div style="margin-top:28px;padding-top:16px;border-top:1px solid var(--border);font-size:11px;color:var(--mid)">
+      Status: <strong>${article.status}</strong>
+    </div>
+  `;
+  document.getElementById('preview-modal').classList.remove('hidden');
+}
+function closePreview() { document.getElementById('preview-modal').classList.add('hidden'); }
+
+// ── MEDIA LIBRARY ──────────────────────────────────────────────────────────────
+async function loadMedia() {
+  const grid  = document.getElementById('media-grid');
+  const lbl   = document.getElementById('media-total-lbl');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--mid)">Loading…</div>';
+  try {
+    const d   = await api('GET', '/api/admin/media');
+    mediaItems = d.media || [];
+    lbl.textContent = `${mediaItems.length} file${mediaItems.length !== 1 ? 's' : ''}`;
+    renderMediaGrid(grid, mediaItems, false);
+  } catch {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--mid)">Could not load media.</div>';
+  }
+}
+
+function renderMediaGrid(grid, items, pickerMode) {
+  if (!items.length) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--mid);font-size:13px">No images uploaded yet.</div>';
+    return;
+  }
+  grid.innerHTML = items.map(m => {
+    const name = m.key.split('/').pop();
+    const size = m.size ? `${(m.size / 1024).toFixed(0)} KB` : '';
+    if (pickerMode) {
+      return `<div class="media-item" onclick="selectMediaItem('${esc(m.key)}')" title="${esc(name)}">
+        <img class="media-thumb" src="${esc(m.url)}" alt="${esc(name)}" loading="lazy">
+        <div class="media-info">${esc(name)}</div>
+        <div class="media-info" style="padding-top:0;color:var(--mid)">${size}</div>
+      </div>`;
+    }
+    return `<div class="media-item" title="${esc(name)}">
+      <img class="media-thumb" src="${esc(m.url)}" alt="${esc(name)}" loading="lazy" onclick="copyMediaUrl('${esc(m.url)}')">
+      <button class="media-del" onclick="confirmDeleteMedia('${esc(m.key)}','${esc(name)}')">✕</button>
+      <div class="media-info">${esc(name)}</div>
+      <div class="media-info" style="padding-top:0">${size}</div>
+    </div>`;
+  }).join('');
+}
+
+async function handleFileSelect(input) {
+  const file = input.files[0];
+  input.value = '';
+  if (!file) return;
+  await uploadFile(file, false);
+}
+
+async function handleFileDrop(event) {
+  event.preventDefault();
+  document.getElementById('media-drop-zone').classList.remove('drag-over');
+  const file = event.dataTransfer.files[0];
+  if (!file) return;
+  await uploadFile(file, false);
+}
+
+async function handlePickerUpload(input) {
+  const file = input.files[0];
+  input.value = '';
+  if (!file) return;
+  await uploadFile(file, true);
+}
+
+async function uploadFile(file, fromPicker) {
+  const notice = document.getElementById(fromPicker ? 'picker-status' : 'media-notice');
+  if (!fromPicker) {
+    notice.className = 'notice notice-info';
+    notice.textContent = `Uploading ${file.name}…`;
+    notice.classList.remove('hidden');
+  } else {
+    notice.textContent = `Uploading ${file.name}…`;
+  }
+
+  const form = new FormData();
+  form.append('file', file);
+  try {
+    const res  = await fetch('/api/admin/media', { method:'POST', credentials:'include', body: form });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+    // Add to local cache
+    mediaItems.unshift({ key: data.key, url: data.url, size: data.size });
+    if (!fromPicker) {
+      notice.className = 'notice notice-success';
+      notice.textContent = `✓ Uploaded ${file.name}`;
+      setTimeout(() => notice.classList.add('hidden'), 3000);
+      document.getElementById('media-total-lbl').textContent = `${mediaItems.length} file${mediaItems.length !== 1 ? 's' : ''}`;
+      renderMediaGrid(document.getElementById('media-grid'), mediaItems, false);
+    } else {
+      notice.textContent = `✓ Uploaded. Select the image below.`;
+      renderMediaGrid(document.getElementById('picker-grid'), mediaItems, true);
+    }
+  } catch (e) {
+    const msg = `Upload failed: ${e.message}`;
+    if (!fromPicker) {
+      notice.className = 'notice notice-err';
+      notice.textContent = msg;
+    } else {
+      notice.textContent = msg;
+    }
+  }
+}
+
+function confirmDeleteMedia(key, name) {
+  openModal('Delete image', `Permanently delete "<strong>${esc(name)}</strong>"? This cannot be undone. Any articles using this image will show a broken image.`, async () => {
+    await api('DELETE', `/api/admin/media/${encodeURIComponent(key)}`);
+    mediaItems = mediaItems.filter(m => m.key !== key);
+    document.getElementById('media-total-lbl').textContent = `${mediaItems.length} file${mediaItems.length !== 1 ? 's' : ''}`;
+    renderMediaGrid(document.getElementById('media-grid'), mediaItems, false);
+  });
+}
+
+function copyMediaUrl(url) {
+  navigator.clipboard?.writeText(location.origin + url).catch(() => {});
+  showNotice(document.createElement('div'), '', 'info'); // dummy
+  // quick visual feedback
+  const tip = document.createElement('div');
+  tip.textContent = '✓ URL copied';
+  tip.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#1F2937;color:#fff;padding:8px 14px;border-radius:8px;font-size:12px;z-index:9999';
+  document.body.appendChild(tip);
+  setTimeout(() => tip.remove(), 2000);
+}
+
+// ── MEDIA PICKER ───────────────────────────────────────────────────────────────
+function openMediaPicker() {
+  const grid   = document.getElementById('picker-grid');
+  const status = document.getElementById('picker-status');
+  status.textContent = mediaItems.length ? 'Click an image to select it.' : 'No images yet — upload one first.';
+  // Refresh from server if cache empty
+  if (!mediaItems.length) {
+    api('GET', '/api/admin/media').then(d => {
+      mediaItems = d.media || [];
+      renderMediaGrid(grid, mediaItems, true);
+      status.textContent = mediaItems.length ? 'Click an image to select it.' : 'No images yet — upload one above.';
+    }).catch(() => { status.textContent = 'Could not load media.'; });
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--mid)">Loading…</div>';
+  } else {
+    renderMediaGrid(grid, mediaItems, true);
+  }
+  document.getElementById('media-picker-modal').classList.remove('hidden');
+}
+
+function closeMediaPicker() {
+  document.getElementById('media-picker-modal').classList.add('hidden');
+  _pickerCb = null;
+}
+
+function selectMediaItem(key) {
+  setFeaturedImagePreview(key);
+  closeMediaPicker();
 }
 </script>
 </body>

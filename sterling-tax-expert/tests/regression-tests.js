@@ -863,3 +863,82 @@ function runAllTests() {
     allPass ? `✓ All ${total} tests passed.` : `✗ ${total - passed} of ${total} tests failed.`;
   document.getElementById('results').innerHTML = html;
 }
+
+/* ─────────────────────────────────────────────────────────
+   PHASE 5 — CMS / Media / Production utilities
+   These run in-browser and exercise the pure-JS helpers.
+   ───────────────────────────────────────────────────────── */
+
+/* ── Reading-time helper (mirrors cms/src/routes/articles.js) ── */
+function calcReadingTime(content) {
+  if (!content) return 1;
+  const text  = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = text.split(' ').filter(w => w.length > 0).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+/* ── Slug sanitiser (mirrors cms/src/sanitise.js slugFromTitle) ── */
+function slugFromTitle(title) {
+  return title.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+/* ── Featured-image key validator (mirrors cms/src/sanitise.js) ── */
+function sanitiseFeaturedImage(val) {
+  if (!val || typeof val !== 'string') return null;
+  const t = val.trim();
+  if (!t) return null;
+  if (t.includes('..')) return null;
+  if (!/^[a-zA-Z0-9/._-]+$/.test(t)) return null;
+  if (t.startsWith('backups/')) return null;
+  return t;
+}
+
+/* ── R2 media filename builder (mirrors cms/src/routes/media.js) ── */
+function buildSafeFilename(originalName, ext) {
+  const base = (originalName || 'upload')
+    .replace(/\.[^.]+$/, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60) || 'upload';
+  return `${base}.${ext}`;
+}
+
+suite('Phase 5 — Reading time calculation', [
+  () => check('Empty content → 1 min',  calcReadingTime(''),            1),
+  () => check('200 words → 1 min',      calcReadingTime(Array(200).fill('word').join(' ')), 1),
+  () => check('400 words → 2 min',      calcReadingTime(Array(400).fill('word').join(' ')), 2),
+  () => check('100 words → 1 min',      calcReadingTime(Array(100).fill('word').join(' ')), 1),
+  () => check('201 words → 1 min (round)', calcReadingTime(Array(201).fill('word').join(' ')), 1),
+  () => check('300 words → 2 min (round)', calcReadingTime(Array(300).fill('word').join(' ')), 2),
+  () => check('HTML stripped',           calcReadingTime('<p>' + Array(200).fill('word').join(' ') + '</p>'), 1),
+  () => check('Null-safe',               calcReadingTime(null),          1),
+]);
+
+suite('Phase 5 — Slug generation', [
+  () => check('Basic title',           slugFromTitle('Hello World'),           'hello-world'),
+  () => check('Accents stripped',      slugFromTitle('UK PAYE 2026/27'),       'uk-paye-2026-27'),
+  () => check('Special chars',         slugFromTitle('Self-Assessment: Tips'), 'self-assessment-tips'),
+  () => check('Leading/trailing dash', slugFromTitle('  -test- '),             'test'),
+  () => check('Numbers preserved',     slugFromTitle('Top 10 VAT tips'),       'top-10-vat-tips'),
+  () => check('Empty string',          slugFromTitle(''),                      ''),
+]);
+
+suite('Phase 5 — Featured image key validation', [
+  () => check('Valid key',             sanitiseFeaturedImage('2026/05/1234567890-photo.jpg'), '2026/05/1234567890-photo.jpg'),
+  () => check('Path traversal blocked', sanitiseFeaturedImage('../etc/passwd'), null),
+  () => check('Backups prefix blocked', sanitiseFeaturedImage('backups/backup.json'), null),
+  () => check('Null input',            sanitiseFeaturedImage(null),            null),
+  () => check('Empty string',          sanitiseFeaturedImage(''),              null),
+  () => check('SQL injection blocked', sanitiseFeaturedImage("'; DROP TABLE"), null),
+  () => check('Valid nested key',      sanitiseFeaturedImage('2026/01/123-my-image.webp'), '2026/01/123-my-image.webp'),
+]);
+
+suite('Phase 5 — Media filename sanitisation', [
+  () => check('Normal filename',      buildSafeFilename('My Photo.jpg',  'jpg'), 'my-photo.jpg'),
+  () => check('Special chars',        buildSafeFilename('../evil.png',    'png'), 'evil.png'),
+  () => check('No name fallback',     buildSafeFilename('',              'webp'), 'upload.webp'),
+  () => check('Extension stripped',   buildSafeFilename('image.JPEG',    'jpg'), 'image.jpg'),
+  () => check('Long name truncated',  buildSafeFilename('a'.repeat(100), 'jpg'), 'a'.repeat(60) + '.jpg'),
+  () => check('Spaces → hyphens',     buildSafeFilename('my image file.png', 'png'), 'my-image-file.png'),
+]);

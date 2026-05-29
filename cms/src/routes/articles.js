@@ -18,6 +18,14 @@ function ok(data, status = 200)      { return Response.json(data, { status }); }
 function fail(message, status = 400) { return Response.json({ error: message }, { status }); }
 function unixNow()                   { return Math.floor(Date.now() / 1000); }
 
+/** Strip HTML tags and estimate reading time in minutes (200 wpm). */
+function calcReadingTime(content) {
+  if (!content) return 1;
+  const text  = content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  const words = text.split(' ').filter(w => w.length > 0).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
 // ── DASHBOARD STATS ───────────────────────────────────────────────────────────
 
 export async function getDashboard(env) {
@@ -134,18 +142,19 @@ export async function createArticle(request, env) {
     if (!cat) data.category_id = null;
   }
 
-  const now    = unixNow();
+  const now          = unixNow();
+  const readingTime  = calcReadingTime(data.content);
   const result = await env.DB
     .prepare(`
       INSERT INTO articles
-        (title, slug, excerpt, content, category_id, featured,
-         meta_title, meta_desc, status, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?)
+        (title, slug, excerpt, content, featured_image, category_id, featured,
+         meta_title, meta_desc, reading_time, status, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'draft', ?, ?)
     `)
     .bind(
-      data.title, data.slug, data.excerpt, data.content,
+      data.title, data.slug, data.excerpt, data.content, data.featured_image,
       data.category_id, data.featured,
-      data.meta_title, data.meta_desc,
+      data.meta_title, data.meta_desc, readingTime,
       now, now,
     )
     .run();
@@ -209,20 +218,21 @@ export async function updateArticle(request, env, id) {
     if (!cat) data.category_id = null;
   }
 
+  const readingTime = calcReadingTime(data.content);
   await env.DB
     .prepare(`
       UPDATE articles
       SET title = ?, slug = ?, excerpt = ?, content = ?,
-          category_id = ?, featured = ?,
+          featured_image = ?, category_id = ?, featured = ?,
           meta_title = ?, meta_desc = ?,
-          updated_at = ?
+          reading_time = ?, updated_at = ?
       WHERE id = ?
     `)
     .bind(
       data.title, data.slug, data.excerpt, data.content,
-      data.category_id, data.featured,
+      data.featured_image, data.category_id, data.featured,
       data.meta_title, data.meta_desc,
-      unixNow(), id,
+      readingTime, unixNow(), id,
     )
     .run();
 
@@ -300,6 +310,30 @@ export async function unpublishArticle(request, env, id) {
     .first();
 
   return ok({ article: updated });
+}
+
+// ── PREVIEW ───────────────────────────────────────────────────────────────────
+
+/**
+ * GET /api/admin/articles/:id/preview  (auth required)
+ *
+ * Returns the article (any status) as JSON with the same shape as the
+ * public endpoint so the admin UI can render a client-side preview.
+ */
+export async function previewArticle(request, env, id) {
+  const article = await env.DB
+    .prepare(`
+      SELECT a.*, c.name AS category_name, c.slug AS category_slug,
+             c.colour AS category_colour
+      FROM   articles a
+      LEFT JOIN categories c ON c.id = a.category_id
+      WHERE  a.id = ?
+    `)
+    .bind(id)
+    .first();
+
+  if (!article) return fail('Article not found', 404);
+  return ok({ article });
 }
 
 // ── INTERNAL ──────────────────────────────────────────────────────────────────

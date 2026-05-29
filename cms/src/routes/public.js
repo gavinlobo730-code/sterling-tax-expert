@@ -49,7 +49,7 @@ export async function publicListArticles(request, env) {
   const rows = await env.DB
     .prepare(`
       SELECT a.id, a.title, a.slug, a.excerpt, a.featured_image,
-             a.featured, a.published_at,
+             a.featured, a.published_at, a.updated_at, a.reading_time,
              c.name   AS category_name,
              c.slug   AS category_slug,
              c.colour AS category_colour
@@ -98,7 +98,8 @@ export async function publicGetArticle(request, env, slug) {
   const article = await env.DB
     .prepare(`
       SELECT a.id, a.title, a.slug, a.excerpt, a.content, a.featured_image,
-             a.featured, a.published_at, a.meta_title, a.meta_desc,
+             a.featured, a.published_at, a.updated_at, a.reading_time,
+             a.meta_title, a.meta_desc,
              c.name   AS category_name,
              c.slug   AS category_slug,
              c.colour AS category_colour

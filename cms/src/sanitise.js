@@ -47,15 +47,28 @@ function sanitiseColour(value) {
 export function sanitiseArticleInput(raw) {
   if (!raw || typeof raw !== 'object') return null;
   return {
-    title:       sanitiseText(raw.title       ?? ''),
-    slug:        sanitiseSlug(raw.slug        ?? ''),
-    excerpt:     sanitiseText(raw.excerpt     ?? ''),
-    content:     typeof raw.content === 'string' ? raw.content.trim() : '',
-    category_id: raw.category_id != null ? (parseInt(raw.category_id, 10) || null) : null,
-    featured:    raw.featured    ? 1 : 0,
-    meta_title:  sanitiseText(raw.meta_title  ?? ''),
-    meta_desc:   sanitiseText(raw.meta_desc   ?? ''),
+    title:          sanitiseText(raw.title      ?? '').slice(0, 300),
+    slug:           sanitiseSlug(raw.slug       ?? ''),
+    excerpt:        sanitiseText(raw.excerpt    ?? '').slice(0, 500),
+    content:        typeof raw.content === 'string' ? raw.content.slice(0, 500_000) : '',
+    category_id:    raw.category_id != null ? (parseInt(raw.category_id, 10) || null) : null,
+    featured:       raw.featured ? 1 : 0,
+    meta_title:     sanitiseText(raw.meta_title ?? '').slice(0, 60),
+    meta_desc:      sanitiseText(raw.meta_desc  ?? '').slice(0, 160),
+    featured_image: sanitiseFeaturedImage(raw.featured_image),
   };
+}
+
+/** Allow only R2 keys matching the media upload pattern. Rejects path traversal. */
+function sanitiseFeaturedImage(val) {
+  if (!val || typeof val !== 'string') return null;
+  const trimmed = val.trim();
+  if (!trimmed) return null;
+  // Key pattern: YYYY/MM/<timestamp>-<safe-name>.<ext>
+  if (trimmed.includes('..')) return null;
+  if (!/^[a-zA-Z0-9/._-]+$/.test(trimmed)) return null;
+  if (trimmed.startsWith('backups/')) return null;
+  return trimmed;
 }
 
 /** Validate fields required for any save (draft or update). */
