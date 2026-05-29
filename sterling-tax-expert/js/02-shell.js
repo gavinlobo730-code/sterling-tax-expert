@@ -232,9 +232,10 @@ window.addEventListener('scroll', () => {
   if (nav) nav.classList.toggle('scrolled', scrollY > 8);
 });
 
-// ── Contact form — POST to Worker /api/enquiry ─────────────
-// Stores in D1 + attempts email delivery via Resend.
-// Requires Worker to be deployed. Shows clear error if offline.
+// ── Contact form ────────────────────────────────────────────
+// Primary:  POST /api/enquiry (Worker — stores in D1, sends via Resend)
+// Fallback: EmailJS (requires config.emailjs keys to be filled in)
+// Last resort: mailto link pre-addressed to the Sterling inbox
 async function submitContact(){
   const cfg = window.STERLING_CONFIG || {};
   const get = id => (document.getElementById(id) || {}).value || '';
@@ -255,44 +256,74 @@ async function submitContact(){
   const btn = document.getElementById('cf-submit');
   if (btn) { btn.textContent = 'Sending…'; btn.disabled = true; btn.style.opacity = '0.7'; }
 
-  const apiBase = (cfg.cmsApiBase || '/api').replace(/\/api$/, '');
+  const name    = (fn + ' ' + ln).trim();
+  const payload = { name, email: em, phone: ph || null, service: sv, message: msg || null };
 
+  function onSuccess() {
+    const suc = document.getElementById('cf-suc');
+    if (suc) suc.classList.add('show');
+    if (btn) btn.textContent = 'Sent ✓';
+    showToast("Enquiry sent — we'll be in touch within 48 hours", 'ok');
+    ['cf-fn','cf-ln','cf-em','cf-ph','cf-msg'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    const sel = document.getElementById('cf-sv'); if (sel) sel.value = '';
+  }
+
+  function onFail(errMsg) {
+    if (btn) { btn.textContent = 'Send enquiry →'; btn.disabled = false; btn.style.opacity = '1'; }
+    showToast(errMsg || 'Could not send. Please email sterlingtaxexpert@gmail.com directly.', 'err');
+  }
+
+  // ── 1. Try Worker endpoint ──────────────────────────────
+  const apiBase = (cfg.cmsApiBase || '/api').replace(/\/api$/, '');
   try {
     const res = await fetch(apiBase + '/api/enquiry', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name:    (fn + ' ' + ln).trim(),
-        email:   em,
-        phone:   ph || null,
-        service: sv,
-        message: msg || null,
-      }),
+      body: JSON.stringify(payload),
+      signal: AbortSignal.timeout(8000),
     });
-
-    if (res.ok) {
-      const suc = document.getElementById('cf-suc');
-      if (suc) suc.classList.add('show');
-      if (btn) { btn.textContent = 'Sent ✓'; }
-      showToast("Enquiry sent — we'll be in touch within 48 hours", 'ok');
-      ['cf-fn','cf-ln','cf-em','cf-ph','cf-msg'].forEach(id => {
-        const el = document.getElementById(id); if (el) el.value = '';
-      });
-      const sel = document.getElementById('cf-sv'); if (sel) sel.value = '';
-    } else {
+    if (res.ok) { onSuccess(); return; }
+    // 4xx = validation error from Worker — surface to user, do not fall through
+    if (res.status >= 400 && res.status < 500) {
       const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || 'Server error ' + res.status);
+      onFail(data.error || 'Please check your details and try again.');
+      return;
     }
-  } catch (err) {
-    console.error('Contact submission failed:', err);
-    if (btn) { btn.textContent = 'Send enquiry →'; btn.disabled = false; btn.style.opacity = '1'; }
-    showToast(
-      err.message && err.message.length < 80
-        ? err.message
-        : 'Could not send. Please email sterlingtaxexpert@gmail.com directly.',
-      'err'
-    );
+    // 5xx — fall through to EmailJS
+  } catch (_) { /* network error or timeout — fall through */ }
+
+  // ── 2. Fallback: EmailJS ────────────────────────────────
+  const ejs = cfg.emailjs || {};
+  if (window.emailjs && ejs.publicKey && !/^YOUR_/.test(ejs.publicKey) &&
+      ejs.serviceId && !/^YOUR_/.test(ejs.serviceId) &&
+      ejs.templateId && !/^YOUR_/.test(ejs.templateId)) {
+    try {
+      await window.emailjs.send(ejs.serviceId, ejs.templateId, {
+        from_name: name,
+        reply_to:  em,
+        phone:     ph || 'Not provided',
+        service:   sv,
+        message:   msg || '',
+        to_email:  cfg.contactEmail || 'sterlingtaxexpert@gmail.com',
+      });
+      onSuccess();
+      return;
+    } catch (_) { /* EmailJS failed — fall through to mailto */ }
   }
+
+  // ── 3. Last resort: mailto ──────────────────────────────
+  const to      = cfg.contactEmail || 'sterlingtaxexpert@gmail.com';
+  const subject = encodeURIComponent('Website enquiry — ' + sv);
+  const body    = encodeURIComponent(
+    'Name: ' + name + '\nEmail: ' + em +
+    (ph ? '\nPhone: ' + ph : '') +
+    '\nService: ' + sv +
+    (msg ? '\n\nMessage:\n' + msg : '')
+  );
+  window.location.href = 'mailto:' + to + '?subject=' + subject + '&body=' + body;
+  if (btn) { btn.textContent = 'Send enquiry →'; btn.disabled = false; btn.style.opacity = '1'; }
 }
 
 // ── FAQ toggle ─────────────────────────────────────────────
