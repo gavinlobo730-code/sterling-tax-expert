@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sterling Tax Expert — Regression Tests</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; background: #f8fafc; color: #1a1a1a; }
+    h1 { font-size: 22px; margin-bottom: 4px; }
+    .subtitle { color: #6b7a8f; font-size: 14px; margin-bottom: 32px; }
+    .suite { margin-bottom: 28px; }
+    .suite-title { font-size: 15px; font-weight: 700; color: #0b1d4e; border-bottom: 2px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 12px; }
+    .test { display: flex; align-items: flex-start; gap: 10px; padding: 7px 10px; border-radius: 6px; font-size: 13px; margin-bottom: 4px; }
+    .test.pass { background: #f0fdf4; }
+    .test.fail { background: #fef2f2; }
+    .badge { width: 52px; flex-shrink: 0; text-align: center; font-weight: 700; font-size: 11px; padding: 2px 0; border-radius: 4px; }
+    .pass .badge { background: #16a34a; color: #fff; }
+    .fail .badge { background: #c0392b; color: #fff; }
+    .test-name { flex: 1; }
+    .test-detail { color: #6b7a8f; font-size: 12px; margin-top: 2px; }
+    .fail .test-detail { color: #991b1b; }
+    #summary { margin: 28px 0 12px; padding: 18px 24px; border-radius: 10px; font-size: 15px; font-weight: 600; }
+    #summary.all-pass { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+    #summary.has-fail  { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+    #run-btn { background: #0b1d4e; color: #fff; border: none; padding: 10px 24px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 24px; }
+    #run-btn:hover { background: #1a55cc; }
+  </style>
+</head>
+<body>
+  <h1>Sterling Tax Expert — Regression Tests</h1>
+  <p class="subtitle">2026/27 UK tax year · Run after any rate or logic change to verify calculations</p>
+  <button id="run-btn" onclick="runAllTests()">Run all tests</button>
+  <div id="summary"></div>
+  <div id="results"></div>
+
+  <!-- Load the production tax constants and calculator logic -->
+  <script src="../js/01-data.js"></script>
+  <script src="../js/00-core.js"></script>
+  <script>
+    /* ── Minimal stubs so calculator files load without the full app ── */
+    window.CALCS = {};
+    function kpi()  { return ''; }
+    function kpiRow() { return ''; }
+    function bkRow()  { return ''; }
+    function barChart() { return ''; }
+    function donutSVG() { return ''; }
+    function actionsRow() { return ''; }
+    function notesCard()  { return ''; }
+    function fmt(v)  { return String(v); }
+    function fmtInt(v) { return String(v); }
+    window._lastCalc = { state: {} };
+  </script>
+  <script src="../js/04-calc-payroll.js"></script>
+  <script src="../js/05-calc-compliance.js"></script>
+  <script src="../js/06-calc-extra.js"></script>
+  <script src="regression-tests.js"></script>
+</body>
+</html>

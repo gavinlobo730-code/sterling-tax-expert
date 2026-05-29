@@ -72,7 +72,8 @@ CALCS['paye'] = {
     const taxablePay = annual - pensionAmt;
     const { tax: incomeTax, paUsed } = incomeTaxOn(taxablePay);
     const empNI = employeeNI(taxablePay);
-    const erNI = employerNI(annual, s.allowance);
+    // Employer NI is on the sacrificed (reduced) gross — pension is salary sacrifice.
+    const erNI = employerNI(taxablePay, s.allowance);
     const sl = studentLoan(annual, s.plan);
     const netPay = annual - pensionAmt - incomeTax - empNI - sl;
     const totalDeductions = incomeTax + empNI + sl;
@@ -136,6 +137,7 @@ CALCS['paye'] = {
         </div>
       </div>
       ${r.paUsed < window.TAX.PA ? notesCard('Personal allowance tapered', `Your gross income exceeds £100,000, so your personal allowance has tapered from £${fmtInt(window.TAX.PA)} to <strong>£${fmtInt(r.paUsed)}</strong> (£1 lost for every £2 above £100,000). This produces an effective marginal rate of 60% in the taper band.`) : ''}
+      ${r.pensionAmt > 0 ? notesCard('Salary sacrifice & employer NI', `Employer NI is calculated on the <strong>post-sacrifice gross</strong> (${fmt(r.taxablePay)}). If your company has other employees, the £${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)} Employment Allowance is a <strong>company-wide</strong> offset against the total employer NI bill — not a per-employee reduction. This calculator applies it to this one employee\'s NI, which is correct for single-employee companies only.`) : notesCard('Employment Allowance', `The £${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)} Employment Allowance offsets your <strong>total</strong> employer NI liability across all employees — not each individual\'s NI separately. For multi-employee companies, use the Employer NI calculator which models the allowance against the whole pay-bill.`)}
       ${actionsRow()}
     `;
   },
@@ -179,7 +181,7 @@ CALCS['employer-ni'] = {
           { l:'Net after EA',              v: r.net,     c:'var(--blue2)' },
         ])}
       </div>
-      ${notesCard('How Employment Allowance works', `Eligible employers can reduce their annual employer NI bill by up to <strong>£${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)}</strong>. You must re-elect each tax year via your EPS. Single-director companies with no other employees are not eligible; connected companies share a single allowance.`)}
+      ${notesCard('How Employment Allowance works', `Eligible employers can reduce their <strong>total annual employer NI bill</strong> by up to <strong>£${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)}</strong>. This is a single company-wide allowance — not per employee. You must re-elect each tax year via your EPS. Single-director companies with no other employees are <strong>not eligible</strong>; connected companies share one allowance between them.`)}
       ${actionsRow()}
     `;
   },
@@ -240,6 +242,7 @@ CALCS['net-to-gross'] = {
         ${bkRow('Net take-home', '#1A55CC', r.net,          r.gross, false, true)}
       </div>
       ${notesCard('Why this number?', `To hand an employee <strong>${fmt(r.net)}</strong> net, you need to offer <strong>${fmt(r.gross)}</strong> gross. The marginal "cost-of-a-pay-rise" goes up sharply once an employee crosses £50,270 (40% tax kicks in) and £100,000 (PA taper). Above £125,140 they pay 45% on every extra pound.`)}
+      ${notesCard('Accuracy note', `This result is solved by binary search to within <strong>±50p</strong> of the target net — suitable for offer-letter estimates. It assumes a standard 1257L tax code (England/Wales/NI), no benefits in kind, and no cumulative PAYE. For payroll software accuracy, confirm with a full PAYE calculation.`)}
       ${actionsRow()}
     `;
   },
@@ -287,6 +290,7 @@ CALCS['payroll-cost'] = {
         ${bkRow('Total employment cost',        '#0B1D4E', r.total,     r.total, false, true)}
       </div>
       ${notesCard('Rule of thumb', `For UK SMEs at 2026/27 rates, the true cost of a hire is typically <strong>${(100+r.overheadPct).toFixed(0)}%</strong> of the headline salary. Budget around <strong>£${fmtInt(r.total/12)}/month</strong> for this role — that's what hits the P&L.`)}
+      ${notesCard('Employment Allowance — company-wide offset', `The £${fmtInt(window.TAX.EMPLOYMENT_ALLOWANCE)} Employment Allowance is applied above against this employee\'s NI. In reality it offsets your <strong>total employer NI bill across all staff</strong>. If you have multiple employees, the allowance may already be consumed by other salaries — the true marginal NI cost for an additional hire could be the full 15% rate with no offset.`)}
       ${actionsRow()}
     `;
   },
@@ -357,6 +361,7 @@ CALCS['salary-sacrifice'] = {
         </div>
       </div>
       ${notesCard('Why sacrifice wins on NI', `Salary sacrifice swaps the employee\'s pre-tax salary for an employer pension contribution. Because employer pension contributions aren\'t subject to employee NI (8%) <em>or</em> employer NI (15%), both sides save. The pension pot is the same; everything else is the saving.`)}
+      ${notesCard('Higher-rate taxpayers: non-sacrifice relief', `The "without sacrifice" column models <strong>relief at source</strong> — the pension provider automatically adds 20% basic-rate tax relief to the employee\'s contribution. Higher-rate and additional-rate taxpayers can claim a <strong>further 20% or 25%</strong> of their contribution back via Self Assessment, reducing their effective pension cost. This extra relief is <strong>not shown above</strong> — for a 40% taxpayer it makes the non-sacrifice route more competitive than it appears here.`)}
       ${actionsRow()}
     `;
   },
@@ -510,10 +515,11 @@ CALCS['holiday'] = {
   title: 'Holiday Pay Calculator',
   subtitle: 'Statutory entitlement (5.6 weeks/year) and accrual for full-time, part-time and irregular-hours workers.',
   inputs: [
-    { id:'mode',     type:'toggle',   label:'Worker type',                  default:'fixed', options:[{v:'fixed',l:'Fixed hours'},{v:'irreg',l:'Irregular / part-year'}] },
-    { id:'daysPerWeek', type:'number',label:'Days worked per week',         default:5, min:1, max:7 },
-    { id:'hoursWorked', type:'number',label:'Total hours worked in period', default:160, hint:'Only used for irregular workers' },
-    { id:'hourlyRate', type:'currency', label:'Hourly rate',                default:13 },
+    { id:'mode',        type:'toggle',   label:'Worker type',                  default:'fixed', options:[{v:'fixed',l:'Fixed hours'},{v:'irreg',l:'Irregular / part-year'}] },
+    { id:'daysPerWeek', type:'number',   label:'Days worked per week',         default:5, min:1, max:7 },
+    { id:'hoursPerDay', type:'number',   label:'Hours per day',                default:7.5, step:0.5, min:1, max:24, hint:'Used for fixed-hours holiday pay calculation' },
+    { id:'hoursWorked', type:'number',   label:'Total hours worked in period', default:160, hint:'Only used for irregular workers' },
+    { id:'hourlyRate',  type:'currency', label:'Hourly rate',                  default:13 },
   ],
   calculate(s){
     const T = window.TAX;
@@ -522,12 +528,13 @@ CALCS['holiday'] = {
       const pay = accrued * s.hourlyRate;
       return { mode:'irreg', accruedHours:accrued, pay, entitlementDays: null };
     }
+    const hoursPerDay = s.hoursPerDay || 7.5;
     const days = s.daysPerWeek * T.HOLIDAY_WEEKS;
     const cappedDays = Math.min(days, 28); // statutory cap
-    const annualPay = s.hourlyRate * (s.daysPerWeek * 7.5) * 52; // assume 7.5h/day for fixed-hours estimate
+    const annualPay = s.hourlyRate * (s.daysPerWeek * hoursPerDay) * 52;
     const weekPay = annualPay / 52;
     const totalHolidayPay = weekPay * T.HOLIDAY_WEEKS;
-    return { mode:'fixed', entitlementDays: cappedDays, weekPay, totalHolidayPay };
+    return { mode:'fixed', entitlementDays: cappedDays, weekPay, totalHolidayPay, hoursPerDay };
   },
   render(r){
     if (r.mode === 'irreg') {
@@ -548,6 +555,7 @@ CALCS['holiday'] = {
         kpi('Annual holiday pay',    fmt(r.totalHolidayPay), { color:'green', sub:'5.6 weeks × week\'s pay' }),
       ])}
       ${notesCard('Statutory minimums', `Full-time workers (5 days/week) are entitled to <strong>28 days paid leave</strong> per year — this can include bank holidays. Part-time workers get pro-rata entitlement. Employers can give more, but never less.`)}
+      ${notesCard('Holiday pay calculation basis', `A week\'s pay for holiday purposes is based on the worker\'s <strong>normal working hours and rate</strong>. The calculation above uses <strong>${r.hoursPerDay} hours/day</strong> — adjust this if your workers have different contracted daily hours. For workers with variable pay (commission, overtime), the ERA 2023 requires a 52-week average; this calculator uses the current hourly rate as a proxy.`)}
       ${actionsRow()}
     `;
   },

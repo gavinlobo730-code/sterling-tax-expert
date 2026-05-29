@@ -277,25 +277,31 @@ CALCS['shpp'] = {
   ],
   calculate(s){
     const T = window.TAX;
-    const totalWeeks = Math.min(s.weeksA + s.weeksB, 37);
+    const overAllocated = (s.weeksA + s.weeksB) > 37;
     const eligibleA = s.aweA >= T.LEL;
     const eligibleB = s.aweB >= T.LEL;
     const rateA = eligibleA ? Math.min(s.aweA * 0.90, T.SHPP_RATE) : 0;
     const rateB = eligibleB ? Math.min(s.aweB * 0.90, T.SHPP_RATE) : 0;
-    const payA = rateA * s.weeksA;
-    const payB = rateB * s.weeksB;
+    // Cap weeks when over-allocated: Parent A takes priority, Parent B gets the remainder.
+    // This ensures the displayed total never exceeds the statutory 37-week maximum.
+    const effectiveWeeksA = overAllocated ? Math.min(s.weeksA, 37) : s.weeksA;
+    const effectiveWeeksB = overAllocated ? Math.min(s.weeksB, Math.max(0, 37 - effectiveWeeksA)) : s.weeksB;
+    const totalWeeks = effectiveWeeksA + effectiveWeeksB;
+    const payA = rateA * effectiveWeeksA;
+    const payB = rateB * effectiveWeeksB;
     const total = payA + payB;
-    const overAllocated = (s.weeksA + s.weeksB) > 37;
-    return { totalWeeks, eligibleA, eligibleB, rateA, rateB, payA, payB, total, overAllocated };
+    const inputWeeksA = s.weeksA;
+    const inputWeeksB = s.weeksB;
+    return { totalWeeks, eligibleA, eligibleB, rateA, rateB, payA, payB, total, overAllocated, effectiveWeeksA, effectiveWeeksB, inputWeeksA, inputWeeksB };
   },
   render(r){
     return `
+      ${r.overAllocated ? `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:14px 18px;margin-bottom:12px;font-size:13px;color:#92400E;line-height:1.65"><strong>\u26a0 Over 37-week cap.</strong> Combined ShPP cannot exceed 37 weeks. You entered ${r.inputWeeksA + r.inputWeeksB} weeks total. Figures below are capped: Parent A ${r.effectiveWeeksA} weeks, Parent B ${r.effectiveWeeksB} weeks. Reduce one parent's allocation to match your intended split.</div>` : ''}
       ${kpiRow([
-        kpi('Total ShPP payable', fmt(r.total),       { color:'primary', sub:`${r.totalWeeks} weeks total` }),
-        kpi('Parent A',            fmt(r.payA),       { color:'gold',  sub:r.eligibleA ? `${fmt(r.rateA)}/week` : 'Not eligible' }),
-        kpi('Parent B',            fmt(r.payB),       { color:'green', sub:r.eligibleB ? `${fmt(r.rateB)}/week` : 'Not eligible' }),
+        kpi('Total ShPP payable', fmt(r.total),  { color:'primary', sub:`${r.totalWeeks} weeks total (statutory max 37)` }),
+        kpi('Parent A',           fmt(r.payA),   { color:'gold',  sub:r.eligibleA ? `${fmt(r.rateA)}/week \u00d7 ${r.effectiveWeeksA} weeks` : 'Not eligible (AWE below LEL)' }),
+        kpi('Parent B',           fmt(r.payB),   { color:'green', sub:r.eligibleB ? `${fmt(r.rateB)}/week \u00d7 ${r.effectiveWeeksB} weeks` : 'Not eligible (AWE below LEL)' }),
       ])}
-      ${r.overAllocated ? `<div style="background:#FFFBEB;border:1px solid #FDE68A;border-radius:10px;padding:14px 18px;font-size:13px;color:#92400E;line-height:1.65"><strong>Over 37-week cap.</strong> Combined ShPP across both parents cannot exceed 37 weeks. Reduce one parent\\'s allocation.</div>` : ''}
       ${notesCard('How Shared Parental Leave works', `Available when both parents qualify and the mother/primary adopter curtails their maternity/adoption leave. Total available ShPP is <strong>52 \u2212 weeks of SMP/SAP already taken</strong>, up to a max of 37 weeks. Both parents must meet the employment and earnings tests independently. Notice of leave intervals (SPLIT notices) must be given to employers at least 8 weeks in advance.`)}
       ${actionsRow()}
     `;

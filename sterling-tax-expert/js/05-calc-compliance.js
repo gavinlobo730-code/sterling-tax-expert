@@ -328,7 +328,7 @@ CALCS['vat-flat'] = {
     { id:'lcost',   type:'checkbox', label:'Limited-cost trader (16.5%)',    default:false },
   ],
   calculate(s){
-    // Standard scheme
+    // Standard scheme — assumes all turnover at 20%. See caveat note in render.
     const net = s.turnover / 1.20;
     const outputVat = s.turnover - net;
     const standardOwed = outputVat - s.inputs;
@@ -336,11 +336,14 @@ CALCS['vat-flat'] = {
     const effectiveRate = s.lcost ? 16.5 : (s.flatRate - (s.firstYear ? 1 : 0));
     const frsOwed = s.turnover * (effectiveRate / 100);
     const saving = standardOwed - frsOwed;
-    return { net, outputVat, standardOwed, frsOwed, saving, effectiveRate };
+    // FRS ceiling: £150,000 net (VAT-exclusive) turnover per HMRC VAT Notice 733 para 3.1
+    const overFrsCeiling = (s.turnover / 1.20) > 150000;
+    return { net, outputVat, standardOwed, frsOwed, saving, effectiveRate, overFrsCeiling };
   },
   render(r){
     const advice = r.saving > 0 ? 'Flat Rate Scheme is cheaper' : r.saving < 0 ? 'Standard scheme is cheaper' : 'Schemes are roughly equal';
     return `
+      ${r.overFrsCeiling ? `<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:14px 18px;margin-bottom:12px;font-size:13px;color:#991B1B;line-height:1.65"><strong>⚠ Turnover exceeds FRS eligibility ceiling.</strong> The Flat Rate Scheme is only available to businesses with net (VAT-exclusive) turnover of <strong>£150,000 or less</strong> (HMRC VAT Notice 733). At this level you would need to leave the scheme. The FRS figures below are shown for comparison only.</div>` : ''}
       ${kpiRow([
         kpi('Standard scheme — VAT owed', fmt(r.standardOwed), { color:'red',  sub:'Output VAT − input VAT' }),
         kpi('FRS — VAT owed',             fmt(r.frsOwed),      { color:'gold', sub:`${r.effectiveRate}% of gross turnover` }),
@@ -350,7 +353,8 @@ CALCS['vat-flat'] = {
         { l:'Standard scheme', v:r.standardOwed, c:'var(--red)' },
         { l:'Flat Rate Scheme', v:r.frsOwed,     c:'var(--gold)' },
       ])}
-      ${notesCard('Flat Rate Scheme rules', `The FRS is available to VAT-registered businesses with turnover under <strong>£150,000</strong>. The flat percentage depends on your business sector — pick the closest from HMRC\'s list. <strong>Limited-cost traders</strong> (those spending less than 2% of turnover on goods, or under £1,000/yr) must use the 16.5% rate regardless of sector.`)}
+      ${notesCard('Flat Rate Scheme rules', `The FRS is available to VAT-registered businesses with <strong>net turnover of £150,000 or less</strong> (HMRC VAT Notice 733). The flat percentage depends on your business sector — pick the closest from HMRC\'s list. <strong>Limited-cost traders</strong> (those spending less than 2% of turnover on goods, or under £1,000/yr) must use the 16.5% rate regardless of sector.`)}
+      ${notesCard('Standard scheme assumption', `The standard VAT calculation above assumes <strong>all turnover is standard-rated at 20%</strong>. If your sales include zero-rated or reduced-rated supplies, your actual output VAT will be lower — making the standard scheme relatively more attractive than shown here. Adjust the recoverable input VAT field to reflect your actual input VAT position.`)}
       ${actionsRow()}
     `;
   },
@@ -471,6 +475,7 @@ CALCS['sal-vs-div'] = {
         ${bkRow('Net take-home',     '#1A55CC', r.netTakeHome, r.totalDraw, false, true)}
       </div>
       ${notesCard('Three common salary levels for directors', `<strong>£0 / £5,000:</strong> No employee NI, but no qualifying NI year for state pension.<br><strong>£6,500 (LEL + buffer):</strong> Earns a qualifying NI year for state pension, still no employee NI to pay.<br><strong>£12,570 (full PA):</strong> Uses up the personal allowance against salary, but triggers employer NI on £7,570 (or zero if Employment Allowance available).<br>The "best" choice depends on EA eligibility and your other income.`)}
+      ${notesCard('Modelling assumption', `This calculator treats the <strong>total draw as post-corporation-tax cash</strong>. In reality, salary and employer NI are deductible business expenses that reduce the company\'s taxable profit before CT is applied. A higher salary therefore reduces the CT bill, freeing slightly more cash for dividends. The CT saving is approximately <strong>19–25%</strong> of the salary and employer NI paid. For marginal-band companies (profits £50k–£250k) the interaction is material — use the Corporation Tax calculator alongside this tool to model the full picture.`)}
       ${actionsRow()}
     `;
   },
@@ -496,8 +501,11 @@ CALCS['self-assess'] = {
     const totalIncome = s.profit + s.other;
     const { tax: incomeTax } = incomeTaxOn(totalIncome);
 
-    // Class 2 (voluntary above SPT)
-    const class2 = s.profit > T.CLASS2_SPT ? 0 : 0; // since Apr 2024, Class 2 is voluntary; not charged when profit > SPT
+    // Class 2 NI (2026/27 rules — changed from April 2024):
+    // • Profits >= SPT (£7,105): CREDITED automatically by HMRC — no cash payment required.
+    // • Profits < SPT: VOLUNTARY payment of £3.65/week (£189.80/yr) available to protect
+    //   State Pension and benefit entitlements. Shown here as it is typically worthwhile.
+    const class2 = s.profit < T.CLASS2_SPT ? T.CLASS2_RATE * 52 : 0;
 
     // Class 4 NI
     let class4 = 0;
@@ -507,10 +515,11 @@ CALCS['self-assess'] = {
     }
     const sl = studentLoan(totalIncome, s.studentPlan);
     const total = incomeTax + class2 + class4 + sl;
-    const poa = total / 2; // payments on account = 50% each
-    const balancing = total;
-    const netProfit = s.profit - (incomeTax + class4 + class2); // approx, before student loan
-    return { incomeTax, class2, class4, sl, total, poa, balancing, netProfit, totalIncome };
+    // Payments on account are based on income tax + Class 4 only — student loan and Class 2
+    // are NOT included in the POA base (HMRC SA payment on account rules).
+    const poa = (incomeTax + class4) / 2;
+    const netProfit = s.profit - (incomeTax + class4 + class2);
+    return { incomeTax, class2, class4, sl, total, poa, netProfit, totalIncome };
   },
   render(r){
     return `
@@ -527,7 +536,8 @@ CALCS['self-assess'] = {
         ${r.sl > 0 ? bkRow('Student loan',               '#EA580C', r.sl,        r.total) : ''}
         ${bkRow('Total due',                             '#0B1D4E', r.total,     r.total, false, true)}
       </div>
-      ${notesCard('Key 2026/27 dates', `<strong>5 Oct 2026:</strong> register if newly self-employed.<br><strong>31 Oct 2026:</strong> paper-return deadline (2025/26).<br><strong>31 Jan 2027:</strong> online filing + balancing payment + 1st POA for 2026/27.<br><strong>31 Jul 2027:</strong> 2nd POA for 2026/27.<br>From April 2026 sole traders with gross income above £50,000 must comply with MTD for Income Tax.`)}
+      ${notesCard('Class 2 NI — 2026/27 rules', `Since April 2024 there is no <em>mandatory</em> Class 2 liability. <strong>Profits at or above the SPT (£${fmtInt(window.TAX.CLASS2_SPT)})</strong> receive an automatic HMRC credit — your NI record is protected with no cash payment. <strong>Profits below £${fmtInt(window.TAX.CLASS2_SPT)}</strong> may pay Class 2 <em>voluntarily</em> at £${window.TAX.CLASS2_RATE.toFixed(2)}/week (£${fmtInt(window.TAX.CLASS2_RATE*52)}/yr) to accumulate qualifying years for State Pension and contributory benefits. ${r.class2 > 0 ? 'This voluntary payment is <strong>included in the totals above</strong> — it is strongly recommended if building State Pension entitlement.' : 'Class 2 is credited automatically for your profit level — no cash payment required.'}`)}
+      ${notesCard('Key 2026/27 dates', `<strong>5 Oct 2026:</strong> register if newly self-employed.<br><strong>31 Oct 2026:</strong> paper-return deadline (2025/26).<br><strong>31 Jan 2027:</strong> online filing + balancing payment + 1st POA for 2026/27 (based on income tax + Class 4 only).<br><strong>31 Jul 2027:</strong> 2nd POA for 2026/27.<br>From April 2026 sole traders with gross income above £50,000 must comply with MTD for Income Tax.`)}
       ${actionsRow()}
     `;
   },

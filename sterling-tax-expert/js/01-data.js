@@ -57,20 +57,20 @@ window.TAX = {
   VAT_REG_THR: 90000,   // Registration threshold (set Apr 2024, held)
   VAT_DEREG: 88000,
 
-  // Student loan thresholds (annual)
+  // Student loan thresholds (annual) — confirmed by GOV.UK SL3 deduction tables 2026/27
   SL: {
-    1: { thr: 26065, rate: 0.09 },
-    2: { thr: 28470, rate: 0.09 },
-    4: { thr: 32745, rate: 0.09 },  // Scottish (Plan 4)
-    5: { thr: 25000, rate: 0.06 },  // Plan 5 (post-Aug 2023)
-    PG: { thr: 21000, rate: 0.06 }, // Postgrad
+    1:  { thr: 26900, rate: 0.09 },  // Plan 1 — confirmed (was £26,065 in 2025/26)
+    2:  { thr: 29385, rate: 0.09 },  // Plan 2 — confirmed (was £28,470 in 2025/26)
+    4:  { thr: 33795, rate: 0.09 },  // Plan 4 (Scottish) — confirmed (was £32,745 in 2025/26)
+    5:  { thr: 25000, rate: 0.06 },  // Plan 5 (post-Aug 2023) — confirmed frozen at £25,000
+    PG: { thr: 21000, rate: 0.06 },  // Postgrad — confirmed frozen at £21,000
   },
 
-  // National Minimum Wage (from 1 April 2026 — confirmed)
-  NLW_21: 12.71,        // 21+ (National Living Wage)
-  NMW_18_20: 10.50,     // 18–20
-  NMW_U18: 7.85,        // 16–17
-  NMW_APP: 7.85,        // Apprentice (1st year or under 19)
+  // National Minimum Wage (from 1 April 2026 — confirmed by SI 2026/357)
+  NLW_21: 12.71,        // 21+ (National Living Wage) — confirmed
+  NMW_18_20: 10.85,     // 18–20 — confirmed (was £10.50 in 2025/26)
+  NMW_U18: 8.00,        // 16–17 — confirmed (was £7.55 in 2025/26)
+  NMW_APP: 8.00,        // Apprentice (1st year or under 19) — confirmed (was £7.55 in 2025/26)
 
   // ── Statutory payments — 2026/27 (effective from 6 April 2026) ──
   // SSP reformed by the Employment Rights Act 2025:
@@ -165,7 +165,7 @@ window.RATES_HEADLINE = [
   { l:'Additional rate (45%)',r:'£125,141+',       s:'Above £125,140',              u:'2026/27' },
   { l:'Employee NI (main)',   r:'8%',              s:'£12,570–£50,270/yr',          u:'2026/27' },
   { l:'Employer NI',          r:'15%',             s:'Above £5,000/yr',             u:'2026/27' },
-  { l:'NLW (21+)',            r:'£12.71/hr',       s:'Projected — Apr 2026',        u:'2026/27' },
+  { l:'NLW (21+)',            r:'£12.71/hr',       s:'Confirmed — from 1 Apr 2026', u:'2026/27' },
   { l:'Corp tax (small)',     r:'19%',             s:'Profits up to £50,000',       u:'2026/27' },
   { l:'Corp tax (main)',      r:'25%',             s:'Profits above £250,000',      u:'2026/27' },
   { l:'VAT registration',     r:'£90,000',         s:'Annual turnover',             u:'2026/27' },
