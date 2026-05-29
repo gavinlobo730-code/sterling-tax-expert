@@ -880,17 +880,22 @@ function renderFooter(){
     <div class="f-main">
       <div>
         <div class="f-lw">
-          <svg width="30" height="30" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0"><rect width="40" height="40" rx="9" fill="#1B4274"/><path d="M14 12 Q22 11 26 16 Q28 19.5 24 22 L18 24 Q14 25.5 16 28.5 Q19 31.5 27 30" stroke="#FBFAF7" stroke-width="2.4" stroke-linecap="round" fill="none"/><rect x="8" y="33" width="24" height="1.6" rx="0.8" fill="#14B8A6"/></svg>
+          <!-- Concept A mark in footer: navy bg, S arc, indigo rule -->
+          <svg width="32" height="32" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0" aria-hidden="true">
+            <rect width="48" height="48" rx="11" fill="rgba(255,255,255,0.08)"/>
+            <path d="M15 15 Q24 12 29 18 Q32 22.5 27 26.5 L20 29 Q14.5 31.5 16.5 36.5 Q20 40.5 31 38.5" stroke="white" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+            <rect x="9" y="44" width="30" height="2" rx="1" fill="#6366F1"/>
+          </svg>
           <div class="f-ln">Sterling Tax Expert</div>
         </div>
         <p class="f-bd">Free HMRC-aligned calculators, the full UK statutory deadlines hub, and plain-English insights. Updated for the 2026/27 tax year.</p>
-        <div style="display:flex;align-items:center;gap:7px;background:rgba(20,184,166,.1);border:1px solid rgba(20,184,166,.25);border-radius:6px;padding:6px 11px;font-size:11px;color:#5EEAD4;width:fit-content">
-          <span style="width:6px;height:6px;border-radius:50%;background:#14B8A6"></span> Live for 2026/27 · refreshed 6 Apr 2026
+        <div style="display:flex;align-items:center;gap:7px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:6px;padding:6px 11px;font-size:11px;color:#a5b4fc;width:fit-content">
+          <span style="width:6px;height:6px;border-radius:50%;background:#6366F1;box-shadow:0 0 6px rgba(99,102,241,.6)"></span> Live for 2026/27 · refreshed 6 Apr 2026
         </div>
       </div>
       <div class="f-col"><h4>Free tools</h4>
         ${window.TOOLS.slice(0,6).map(t => `<a onclick="navigate('calc','${t.id}')">${t.title.replace(/Calculator|Checker/,'').trim()}</a>`).join('')}
-        <a onclick="navigate('tools')" style="color:var(--teal3)">All tools →</a>
+        <a onclick="navigate('tools')" style="color:#818CF8">All tools →</a>
       </div>
       <div class="f-col"><h4>Resources</h4>
         <a onclick="navigate('insights')">Insights</a>
@@ -906,9 +911,9 @@ function renderFooter(){
       </div>
     </div>
     <div class="f-bot">
-      <span class="f-bl">© 2026 Sterling Tax Expert · <a onclick="navigate('contact')" style="color:rgba(255,255,255,.5)">sterlingtaxexpert@gmail.com</a></span>
+      <span class="f-bl">© 2026 Sterling Tax Expert</span>
       <div class="f-bls">
-        <a>Privacy</a><a>Terms</a><a>Cookies</a>
+        <a onclick="navigate('contact')">Contact</a><a>Privacy</a><a>Terms</a>
       </div>
     </div>
     <div class="f-rule"></div>

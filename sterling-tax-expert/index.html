@@ -4,12 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
 <meta name="description" content="UK payroll, tax and compliance platform — 25 free HMRC-aligned calculators for the 2026/27 tax year, the full statutory deadlines hub with calendar exports, and plain-English insights.">
-<meta name="theme-color" content="#123458">
+<meta name="theme-color" content="#0B1E3D">
 <title>Sterling Tax Expert — UK Payroll, Tax &amp; Compliance Platform</title>
 
-<!-- Favicon / app icon (inline SVG — the Sterling mark) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%230B1E3D'/%3E%3Cpath d='M16 17 Q25 14 30 20 Q33 24 28 28 L21 30 Q16 32 18 37 Q22 41 32 39' stroke='white' stroke-width='2.8' stroke-linecap='round' fill='none'/%3E%3Crect x='9' y='43' width='30' height='2' rx='1' fill='%236366F1'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23123458'/%3E%3Cpath d='M14 12 Q22 11 26 16 Q28 19.5 24 22 L18 24 Q14 25.5 16 28.5 Q19 31.5 27 30' stroke='%23FBFAF7' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3Crect x='8' y='33' width='24' height='1.6' rx='0.8' fill='%2314B8A6'/%3E%3C/svg%3E">
+<!-- Favicon: Concept B node mark — three connected nodes, teal lines, S in primary node -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%230B1E3D'/%3E%3Cline x1='14' y1='20' x2='28' y2='36' stroke='%2314B8A6' stroke-width='1.5' opacity='0.85'/%3E%3Cline x1='14' y1='20' x2='34' y2='14' stroke='%2314B8A6' stroke-width='1.5' opacity='0.85'/%3E%3Cline x1='34' y1='14' x2='28' y2='36' stroke='%2314B8A6' stroke-width='1.5' opacity='0.85'/%3E%3Ccircle cx='14' cy='20' r='9' fill='%231B3461'/%3E%3Ccircle cx='34' cy='14' r='6' fill='%231B3461'/%3E%3Ccircle cx='28' cy='36' r='4.5' fill='%231B3461'/%3E%3Cpath d='M10 17 Q14 15 17 17.5 Q18 19.5 16 21.5 L12 22.5 Q10 23.5 11.5 25.5 Q13.5 27 18 25.5' stroke='white' stroke-width='1.6' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
+<!-- Apple touch icon: Concept B — same node mark, larger touch target -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230B1E3D'/%3E%3Cline x1='52' y1='74' x2='105' y2='136' stroke='%2314B8A6' stroke-width='5' opacity='0.85'/%3E%3Cline x1='52' y1='74' x2='128' y2='52' stroke='%2314B8A6' stroke-width='5' opacity='0.85'/%3E%3Cline x1='128' y1='52' x2='105' y2='136' stroke='%2314B8A6' stroke-width='5' opacity='0.85'/%3E%3Ccircle cx='52' cy='74' r='34' fill='%231B3461'/%3E%3Ccircle cx='128' cy='52' r='22' fill='%231B3461'/%3E%3Ccircle cx='105' cy='136' r='17' fill='%231B3461'/%3E%3Cpath d='M37 62 Q52 56 63 66 Q68 74 60 81 L44 85 Q37 88 41 96 Q49 103 67 97' stroke='white' stroke-width='6' stroke-linecap='round' fill='none'/%3E%3C/svg%3E">
 
 <!-- Fonts: Instrument Serif + Inter + JetBrains Mono -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,14 +36,25 @@
 <nav id="nav">
   <div class="nav-inner">
     <div class="logo" onclick="navigate('home')" aria-label="Sterling Tax Expert home">
+      <!-- Concept A: S arc mark with indigo underline rule -->
       <svg class="lm" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
-        <path d="M16 17 Q25 14 30 20 Q33 24 28 28 L21 30 Q16 32 18 37 Q22 41 32 39" stroke="white" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-        <rect x="9" y="43" width="30" height="2" rx="1" fill="#6366F1"/>
+        <!-- Subtle inner glow -->
+        <rect width="48" height="48" rx="11" fill="url(#navGrad)" opacity="0.3"/>
+        <defs>
+          <radialGradient id="navGrad" cx="30%" cy="20%" r="70%">
+            <stop offset="0%" stop-color="#6366F1" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#6366F1" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <!-- S letterform: fluid arc, variable stroke weight -->
+        <path d="M15 15 Q24 12 29 18 Q32 22.5 27 26.5 L20 29 Q14.5 31.5 16.5 36.5 Q20 40.5 31 38.5" stroke="white" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+        <!-- Indigo rule — the brand accent -->
+        <rect x="9" y="44" width="30" height="2" rx="1" fill="#6366F1"/>
       </svg>
       <div>
         <div class="ln">Sterling <span>Tax Expert</span></div>
-        <div class="ls">UK Payroll Intelligence</div>
+        <div class="ls">UK Tax Intelligence</div>
       </div>
     </div>
     <div class="nav-links">
@@ -66,13 +78,13 @@
 <div class="mob" id="mob">
   <a class="nl-home" onclick="navigate('home')">Home</a>
   <a class="nl-services" onclick="navigate('services')">Services</a>
-  <a class="nl-tools-link" onclick="navigate('tools')">⚡ Free tools</a>
+  <a class="nl-tools-link" onclick="navigate('tools')">Free tools</a>
   <a class="nl-deadlines" onclick="navigate('deadlines')">Deadlines</a>
   <a class="nl-insights" onclick="navigate('insights')">Insights</a>
   <a class="nl-about" onclick="navigate('about')">About</a>
   <a class="nl-contact" onclick="navigate('contact')">Contact</a>
   <div class="mob-cta">
-    <button class="btn btn-navy" onclick="navigate('contact')">✉ Contact us</button>
+    <button class="btn btn-indigo" style="width:100%;justify-content:center;padding:12px" onclick="navigate('contact')">Book free call</button>
   </div>
 </div>
 

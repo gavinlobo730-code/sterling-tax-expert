@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <!-- Sterling Tax Expert — Concept B Node Mark -->
+  <!-- Use for: LinkedIn profile, app icon, standalone brand mark -->
+  <!-- Background -->
+  <rect width="400" height="400" rx="88" fill="#0B1E3D"/>
+  <!-- Subtle radial glow top-right -->
+  <radialGradient id="glow" cx="65%" cy="25%" r="55%">
+    <stop offset="0%" stop-color="#6366F1" stop-opacity="0.18"/>
+    <stop offset="100%" stop-color="#6366F1" stop-opacity="0"/>
+  </radialGradient>
+  <rect width="400" height="400" rx="88" fill="url(#glow)"/>
+  <!-- Teal connecting lines (drawn first, behind nodes) -->
+  <line x1="116" y1="164" x2="234" y2="298" stroke="#14B8A6" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+  <line x1="116" y1="164" x2="284" y2="116" stroke="#14B8A6" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+  <line x1="284" y1="116" x2="234" y2="298" stroke="#14B8A6" stroke-width="6" stroke-linecap="round" opacity="0.85"/>
+  <!-- Primary node (large — contains S mark) -->
+  <circle cx="116" cy="164" r="74" fill="#1B3461"/>
+  <!-- Secondary node -->
+  <circle cx="284" cy="116" r="50" fill="#1B3461"/>
+  <!-- Tertiary node -->
+  <circle cx="234" cy="298" r="38" fill="#1B3461"/>
+  <!-- S letterform in primary node — fluid arc -->
+  <path d="M84 136 Q116 122 136 142 Q148 158 132 174 L100 184 Q82 192 90 210 Q106 226 142 214" stroke="white" stroke-width="12" stroke-linecap="round" fill="none"/>
+</svg>

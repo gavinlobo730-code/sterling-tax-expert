@@ -37,7 +37,7 @@
   --shadow-lg:0 12px 40px rgba(11,30,61,.12);
   --shadow-indigo:0 4px 20px rgba(99,102,241,.18);
   /* Gradients */
-  --grad-navy:linear-gradient(135deg,#0B1E3D 0%,#1B3461 60%,#0D9488 130%);
+  --grad-navy:linear-gradient(135deg,#0B1E3D 0%,#1B3461 60%,#4F46E5 130%);
   --grad-indigo:linear-gradient(135deg,#6366F1 0%,#4F46E5 100%);
   --grad-teal:linear-gradient(135deg,#14B8A6 0%,#0D9488 100%);
   /* Radius */
@@ -677,7 +677,7 @@ tr:hover td{background:var(--g50)}
 /* ── account widget (nav) ── */
 .acct-wrap{position:relative}
 .acct-chip{display:flex;align-items:center;gap:9px;padding:5px 10px 5px 5px;border:1px solid var(--br);border-radius:24px;cursor:pointer;transition:all .15s;background:var(--w)}
-.acct-chip:hover{border-color:var(--teal);background:var(--g25)}
+.acct-chip:hover{border-color:var(--indigo);background:var(--g25)}
 .acct-av{width:28px;height:28px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:10.5px;font-weight:700;flex-shrink:0}
 .acct-av-l{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:12.5px;font-weight:700}
 .acct-meta{display:flex;flex-direction:column;line-height:1.1}
@@ -693,8 +693,8 @@ tr:hover td{background:var(--g50)}
 /* ── pricing ── */
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 .pricing-card{background:var(--w);border:1px solid var(--br);border-radius:14px;padding:28px 24px;position:relative;transition:border-color .15s,transform .18s,box-shadow .15s}
-.pricing-card:hover{border-color:var(--teal);transform:translateY(-3px);box-shadow:var(--shadow)}
-.pricing-card.pc-premium{border-color:var(--teal);background:linear-gradient(180deg,var(--tealb) 0%,var(--w) 30%);box-shadow:var(--shadow)}
+.pricing-card:hover{border-color:var(--indigo);transform:translateY(-3px);box-shadow:var(--shadow-indigo)}
+.pricing-card.pc-premium{border-color:var(--indigo);background:linear-gradient(180deg,var(--indigol) 0%,var(--w) 30%);box-shadow:var(--shadow-indigo)}
 .pc-plan{font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:14px}
 .pc-price{display:flex;align-items:baseline;gap:6px;margin-bottom:8px}
 .pc-amt{font-family:var(--serif);font-size:42px;font-weight:700;color:var(--navy);letter-spacing:-1px}
