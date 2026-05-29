@@ -112,6 +112,45 @@ window.TAX = {
 
   // Holiday pay
   HOLIDAY_WEEKS: 5.6,    // statutory minimum (28 days for 5-day worker)
+
+  // ── NHS Pension 2015 CARE Scheme ──────────────────────────
+  // Contribution tiers: 6-tier structure effective 1 April 2024 (SI 2024/No.351).
+  // No 2026/27 SI uprating announced at time of publication — tiers and rates shown
+  // are 2024/25 confirmed figures pending any revaluation for 2026/27.
+  NHS_PENSION_TIERS: [
+    { to: 13259,    rate: 0.052 },
+    { to: 28854,    rate: 0.065 },
+    { to: 35155,    rate: 0.083 },
+    { to: 52778,    rate: 0.098 },
+    { to: 67668,    rate: 0.107 },
+    { to: Infinity, rate: 0.125 },
+  ],
+  // Employer contribution: 23.7% — confirmed 2024/25 (SI 2023/1007).
+  // No 2026/27 SI yet published; rate shown pending confirmation.
+  NHS_ER_CONTRIB: 0.237,
+  NHS_ACCRUAL_DENOM: 54,          // 1/54th CARE accrual
+  NHS_CPI_ASSUMPTION: 0.025,      // 2.5% illustrative revaluation (not guaranteed)
+  NHS_CPI_ABOVE: 0.015,           // CPI + 1.5% revaluation above CPI
+
+  // Annual Allowance (confirmed — unchanged since April 2023)
+  AA_STANDARD: 60000,
+  AA_THRESHOLD_INCOME: 200000,    // taper starts if threshold income > this
+  AA_ADJUSTED_INCOME: 260000,     // and adjusted income > this
+  AA_MINIMUM: 10000,              // floor for tapered AA
+  AA_TAPER_RATE: 0.5,             // £1 reduction per £2 of adjusted income above threshold
+  AA_DB_FACTOR: 16,               // pension input = (annual pension increase) × 16
+
+  // Scottish income tax 2026/27 — confirmed by Scottish Budget
+  SCOT_STARTER_LIMIT: 15397,   // 19% starter rate up to (above PA)
+  SCOT_BASIC_LIMIT:   27491,   // 20% basic rate up to
+  SCOT_INTER_LIMIT:   43662,   // 21% intermediate rate up to
+  SCOT_HR_LIMIT:     125140,   // 42% higher rate up to
+  // Top rate: 48% above £125,140
+  SCOT_STARTER: 0.19,
+  SCOT_BASIC:   0.20,
+  SCOT_INTER:   0.21,
+  SCOT_HR:      0.42,
+  SCOT_TOP:     0.48,
 };
 
 /* ── Tool registry ─────────────────────────────────────────
@@ -153,9 +192,12 @@ window.TOOLS = [
   { id:'sap',           cat:'Statutory',   icon:'🏡', title:'SAP Calculator',                         desc:'Statutory Adoption Pay — SMP structure for adoptive parents (39 weeks total).',                                       tags:['Adoption','39 weeks','AWE'],            badge:'tb-new', badgeText:'New',      color:'tc-green',  iconBg:'ti-green'  },
   { id:'shpp',          cat:'Statutory',   icon:'👪', title:'Shared Parental Pay Calculator',         desc:'Up to 37 weeks of shared parental pay divisible between parents at £194.32 or 90% AWE.',                             tags:['Shared parental','37 weeks','Split'],   badge:'tb-new', badgeText:'New',      color:'tc-purple', iconBg:'ti-purple' },
   { id:'marginal',      cat:'Tax',         icon:'📐', title:'Marginal Relief Calculator',             desc:'Standalone marginal-relief explorer for profits between £50,000 and £250,000 — the CT band.',                         tags:['MR fraction','£50k–£250k','26.5% eff'], badge:'tb-new', badgeText:'New',      color:'tc-purple', iconBg:'ti-purple' },
+
+  // Healthcare
+  { id:'nhs-payroll',   cat:'Healthcare',  icon:'🏥', title:'NHS Payroll & Pension Calculator',        desc:'Take-home pay, NHS pension contribution tier and annual allowance risk for NHS doctors, consultants, salaried GPs, nurses and AHPs — 2026/27.',  tags:['NHS pension','CARE scheme','Annual allowance'], badge:'tb-new', badgeText:'New', color:'tc-blue', iconBg:'ti-blue' },
 ];
 
-window.TOOL_CATS = ['All','Payroll','Statutory','Compliance','Tax'];
+window.TOOL_CATS = ['All','Payroll','Statutory','Compliance','Tax','Healthcare'];
 
 /* ── HMRC headline rates (for tools hub widget) ─────────── */
 window.RATES_HEADLINE = [
