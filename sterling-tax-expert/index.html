@@ -8,13 +8,13 @@
 <title>Sterling Tax Expert — UK Payroll, Tax &amp; Compliance Platform</title>
 
 <!-- Favicon / app icon (inline SVG — the Sterling mark) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23123458'/%3E%3Cpath d='M14 12 Q22 11 26 16 Q28 19.5 24 22 L18 24 Q14 25.5 16 28.5 Q19 31.5 27 30' stroke='%23FBFAF7' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3Crect x='8' y='33' width='24' height='1.6' rx='0.8' fill='%2314B8A6'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='11' fill='%230B1E3D'/%3E%3Cpath d='M16 17 Q25 14 30 20 Q33 24 28 28 L21 30 Q16 32 18 37 Q22 41 32 39' stroke='white' stroke-width='2.8' stroke-linecap='round' fill='none'/%3E%3Crect x='9' y='43' width='30' height='2' rx='1' fill='%236366F1'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23123458'/%3E%3Cpath d='M14 12 Q22 11 26 16 Q28 19.5 24 22 L18 24 Q14 25.5 16 28.5 Q19 31.5 27 30' stroke='%23FBFAF7' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3Crect x='8' y='33' width='24' height='1.6' rx='0.8' fill='%2314B8A6'/%3E%3C/svg%3E">
 
-<!-- Fonts: Fraunces (serif display) + Inter (sans) -->
+<!-- Fonts: Instrument Serif + Inter + JetBrains Mono -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 
 <!-- Stylesheet -->
 <link rel="stylesheet" href="css/styles.css">
@@ -35,10 +35,10 @@
 <nav id="nav">
   <div class="nav-inner">
     <div class="logo" onclick="navigate('home')" aria-label="Sterling Tax Expert home">
-      <svg class="lm" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect width="40" height="40" rx="9" fill="#123458"></rect>
-        <path d="M14 12 Q22 11 26 16 Q28 19.5 24 22 L18 24 Q14 25.5 16 28.5 Q19 31.5 27 30" stroke="#FBFAF7" stroke-width="2.4" stroke-linecap="round" fill="none"></path>
-        <rect x="8" y="33" width="24" height="1.6" rx="0.8" fill="#14B8A6"></rect>
+      <svg class="lm" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
+        <path d="M16 17 Q25 14 30 20 Q33 24 28 28 L21 30 Q16 32 18 37 Q22 41 32 39" stroke="white" stroke-width="2.8" stroke-linecap="round" fill="none"/>
+        <rect x="9" y="43" width="30" height="2" rx="1" fill="#6366F1"/>
       </svg>
       <div>
         <div class="ln">Sterling <span>Tax Expert</span></div>
@@ -46,17 +46,17 @@
       </div>
     </div>
     <div class="nav-links">
-      <a class="nl nl-home" onclick="navigate('home')">Home</a>
-      <a class="nl nl-services" onclick="navigate('services')">Services</a>
-      <a class="nl nl-tools-link nl-tools" onclick="navigate('tools')">⚡ Free tools</a>
-      <a class="nl nl-deadlines" onclick="navigate('deadlines')">Deadlines</a>
-      <a class="nl nl-insights" onclick="navigate('insights')">Insights</a>
-      <a class="nl nl-about" onclick="navigate('about')">About</a>
-      <a class="nl nl-contact" onclick="navigate('contact')">Contact</a>
+      <a class="nl nl-home" data-page="home" onclick="navigate('home')">Home</a>
+      <a class="nl nl-services" data-page="services" onclick="navigate('services')">Services</a>
+      <a class="nl nl-tools-link nl-tools" data-page="tools" onclick="navigate('tools')">Free tools</a>
+      <a class="nl nl-deadlines" data-page="deadlines" onclick="navigate('deadlines')">Deadlines</a>
+      <a class="nl nl-insights" data-page="insights" onclick="navigate('insights')">Insights</a>
+      <a class="nl nl-about" data-page="about" onclick="navigate('about')">About</a>
+      <a class="nl nl-contact" data-page="contact" onclick="navigate('contact')">Contact</a>
     </div>
     <div class="nr">
-      <span class="ntel">✉ sterlingtaxexpert@gmail.com</span>
-      <button class="btn btn-navy btn-sm" onclick="navigate('contact')">Book free call</button>
+      <button class="btn btn-ghost btn-sm" onclick="navigate('tools')">Free tools</button>
+      <button class="btn btn-indigo btn-sm" onclick="navigate('contact')">Book free call</button>
       <button class="ham" id="ham" onclick="toggleMobileMenu()" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
@@ -81,19 +81,17 @@
 ══════════════════════════════ -->
 <div class="page active" id="page-home">
   <div class="crumbs" style="display:none"></div>
-  <div class="hero hero-has-video" id="hero">
-    <video class="hero-video" id="hero-video" autoplay muted loop playsinline preload="none" aria-hidden="true"></video>
-    <div class="hero-video-overlay"></div>
-    <div class="hero-grid-bg"></div><div class="hero-radial"></div>
+  <div class="hero" id="hero">
+    <div class="hero-grid-bg"></div><div class="hero-radial"></div><div class="hero-radial-r"></div>
     <div class="hero-inner">
       <div>
-        <div class="hero-kicker">⚡ Updated for 2026/27 UK tax rules · Refreshed 6 Apr 2026</div>
-        <h1>Your UK payroll &amp; tax<br><em>command centre</em></h1>
-        <p class="hero-sub">25 free HMRC-aligned calculators, every statutory deadline, and the latest HMRC updates — in one place. No signup, no fluff. Built for accountants, bookkeepers and business owners.</p>
+        <div class="hero-kicker">Updated for 2026/27 · HMRC-aligned</div>
+        <h1>Tax intelligence<br>for UK <em>business</em></h1>
+        <p class="hero-sub">25 free HMRC-aligned calculators, every statutory deadline, and authoritative UK tax insights — in one place. No signup required.</p>
         <div class="hero-acts">
-          <button class="btn btn-blue" style="padding:11px 22px;font-size:13.5px" onclick="navigate('tools')">⚡ Browse free tools</button>
-          <button class="btn btn-navy" style="padding:11px 22px;font-size:13.5px" onclick="navigate('deadlines')">View deadlines hub</button>
-          <button class="btn btn-ghost" style="padding:11px 18px;font-size:13.5px" onclick="navigate('insights')">Read insights</button>
+          <button class="btn btn-indigo" style="padding:11px 22px;font-size:13.5px" onclick="navigate('tools')">Browse free tools</button>
+          <button class="btn btn-white" style="padding:11px 22px;font-size:13.5px" onclick="navigate('deadlines')">View deadlines hub</button>
+          <button class="btn btn-ghost-light" style="padding:11px 18px;font-size:13.5px" onclick="navigate('insights')">Read insights</button>
         </div>
         <div class="hero-proof">
           <div class="hp"><div class="hpd">✓</div>All 2026/27 thresholds applied</div>
@@ -102,22 +100,27 @@
           <div class="hp"><div class="hpd">✓</div>Mobile-first, print-ready</div>
         </div>
       </div>
-      <div class="dpanel">
-        <div class="dp-chrome">
-          <div class="dp-dots"><div class="dd dd1"></div><div class="dd dd2"></div><div class="dd dd3"></div></div>
-          <span class="dp-lbl">command.centre / 2026-27</span>
-          <span class="dp-live"><span class="dp-ldot"></span>live</span>
-        </div>
-        <div class="dp-body">
-          <div class="dp-mets">
-            <div class="dp-m"><div class="dp-mn"><em>15</em>%</div><div class="dp-ml">Employer NI rate</div></div>
-            <div class="dp-m"><div class="dp-mn">£<em>5</em>k</div><div class="dp-ml">NI secondary threshold</div></div>
-            <div class="dp-m"><div class="dp-mn">£<em>10.5</em>k</div><div class="dp-ml">Employment Allowance</div></div>
+      <div class="hero-canvas-wrap">
+        <canvas id="hero-canvas" class="hero-canvas" aria-hidden="true"></canvas>
+        <div class="hero-canvas-overlay"></div>
+        <!-- Static glass panel: shows when canvas is not active / on mobile -->
+        <div class="dpanel">
+          <div class="dp-chrome">
+            <div class="dp-dots"><div class="dd dd1"></div><div class="dd dd2"></div><div class="dd dd3"></div></div>
+            <span class="dp-lbl">tax.intelligence / 2026-27</span>
+            <span class="dp-live"><span class="dp-ldot"></span>live</span>
           </div>
-          <div class="dp-tasks">
-            <div class="dp-task"><div class="dp-ds" style="background:var(--green)"></div><div class="dp-tt">P60s — issue to employees</div><span class="dp-tag dtg">31 May</span></div>
-            <div class="dp-task"><div class="dp-ds" style="background:var(--goldd)"></div><div class="dp-tt">P11D filing</div><span class="dp-tag dta">6 Jul</span></div>
-            <div class="dp-task"><div class="dp-ds" style="background:var(--teal)"></div><div class="dp-tt">VAT return Q1 (Mar y/e)</div><span class="dp-tag dtb">7 May</span></div>
+          <div class="dp-body">
+            <div class="dp-mets">
+              <div class="dp-m"><div class="dp-mn"><em>15</em>%</div><div class="dp-ml">Employer NI</div></div>
+              <div class="dp-m"><div class="dp-mn">£<em>10.5</em>k</div><div class="dp-ml">Employment Allow.</div></div>
+              <div class="dp-m"><div class="dp-mn">£<em>12.71</em></div><div class="dp-ml">Nat. Living Wage</div></div>
+            </div>
+            <div class="dp-tasks">
+              <div class="dp-task"><div class="dp-ds" style="background:#4ade80"></div><div class="dp-tt">P60s — issue to employees</div><span class="dp-tag dtg">31 May</span></div>
+              <div class="dp-task"><div class="dp-ds" style="background:#fbbf24"></div><div class="dp-tt">P11D filing deadline</div><span class="dp-tag dta">6 Jul</span></div>
+              <div class="dp-task"><div class="dp-ds" style="background:#a5b4fc"></div><div class="dp-tt">VAT return Q1 (Mar y/e)</div><span class="dp-tag dtb">7 May</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -144,7 +147,7 @@
     <div class="sc"><div class="sc-n"><em>25</em></div><div class="sc-l">Free calculators</div><div class="sc-d">Live now</div></div>
     <div class="sc"><div class="sc-n"><em>20</em></div><div class="sc-l">Statutory deadlines tracked</div><div class="sc-d">2026/27 calendar</div></div>
     <div class="sc"><div class="sc-n">2026/<em>27</em></div><div class="sc-l">UK tax year covered</div><div class="sc-d">All formulae current</div></div>
-    <div class="sc"><div class="sc-n"><em>£</em>0</div><div class="sc-l">Cost to use every tool</div><div class="sc-d">No signup, no caps</div></div>
+    <div class="sc"><div class="sc-n">Free</div><div class="sc-l">All 25 calculators</div><div class="sc-d">No account required</div></div>
   </div>
 
   <!-- HMRC feed + deadlines -->
@@ -262,6 +265,7 @@
 <script src="js/07-admin-cms.js"></script>
 <script src="js/07b-admin-tax-config.js"></script>
 <script src="js/08-pages.js"></script>
+<script src="js/09-hero-anim.js"></script>
 
 <!-- ═══ Boot: footer/CTA, EmailJS init, hero video, reveal motion ═══ -->
 <script>
@@ -279,19 +283,6 @@
         window.emailjs.init({ publicKey: cfg.emailjs.publicKey });
       }
     } catch (e) { console.warn('EmailJS init skipped:', e); }
-
-    // Hero video: lazy-load + fade in. Respects reduced-motion (CSS hides it).
-    try {
-      var cfg2 = window.STERLING_CONFIG || {};
-      var v = document.getElementById('hero-video');
-      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (v && cfg2.heroVideo && !reduce) {
-        v.src = cfg2.heroVideo;
-        v.addEventListener('loadeddata', function () { v.classList.add('ready'); });
-        var p = v.play(); if (p && p.catch) p.catch(function(){});
-      }
-      // If no video configured, the premium gradient stands in — nothing to do.
-    } catch (e) { /* gradient fallback */ }
 
     // Reveal-on-scroll for cards/sections
     try {

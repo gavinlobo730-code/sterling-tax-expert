@@ -210,7 +210,10 @@ function mountTools(){
           <button class="tcat-btn ${c===CURRENT_TOOL_CAT?'on':''}" onclick="setToolCat('${c}')">${c}</button>
         `).join('')}
       </div>
-      <div class="tools-grid" id="all-tools-grid"></div>
+      <div class="tools-search-wrap">
+        <input type="text" id="tools-search" placeholder="Search tools…" oninput="filterTools(this.value)" class="tools-search-input">
+      </div>
+      <div class="tools-grid" id="tools-grid"></div>
     </div></div>
     ${renderCTABand()}
     ${renderFooter()}
@@ -224,10 +227,18 @@ function setToolCat(c){
   renderToolsGrid();
 }
 function renderToolsGrid(){
-  const grid = document.getElementById('all-tools-grid');
+  const grid = document.getElementById('tools-grid');
   if (!grid) return;
   const items = CURRENT_TOOL_CAT === 'All' ? window.TOOLS : window.TOOLS.filter(t => t.cat === CURRENT_TOOL_CAT);
   grid.innerHTML = items.map(t => toolCardHTML(t)).join('');
+}
+function filterTools(query) {
+  var q = (query || '').toLowerCase().trim();
+  var cards = document.querySelectorAll('#tools-grid .tool-card');
+  cards.forEach(function(card) {
+    var text = card.textContent.toLowerCase();
+    card.style.display = (!q || text.indexOf(q) !== -1) ? '' : 'none';
+  });
 }
 
 // ─────────────────────────────────────────────────────────
