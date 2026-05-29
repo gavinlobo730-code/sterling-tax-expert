@@ -493,10 +493,10 @@ function ed(cmd, val = null){
   }
 }
 function edInsH2(){
-  ed('insertHTML', '<h2 style="font-family:Georgia,serif;font-size:20px;font-weight:700;color:var(--navy);margin:18px 0 9px">Section heading</h2><p><br></p>');
+  ed('insertHTML', '<h2 style="font-family:var(--sans);font-size:20px;font-weight:700;color:var(--navy);margin:18px 0 9px">Section heading</h2><p><br></p>');
 }
 function edInsH3(){
-  ed('insertHTML', '<h3 style="font-family:Georgia,serif;font-size:16px;font-weight:700;color:var(--navy);margin:14px 0 8px">Sub-heading</h3><p><br></p>');
+  ed('insertHTML', '<h3 style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--navy);margin:14px 0 8px">Sub-heading</h3><p><br></p>');
 }
 function edInsCallout(){
   ed('insertHTML', '<div class="callout" style="background:var(--bluel);border-left:3px solid var(--blue2);border-radius:0 8px 8px 0;padding:14px 18px;margin:18px 0;font-size:14px;color:var(--t2);line-height:1.7">💡 <strong>Callout:</strong> Replace this with your callout text.</div><p><br></p>');

@@ -244,7 +244,7 @@ function mountServices(){
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
         <div class="eyebrow ey-blue">Services</div>
-        <h1 style="font-family:var(--serif);font-size:34px;font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:11px">Eight pillars of UK tax expertise</h1>
+        <h1 style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Eight pillars of UK tax expertise</h1>
         <p style="font-size:14.5px;color:var(--t2);max-width:560px;line-height:1.75">Full-service accounting for limited companies, sole traders and partnerships. Every engagement is fixed-fee, with a named senior accountant assigned from day one.</p>
       </div>
     </div>
@@ -253,7 +253,7 @@ function mountServices(){
         ${(window.SVCS || []).map(s => `
           <div style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:24px;transition:border-color .15s,box-shadow .15s,transform .15s;cursor:pointer" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='var(--shadow)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'" onclick="navigate('contact')">
             <div style="width:42px;height:42px;background:var(--bluel);border-radius:10px;display:grid;place-items:center;font-size:19px;margin-bottom:14px">${s.icon}</div>
-            <div style="font-family:var(--serif);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px">${s.t}</div>
+            <div style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px">${s.t}</div>
             <div style="font-size:12.5px;color:var(--t3);line-height:1.65;margin-bottom:14px">${s.d}</div>
             <div style="display:flex;flex-wrap:wrap;gap:5px">${s.tags.map(tag => `<span class="ttag">${tag}</span>`).join('')}</div>
           </div>
@@ -370,7 +370,7 @@ function mountInsights(){
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:42px 28px 32px">
         <div class="eyebrow ey-blue">Insights</div>
-        <h1 style="font-family:var(--serif);font-size:32px;font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:14px;text-wrap:balance">UK payroll, tax &amp; compliance — explained plainly</h1>
+        <h1 style="font-family:var(--sans);font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-1px;margin-bottom:14px;text-wrap:balance">UK payroll, tax &amp; compliance — explained plainly</h1>
         <div class="blog-toolbar">
           <div class="blog-search-wrap">
             <span style="color:var(--t3)">🔍</span>
@@ -521,7 +521,7 @@ function mountDeadlines(){
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:42px 28px 28px">
         <div class="eyebrow ey-blue">Compliance calendar</div>
-        <h1 style="font-family:var(--serif);font-size:32px;font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:11px">UK tax &amp; payroll deadlines hub</h1>
+        <h1 style="font-family:var(--sans);font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-1px;margin-bottom:11px">UK tax &amp; payroll deadlines hub</h1>
         <p style="font-size:14px;color:var(--t2);max-width:600px;line-height:1.75">All HMRC and statutory deadlines for the 2026/27 tax year. Filter by type, switch between list and calendar view, and export reminders straight to your calendar — Google, Outlook, Apple or any app that reads .ics.</p>
         <div style="display:flex;gap:8px;margin-top:18px;flex-wrap:wrap">
           <button class="btn btn-navy btn-sm" onclick="downloadIcs()">⬇ Download all (.ics)</button>
@@ -922,14 +922,14 @@ function mountContact(){
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
         <div class="eyebrow ey-blue">Get in touch</div>
-        <h1 style="font-family:var(--serif);font-size:34px;font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:11px">Book your free consultation</h1>
+        <h1 style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Book your free consultation</h1>
         <p style="font-size:14px;color:var(--t2);max-width:520px;line-height:1.8">A free, no-obligation 30-minute call with a senior UK tax expert. We'll assess your situation and recommend the right approach.</p>
       </div>
     </div>
     <div class="sec"><div class="sec-inner">
       <div style="display:grid;grid-template-columns:1fr 340px;gap:36px;align-items:start" class="contact-grid">
         <div style="background:var(--w);border:1px solid var(--br);border-radius:13px;padding:28px">
-          <div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px">Your details</div>
+          <div style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px">Your details</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
             <div class="fg"><div class="fl">First name *</div><input class="fi" id="cf-fn" type="text" placeholder="Sarah"></div>
             <div class="fg"><div class="fl">Last name *</div><input class="fi" id="cf-ln" type="text" placeholder="Mitchell"></div>
@@ -951,7 +951,7 @@ function mountContact(){
         <aside>
           <div style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:22px;margin-bottom:14px">
             <div class="eyebrow ey-blue">Quick contact</div>
-            <div style="font-family:var(--serif);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px">Direct contact</div>
+            <div style="font-family:var(--sans);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px">Direct contact</div>
             <div style="font-size:12.5px;color:var(--t2);line-height:1.85">
               <div style="margin-bottom:10px"><strong>✉</strong> <a href="mailto:sterlingtaxexpert@gmail.com" style="color:var(--blue2)">sterlingtaxexpert@gmail.com</a></div>
               <div style="margin-bottom:10px"><strong>💬</strong> Replies within 48 hours, weekdays</div>

@@ -44,7 +44,7 @@
       <div style="background:var(--g50);border-bottom:1px solid var(--br)">
         <div style="max-width:1280px;margin:0 auto;padding:42px 28px 32px">
           <div class="eyebrow ey-blue">Insights</div>
-          <h1 style="font-family:var(--serif);font-size:32px;font-weight:700;color:var(--navy);letter-spacing:-.5px;margin-bottom:14px;text-wrap:balance">UK payroll, tax &amp; compliance — explained plainly</h1>
+          <h1 style="font-family:var(--sans);font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-1px;margin-bottom:14px;text-wrap:balance">UK payroll, tax &amp; compliance — explained plainly</h1>
           <div class="cat-pills" id="insights-cat-pills">
             <button class="tcat-btn on" onclick="insightsSetCat('')">All</button>
           </div>
@@ -253,7 +253,7 @@
         <div class="crumbs"></div>
         <div class="sec"><div class="sec-inner" style="text-align:center;padding:64px 0">
           <div style="font-size:48px;margin-bottom:16px">📄</div>
-          <h1 style="font-family:var(--serif);font-size:26px;font-weight:700;color:var(--navy);margin-bottom:12px">Article not found</h1>
+          <h1 style="font-family:var(--sans);font-size:26px;font-weight:800;color:var(--navy);margin-bottom:12px">Article not found</h1>
           <p style="color:var(--t3);font-size:14px;margin-bottom:24px">This article may have been moved or removed.</p>
           <button class="btn btn-navy" onclick="navigate('insights')">Browse all articles</button>
         </div></div>
