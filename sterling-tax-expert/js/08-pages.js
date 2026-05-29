@@ -880,11 +880,15 @@ function renderFooter(){
     <div class="f-main">
       <div>
         <div class="f-lw">
-          <!-- Concept A mark in footer: navy bg, S arc, indigo rule -->
+          <!-- The Pillar mark in footer -->
           <svg width="32" height="32" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0" aria-hidden="true">
             <rect width="48" height="48" rx="11" fill="rgba(255,255,255,0.08)"/>
-            <path d="M15 15 Q24 12 29 18 Q32 22.5 27 26.5 L20 29 Q14.5 31.5 16.5 36.5 Q20 40.5 31 38.5" stroke="white" stroke-width="2.8" stroke-linecap="round" fill="none"/>
-            <rect x="9" y="44" width="30" height="2" rx="1" fill="#6366F1"/>
+            <rect x="5" y="7" width="38" height="3.5" rx="1.5" fill="white"/>
+            <rect x="5" y="10.5" width="38" height="1.5" rx="0.75" fill="#818CF8"/>
+            <rect x="8" y="14" width="7" height="22" rx="1.5" fill="white"/>
+            <rect x="20.5" y="14" width="7" height="22" rx="1.5" fill="white"/>
+            <rect x="33" y="14" width="7" height="22" rx="1.5" fill="white"/>
+            <rect x="5" y="37" width="38" height="3.5" rx="1.5" fill="white"/>
           </svg>
           <div class="f-ln">Sterling Tax Expert</div>
         </div>
