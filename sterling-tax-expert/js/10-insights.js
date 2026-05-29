@@ -163,9 +163,26 @@
       // Update <title> and meta for SEO
       document.title = (a.meta_title || a.title) + ' — Sterling Tax Expert';
       setMeta('description', a.meta_desc || a.excerpt || '');
+
+      // Open Graph
+      setMeta('og:type',        'article');
+      setMeta('og:url',         'https://sterling-tax.co.uk/insights/' + a.slug);
       setMeta('og:title',       a.meta_title || a.title);
       setMeta('og:description', a.meta_desc  || a.excerpt || '');
-      setMeta('og:type', 'article');
+      if (a.featured_image) {
+        setMeta('og:image',        'https://sterling-tax.co.uk/media/' + a.featured_image);
+        setMeta('og:image:width',  '1200');
+        setMeta('og:image:height', '630');
+      }
+
+      // Twitter Cards
+      setMeta('twitter:card',        a.featured_image ? 'summary_large_image' : 'summary');
+      setMeta('twitter:title',       a.meta_title || a.title);
+      setMeta('twitter:description', a.meta_desc  || a.excerpt || '');
+      if (a.featured_image) {
+        setMeta('twitter:image', 'https://sterling-tax.co.uk/media/' + a.featured_image);
+      }
+
       setCanonical('https://sterling-tax.co.uk/insights/' + a.slug);
 
       // Structured data (Article schema)
@@ -175,6 +192,9 @@
         headline: a.title,
         description: a.excerpt || '',
         datePublished: a.published_at ? new Date(a.published_at * 1000).toISOString() : '',
+        dateModified:  a.updated_at   ? new Date(a.updated_at   * 1000).toISOString()
+                     : a.published_at ? new Date(a.published_at  * 1000).toISOString() : '',
+        ...(a.featured_image ? { image: 'https://sterling-tax.co.uk/media/' + a.featured_image } : {}),
         publisher: {
           '@type': 'Organization',
           name: 'Sterling Tax Expert',

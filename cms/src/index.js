@@ -72,6 +72,18 @@ export default {
           'Content-Type':  'text/html; charset=utf-8',
           'X-Robots-Tag':  'noindex, nofollow',
           'X-Frame-Options': 'DENY',
+          'Content-Security-Policy': [
+            "default-src 'self'",
+            "script-src 'self' 'unsafe-inline'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: blob: https://sterling-tax.co.uk",
+            "connect-src 'self' https://sterling-tax.co.uk",
+            "font-src 'self'",
+            "object-src 'none'",
+            "base-uri 'self'",
+            "form-action 'self'",
+            "frame-ancestors 'none'",
+          ].join('; '),
         },
       });
     }
