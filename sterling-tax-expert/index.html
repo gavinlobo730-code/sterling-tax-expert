@@ -211,53 +211,56 @@
 
     // Scroll-reveal animation system
     try {
-      var TA_SEL = '.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale,.ds-reveal,.hp-anim,.px-anim,.reveal,.tool-card,.bc,.dl-c,.kpi,.about-audience-card,.about-service-card,.tcard,.why-card,.hsvc,.tc,.pricing-card';
+      var TA_SEL = '.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale';
       var _taScheduled = false;
 
-      function _revealVisible() {
-        document.querySelectorAll(TA_SEL).forEach(function(el) {
-          if (el.classList.contains('ta-in') || el.classList.contains('ds-in')) return;
-          var rect = el.getBoundingClientRect();
-          if (rect.top < window.innerHeight - 40 && rect.bottom > 0) {
-            // Double rAF ensures browser paints opacity:0 before we add ta-in
-            requestAnimationFrame(function() {
-              requestAnimationFrame(function() {
-                el.classList.add('ta-in','ds-in','hp-in','px-in','in');
-              });
-            });
-          }
+      function initReveal() {
+        setTimeout(function() {
+          var vh = window.innerHeight;
+          document.querySelectorAll(TA_SEL).forEach(function(el) {
+            if (el.hasAttribute('data-ta-ready')) return;
+            el.setAttribute('data-ta-ready', '1');
+            var rect = el.getBoundingClientRect();
+            if (rect.top < vh - 20) {
+              // Already visible — show immediately, no animation
+              el.classList.add('ta-in');
+            }
+            // Below fold — it will animate when scrolled into view
+          });
+        }, 80);
+      }
+
+      function _onScroll() {
+        if (_taScheduled) return;
+        _taScheduled = true;
+        requestAnimationFrame(function() {
+          _taScheduled = false;
+          var vh = window.innerHeight;
+          document.querySelectorAll(TA_SEL + ':not(.ta-in)').forEach(function(el) {
+            var rect = el.getBoundingClientRect();
+            if (rect.top < vh - 60) {
+              el.classList.add('ta-in');
+            }
+          });
         });
       }
 
-      function initReveal() {
-        // Small delay so injected HTML is in the DOM
-        setTimeout(function() {
-          _revealVisible();
-        }, 60);
-      }
-
       window.initReveal = initReveal;
+      window.addEventListener('scroll', _onScroll, { passive: true });
 
-      window.addEventListener('scroll', function() {
-        if (!_taScheduled) {
-          _taScheduled = true;
-          requestAnimationFrame(function() {
-            _revealVisible();
-            _taScheduled = false;
-          });
-        }
-      }, { passive: true });
-
-      // Run on load
       initReveal();
 
-      // Re-run after every navigation
       var _origNavigate = window.navigate;
       if (typeof _origNavigate === 'function') {
         window.navigate = function() {
           _origNavigate.apply(this, arguments);
-          setTimeout(initReveal, 80);
-          setTimeout(initReveal, 350);
+          // Reset so new page elements get re-evaluated
+          document.querySelectorAll('[data-ta-ready]').forEach(function(el) {
+            el.removeAttribute('data-ta-ready');
+            el.classList.remove('ta-in');
+          });
+          setTimeout(initReveal, 100);
+          setTimeout(initReveal, 400);
         };
       }
     } catch(e) { /* no-op */ }
