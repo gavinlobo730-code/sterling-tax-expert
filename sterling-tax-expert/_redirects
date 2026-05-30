@@ -6,11 +6,6 @@
 #
 # All other paths fall through to the SPA root so hash-based routes work.
 
-/insights/:slug       /index.html          200
-/insights             /index.html          200
-
-# ── Temporary hero variant previews (delete after decision) ──
-/hero-a               /hero-variant-a.html 200
-/hero-b               /hero-variant-b.html 200
-
-/*                    /index.html          200
+/insights/:slug   /index.html   200
+/insights         /index.html   200
+/*                /index.html   200
