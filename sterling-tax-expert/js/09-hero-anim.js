@@ -17,15 +17,15 @@
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
       pts = [];
-      var count = Math.min(100, Math.floor(W * H / 11000));
+      var count = Math.min(110, Math.floor(W * H / 9000));
       for (var i = 0; i < count; i++) {
         pts.push({
           x:    Math.random() * W,
           y:    Math.random() * H,
           vx:   (Math.random() - 0.5) * 0.22,
           vy:   (Math.random() - 0.5) * 0.14,
-          r:    0.6 + Math.random() * 1.2,
-          a:    0.06 + Math.random() * 0.18,
+          r:    1.0 + Math.random() * 1.8,
+          a:    0.35 + Math.random() * 0.45,
           gold: Math.random() < 0.3
         });
       }
@@ -58,7 +58,7 @@
           var dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
           var dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < connDist) {
-            var alpha = (1 - dist / connDist) * 0.07;
+            var alpha = (1 - dist / connDist) * 0.22;
             ctx.beginPath();
             ctx.moveTo(pts[i].x, pts[i].y);
             ctx.lineTo(pts[j].x, pts[j].y);
