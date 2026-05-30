@@ -172,11 +172,12 @@
 <!-- ═══ Boot: footer/CTA, EmailJS init, hero video, reveal motion ═══ -->
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Home CTA + footer (rendered by JS so they're reused everywhere)
-    var ctaEl = document.getElementById('home-cta');
-    var ftEl  = document.getElementById('home-footer');
-    if (ctaEl && typeof renderCTABand === 'function') ctaEl.innerHTML = renderCTABand();
-    if (ftEl  && typeof renderFooter  === 'function') ftEl.innerHTML  = renderFooter();
+    // Mount premium home sections (about, principles, showcase, blog)
+    if (typeof mountHome === 'function') mountHome();
+
+    // Footer (rendered by JS so it's reused everywhere)
+    var ftEl = document.getElementById('home-footer');
+    if (ftEl && typeof renderFooter === 'function') ftEl.innerHTML = renderFooter();
 
     // EmailJS init (only if a real public key is configured)
     try {

@@ -68,19 +68,19 @@ function mountHome(){
           <h2 class="pm-principles-h">The standards we hold ourselves to.</h2>
         </div>
         <div class="pm-principles-grid">
-          <div class="pm-prin-card reveal">
+          <div class="pm-prin-card">
             <div class="pm-prin-num">01</div>
             <div class="pm-prin-title">Accuracy First</div>
             <div class="pm-prin-rule"></div>
             <div class="pm-prin-body">Every calculation is built with precision and aligned with current UK tax and payroll requirements. No rounding shortcuts, no approximation.</div>
           </div>
-          <div class="pm-prin-card reveal">
+          <div class="pm-prin-card">
             <div class="pm-prin-num">02</div>
             <div class="pm-prin-title">Professional by Design</div>
             <div class="pm-prin-rule"></div>
             <div class="pm-prin-body">Designed to provide a clear, efficient and reliable experience for professionals and individuals alike &mdash; without unnecessary complexity.</div>
           </div>
-          <div class="pm-prin-card reveal">
+          <div class="pm-prin-card">
             <div class="pm-prin-num">03</div>
             <div class="pm-prin-title">Always Evolving</div>
             <div class="pm-prin-rule"></div>
@@ -178,15 +178,6 @@ function mountHome(){
     `;
   }
 
-  // Reveal-on-scroll for principle cards
-  try {
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-      }, { threshold: 0.07 });
-      document.querySelectorAll('.pm-prin-card').forEach(el => { el.classList.add('reveal'); io.observe(el); });
-    }
-  } catch(e) {}
 }
 function daysUntil(dateStr){
   const today = new Date(); today.setHours(0,0,0,0);
