@@ -148,10 +148,9 @@ function mountHome(){
   if (why) {
     const reasons = [
       { h: 'Personalised Service',         b: 'We take the time to understand your specific circumstances — your structure, your goals, your obligations — before offering any advice. You are not a case number.' },
-      { h: 'Responsive Support',           b: 'When you have a question, you get an answer promptly. We understand that tax and payroll decisions at business level are often time-critical.' },
-      { h: 'Practical, Actionable Advice', b: 'Straightforward guidance you can act on — whether that is a routine filing question or a complex decision around profit extraction, R&D relief or group restructuring.' },
-      { h: 'Compliance Confidence',        b: 'We stay current with every HMRC update, legislative change and deadline — from routine returns to complex multi-entity obligations. Your exposure is managed.' },
-      { h: 'Long-term Relationships',      b: 'We grow with our clients. Whether you are just starting out or running an established business, the same adviser stays with you — building genuine knowledge of your affairs year after year.' },
+      { h: 'Responsive &amp; Reliable',        b: 'When you have a question, you get an answer promptly. Tax and payroll decisions are often time-critical — we treat them accordingly.' },
+      { h: 'Compliance Confidence',        b: 'We stay current with every HMRC update and legislative change — from routine returns to complex multi-entity obligations. Your exposure is managed, year-round.' },
+      { h: 'Long-term Relationships',      b: 'The same adviser stays with you as your business evolves — building genuine, deep knowledge of your affairs rather than starting from scratch each year.' },
     ];
     why.innerHTML = `
       <section class="hp-why">
@@ -210,8 +209,8 @@ function mountHome(){
       <div class="hp-inner hp-cta-inner">
         <h2 class="hp-cta-h hp-anim">Let&rsquo;s Discuss Your Tax and<br>Payroll Requirements</h2>
         <p class="hp-cta-p hp-anim" style="animation-delay:.1s">
-          Speak with a UK tax expert who will take time to understand your situation
-          and provide clear, practical guidance you can act on.
+          Book a free 30-minute call with a senior UK tax expert. No commitment —
+          just a straight conversation about your situation and what good advice looks like for you.
         </p>
         <div class="hp-cta-acts hp-anim" style="animation-delay:.2s">
           <button class="btn btn-white" onclick="navigate('contact')">Book a Consultation</button>
