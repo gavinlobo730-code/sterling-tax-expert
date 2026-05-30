@@ -57,7 +57,6 @@ function navigate(page, param = null, opts = {}){
     if (page === 'deadlines') mountDeadlines();
     if (page === 'about') mountAbout();
     if (page === 'contact') mountContact();
-    if (page === 'admin')   mountAdmin();
     if (page === 'calc')    mountCalc(param);
     if (page === 'article') mountArticle(param);
 
@@ -109,7 +108,7 @@ function updateBreadcrumbs(page, param){
     deadlines: [{ l:'Home', p:'home' }, { l:'Deadlines', h:1 }],
     about: [{ l:'Home', p:'home' }, { l:'About', h:1 }],
     contact: [{ l:'Home', p:'home' }, { l:'Contact', h:1 }],
-    admin:   [{ l:'Home', p:'home' }, { l:'Admin', h:1 }],
+    admin:   null,
     article: param ? [
       { l:'Home', p:'home' },
       { l:'Insights', p:'insights' },
@@ -276,7 +275,7 @@ async function submitContact(){
   }
 
   // ── 1. Try Worker endpoint ──────────────────────────────
-  const apiBase = (cfg.cmsApiBase || '/api').replace(/\/api$/, '');
+  const apiBase = (cfg.cmsApiBase || '').replace(/\/$/, '');
   try {
     const res = await fetch(apiBase + '/api/enquiry', {
       method: 'POST',
@@ -353,9 +352,9 @@ window.addEventListener('DOMContentLoaded', () => {
   updateBreadcrumbs('home');
   if (typeof updateAccountWidget === 'function') updateAccountWidget();
 
-  // Allow URL hash routing for sharing/deep-linking
+  // Allow URL hash routing for sharing/deep-linking (admin excluded from public routing)
   const h = location.hash.replace('#', '');
-  if (h && h !== 'home') {
+  if (h && h !== 'home' && h.split('/')[0] !== 'admin') {
     const [page, param] = h.split('/');
     if (page) navigate(page, param || null, { skipHistory: true });
   }
@@ -365,6 +364,6 @@ window.addEventListener('hashchange', () => {
   const h = location.hash.replace('#', '');
   if (h) {
     const [page, param] = h.split('/');
-    if (page && page !== CURRENT_PAGE) navigate(page, param || null);
+    if (page && page !== CURRENT_PAGE && page !== 'admin') navigate(page, param || null);
   }
 });

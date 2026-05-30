@@ -12,8 +12,6 @@
 const STERLING_AUTH_KEY = 'ste_admin_session';
 const STERLING_POSTS_KEY = 'ste_posts_v1';
 const STERLING_MEDIA_KEY = 'ste_media_v1';
-const ADMIN_USER = 'Admin';
-const ADMIN_PASS = '123456789';
 const ADMIN_TIMEOUT = 1000 * 60 * 60 * 4; // 4 hours
 
 // ── Data store ─────────────────────────────────────────────
@@ -69,11 +67,10 @@ function cmsLoggedIn(){
     return true;
   } catch(e) { return false; }
 }
-function cmsLogin(user, pass){
-  if (user === ADMIN_USER && pass === ADMIN_PASS) {
-    sessionStorage.setItem(STERLING_AUTH_KEY, JSON.stringify({ t: Date.now(), u: user }));
-    return true;
-  }
+function cmsLogin(_user, _pass){
+  // Authentication is managed server-side. This client-side path is disabled.
+  // Wire up a Cloudflare Worker endpoint that validates credentials and returns
+  // a signed session token before re-enabling client login here.
   return false;
 }
 function cmsLogout(){
@@ -103,11 +100,11 @@ function renderLogin(){
     <div class="login-shell">
       <div class="login-card">
         <div class="login-h">Sterling CMS</div>
-        <div class="login-s">Sign in to manage articles, media and SEO. Public visitors do not see this page — the CMS is private to authorised editors only.</div>
+        <div class="login-s">Sign in to manage articles, media and SEO.</div>
         <form onsubmit="event.preventDefault();doLogin()">
           <div class="fg">
             <div class="fl">Username</div>
-            <input class="fi" id="login-user" type="text" autocomplete="username" value="Admin">
+            <input class="fi" id="login-user" type="text" autocomplete="username">
           </div>
           <div class="fg">
             <div class="fl">Password</div>
@@ -115,10 +112,6 @@ function renderLogin(){
           </div>
           <button class="btn btn-navy" style="width:100%;padding:11px;margin-top:6px" type="submit">Sign in →</button>
         </form>
-        <div class="login-hint">
-          <strong>Demo credentials:</strong> <code>Admin</code> / <code>123456789</code>.
-          In production this would be backed by proper server-side authentication (HTTPS-only session cookie, password hashing, rate-limited logins, optional 2FA). Sessions expire after 4 hours.
-        </div>
       </div>
     </div>
   `;

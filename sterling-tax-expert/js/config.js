@@ -40,7 +40,8 @@ window.STERLING_CONFIG = {
   // Example (self-hosted): 'assets/hero.mp4'
   heroVideo: '',
 
-  // CMS public API base URL. Points to the Cloudflare Worker.
-  // Change to 'http://localhost:8787/api' for local development.
-  cmsApiBase: 'https://sterling-tax.co.uk/api',
+  // Base URL of the Cloudflare Worker. Do NOT include a trailing /api.
+  // The contact form appends /api/enquiry to this value.
+  // Change to 'http://localhost:8787' for local development.
+  cmsApiBase: 'https://sterling-tax.co.uk',
 };
