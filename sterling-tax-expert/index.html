@@ -209,13 +209,95 @@
       }
     } catch (e) { console.warn('EmailJS init skipped:', e); }
 
-    // Scroll-reveal animation system — force all elements after 1s to test CSS
-    setTimeout(function() {
-      document.querySelectorAll('.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale').forEach(function(el) {
-        el.classList.add('ta-in');
-      });
-    }, 1000);
-    window.initReveal = function() {};
+    // Scroll-reveal — pure JS transitions, no CSS animation dependency
+    (function() {
+      var observed = new WeakSet();
+
+      function animateIn(el) {
+        if (observed.has(el)) return;
+        observed.add(el);
+
+        var isLeft  = el.classList.contains('ta-left');
+        var isRight = el.classList.contains('ta-right');
+        var delay   = parseFloat(el.style.transitionDelay || el.style.animationDelay || 0) * 1000;
+
+        // Get stagger delay from class
+        var d = 0;
+        if (el.classList.contains('ta-d1')) d = 80;
+        if (el.classList.contains('ta-d2')) d = 160;
+        if (el.classList.contains('ta-d3')) d = 240;
+        if (el.classList.contains('ta-d4')) d = 320;
+        if (el.classList.contains('ta-d5')) d = 400;
+
+        setTimeout(function() {
+          // Set start state
+          el.style.opacity = '0';
+          el.style.transform = isLeft  ? 'translateX(-50px)' :
+                               isRight ? 'translateX(50px)'  :
+                                         'translateY(40px)';
+          // Force browser to paint start state
+          el.getBoundingClientRect();
+          // Animate to end state
+          el.style.transition = 'opacity 0.75s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.22,1,0.36,1)';
+          el.style.opacity    = '1';
+          el.style.transform  = 'none';
+        }, d);
+      }
+
+      function check() {
+        var vh = window.innerHeight;
+        document.querySelectorAll('.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale').forEach(function(el) {
+          if (observed.has(el)) return;
+          var rect = el.getBoundingClientRect();
+          if (rect.top < vh - 40 && rect.bottom > 0) animateIn(el);
+        });
+      }
+
+      // Auto stagger children of .ta-stagger
+      function staggerChildren() {
+        document.querySelectorAll('.ta-stagger').forEach(function(parent) {
+          var children = parent.querySelectorAll('.ta-up,.ta-left,.ta-right');
+          children.forEach(function(el, i) {
+            if (!observed.has(el)) el._taDelay = i * 90;
+          });
+        });
+      }
+
+      function animateInStagger(el) {
+        if (observed.has(el)) return;
+        observed.add(el);
+        var d = el._taDelay || 0;
+        setTimeout(function() {
+          el.style.opacity = '0';
+          el.style.transform = el.classList.contains('ta-left') ? 'translateX(-50px)' :
+                               el.classList.contains('ta-right') ? 'translateX(50px)' : 'translateY(40px)';
+          el.getBoundingClientRect();
+          el.style.transition = 'opacity 0.75s cubic-bezier(0.22,1,0.36,1), transform 0.75s cubic-bezier(0.22,1,0.36,1)';
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }, d);
+      }
+
+      function checkAll() {
+        staggerChildren();
+        var vh = window.innerHeight;
+        document.querySelectorAll('.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale').forEach(function(el) {
+          if (observed.has(el)) return;
+          var rect = el.getBoundingClientRect();
+          if (rect.top < vh - 40 && rect.bottom > 0) animateInStagger(el);
+        });
+      }
+
+      window.initReveal = function() { setTimeout(checkAll, 80); };
+      window.addEventListener('scroll', checkAll, { passive: true });
+
+      // Poll for first 4 seconds to catch dynamically injected elements
+      var t = 0;
+      var iv = setInterval(function() {
+        checkAll();
+        if ((t += 200) >= 4000) clearInterval(iv);
+      }, 200);
+    })();
   });
 </script>
 </body>
