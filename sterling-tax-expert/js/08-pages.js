@@ -62,32 +62,32 @@ function mountHome(){
       {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>`,
         name: 'Payroll Services',
-        desc: 'Accurate, compliant payroll managed for businesses of all sizes — RTI submissions, payslips and year-end included.',
+        desc: 'Compliant payroll for businesses of any size — from a single director to large multi-employee operations. RTI submissions, payslips, auto-enrolment and year-end all included.',
       },
       {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
         name: 'Self Assessment',
-        desc: 'Personal tax returns prepared and filed correctly, on time, with full HMRC compliance and maximum legitimate efficiency.',
+        desc: 'Personal tax returns for individuals, directors and high earners — prepared accurately, filed on time, with all legitimate reliefs and allowances applied.',
       },
       {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
         name: 'Corporation Tax',
-        desc: 'CT600 returns and computations for limited companies, prepared accurately and submitted within statutory deadlines.',
+        desc: 'CT600 returns, tax computations and group tax planning for limited companies and multi-entity structures — submitted accurately within statutory deadlines.',
       },
       {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>`,
         name: 'VAT Services',
-        desc: 'VAT registration, quarterly returns and compliance — including MTD submissions — handled with precision and care.',
+        desc: 'VAT registration, scheme selection, quarterly returns and full MTD compliance — for businesses at every stage and turnover level.',
       },
       {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20"/><path d="M5 20V8l7-6 7 6v12"/><path d="M9 20v-5h6v5"/></svg>`,
         name: 'CIS Services',
-        desc: 'CIS returns, subcontractor verification and compliance for contractors operating in the construction industry.',
+        desc: 'End-to-end CIS management — monthly returns, subcontractor verification, deduction statements and compliance for contractors of all sizes.',
       },
       {
         icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
         name: 'Tax Advisory',
-        desc: 'Forward-looking tax planning and advisory support to help individuals and businesses make informed, compliant decisions.',
+        desc: 'Strategic tax planning covering R&amp;D relief, IR35 compliance, group structures, profit extraction and forward-looking advisory for established and growing businesses.',
       },
     ];
     services.innerHTML = `
@@ -120,14 +120,15 @@ function mountHome(){
       { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`, label: 'Sole Traders' },
       { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`, label: 'Contractors' },
       { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`, label: 'SMEs' },
-      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`, label: 'Growing Businesses' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`, label: 'Established Businesses' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="8" height="14" rx="1"/><rect x="9" y="3" width="6" height="18" rx="1"/><rect x="14" y="9" width="8" height="12" rx="1"/></svg>`, label: 'Complex Structures' },
     ];
     audience.innerHTML = `
       <section class="hp-audience">
         <div class="hp-inner">
           <div class="hp-section-header hp-anim" style="text-align:center">
             <div class="hp-kicker">Who We Help</div>
-            <h2 class="hp-h2 hp-h2-center">We work with clients across<br>all sectors and circumstances</h2>
+            <h2 class="hp-h2 hp-h2-center">From sole traders to multi-entity businesses —<br>we understand the full range of UK tax complexity</h2>
           </div>
           <div class="hp-audience-row">
             ${groups.map((g, i) => `
@@ -146,11 +147,11 @@ function mountHome(){
   const why = document.getElementById('home-why');
   if (why) {
     const reasons = [
-      { h: 'Personalised Service',         b: 'We take the time to understand your specific circumstances before offering any advice. You are not a case number — your situation is unique and we treat it that way.' },
-      { h: 'Responsive Support',           b: 'When you have a question, you get an answer promptly. We understand that tax and payroll matters often have time-sensitive implications.' },
-      { h: 'Practical, Actionable Advice', b: 'We give you straightforward guidance you can understand and act on — not dense legal text. Complex tax obligations explained in plain English.' },
-      { h: 'Compliance Confidence',        b: 'We stay current with every HMRC update, legislative change and deadline. Your obligations are met accurately, fully and on time.' },
-      { h: 'Long-term Relationships',      b: 'We work with clients year after year, building a genuine understanding of their needs. The same adviser, consistent service, no handoffs.' },
+      { h: 'Personalised Service',         b: 'We take the time to understand your specific circumstances — your structure, your goals, your obligations — before offering any advice. You are not a case number.' },
+      { h: 'Responsive Support',           b: 'When you have a question, you get an answer promptly. We understand that tax and payroll decisions at business level are often time-critical.' },
+      { h: 'Practical, Actionable Advice', b: 'Straightforward guidance you can act on — whether that is a routine filing question or a complex decision around profit extraction, R&D relief or group restructuring.' },
+      { h: 'Compliance Confidence',        b: 'We stay current with every HMRC update, legislative change and deadline — from routine returns to complex multi-entity obligations. Your exposure is managed.' },
+      { h: 'Long-term Relationships',      b: 'We grow with our clients. Whether you are just starting out or running an established business, the same adviser stays with you — building genuine knowledge of your affairs year after year.' },
     ];
     why.innerHTML = `
       <section class="hp-why">
