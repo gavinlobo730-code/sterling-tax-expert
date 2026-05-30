@@ -211,8 +211,6 @@
 
     // Scroll-reveal animation system
     try {
-      var _taScheduled = false;
-
       function _check() {
         var vh = window.innerHeight;
         document.querySelectorAll('.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale').forEach(function(el) {
@@ -222,24 +220,17 @@
         });
       }
 
-      window.initReveal = function() { setTimeout(_check, 120); };
+      // Run every 100ms for the first 3 seconds to catch any timing issues
+      var _bootCount = 0;
+      var _bootTimer = setInterval(function() {
+        _check();
+        if (++_bootCount >= 30) clearInterval(_bootTimer);
+      }, 100);
 
-      window.addEventListener('scroll', function() {
-        if (_taScheduled) return;
-        _taScheduled = true;
-        requestAnimationFrame(function() { _check(); _taScheduled = false; });
-      }, { passive: true });
+      // Then on every scroll
+      window.addEventListener('scroll', _check, { passive: true });
 
-      setTimeout(_check, 200);
-
-      var _origNav = window.navigate;
-      if (typeof _origNav === 'function') {
-        window.navigate = function() {
-          _origNav.apply(this, arguments);
-          setTimeout(_check, 150);
-          setTimeout(_check, 500);
-        };
-      }
+      window.initReveal = _check;
     } catch(e) {}
   });
 </script>
