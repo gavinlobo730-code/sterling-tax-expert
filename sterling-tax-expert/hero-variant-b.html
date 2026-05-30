@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title>Sterling Tax Expert &mdash; Variant B: Premium Motion Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B1E3D;--midnight:#050D1A;--indigo:#6366F1;
+  --sans:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html,body{height:100%;background:#02040C;color:#fff;font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── NAV ─────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 40px;height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+nav.scrolled{
+  background:rgba(4,6,15,0.82);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logon{font-size:15px;font-weight:600;color:#fff;letter-spacing:-.2px}
+.logon span{color:rgba(255,255,255,0.42)}
+.navl{display:flex;gap:32px}
+.navl a{font-size:13px;color:rgba(255,255,255,0.48);cursor:pointer;text-decoration:none;transition:color .2s;letter-spacing:.3px}
+.navl a:hover{color:#fff}
+.navcta{
+  font-size:13px;font-weight:600;letter-spacing:.4px;color:#fff;
+  background:rgba(99,102,241,0.88);border:none;border-radius:6px;
+  padding:9px 20px;cursor:pointer;transition:background .2s;
+}
+.navcta:hover{background:var(--indigo)}
+
+/* ── HERO ────────────────────────────────────────────── */
+.hero{
+  position:relative;width:100%;height:100vh;min-height:700px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;background:#03040D;
+}
+
+/* Layer 1 — deep animated aurora */
+.layer-aurora{
+  position:absolute;inset:-30%;
+  background:
+    radial-gradient(ellipse 58% 42% at 28% 62%, rgba(13,32,96,0.65) 0%, transparent 55%),
+    radial-gradient(ellipse 46% 52% at 74% 38%, rgba(22,48,122,0.45) 0%, transparent 52%),
+    radial-gradient(ellipse 64% 38% at 52% 82%, rgba(10,22,74,0.55) 0%, transparent 48%),
+    radial-gradient(ellipse 40% 60% at 15% 30%, rgba(8,18,58,0.4) 0%, transparent 60%);
+  animation:aurora 28s ease-in-out infinite alternate;
+  will-change:transform;
+}
+@keyframes aurora{
+  0%  {transform:translate(0,0) scale(1)}
+  25% {transform:translate(-2.5%,1.5%) scale(1.03)}
+  50% {transform:translate(1.8%,-2%) scale(0.98)}
+  75% {transform:translate(-1%,2.5%) scale(1.02)}
+  100%{transform:translate(2%,-1%) scale(1.04)}
+}
+
+/* Layer 2 — subtle perspective grid */
+.layer-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size:88px 88px;
+  mask-image:radial-gradient(ellipse 95% 85% at 50% 50%, black 0%, transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse 95% 85% at 50% 50%, black 0%, transparent 72%);
+  animation:gridDrift 40s linear infinite;
+}
+@keyframes gridDrift{
+  from{background-position:0 0}
+  to{background-position:88px 88px}
+}
+
+/* Layer 3 — indigo accent pulse */
+.layer-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 55% 45% at 50% 55%, rgba(99,102,241,0.07) 0%, transparent 65%);
+  animation:glowPulse 10s ease-in-out infinite;
+}
+@keyframes glowPulse{
+  0%,100%{opacity:0.6;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.08)}
+}
+
+/* Layer 4 — horizon band (subtle warm glow) */
+.layer-horizon{
+  position:absolute;left:0;right:0;
+  bottom:35%;height:2px;
+  background:linear-gradient(90deg,
+    transparent 0%, rgba(30,55,140,0.35) 20%,
+    rgba(40,70,165,0.5) 50%,
+    rgba(30,55,140,0.35) 80%, transparent 100%);
+  animation:horizonPulse 12s ease-in-out infinite;
+}
+@keyframes horizonPulse{
+  0%,100%{opacity:0.5} 50%{opacity:1}
+}
+.layer-horizon-glow{
+  position:absolute;left:0;right:0;
+  bottom:28%;height:180px;
+  background:linear-gradient(to top,
+    rgba(14,30,90,0.28) 0%, transparent 100%);
+}
+
+/* Canvas for particles */
+#particles{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;
+}
+
+/* Cinematic overlay */
+.hero-ov{
+  position:absolute;inset:0;z-index:2;
+  background:
+    linear-gradient(180deg,
+      rgba(3,4,13,0.22) 0%,
+      rgba(3,4,13,0.15) 30%,
+      rgba(3,4,13,0.55) 75%,
+      rgba(3,4,13,0.95) 100%);
+}
+
+/* Hero content — parallax wrapper */
+.hero-ct-wrap{
+  position:relative;z-index:3;
+  text-align:center;padding:0 32px;
+  will-change:transform;
+}
+
+/* Staggered word entrance */
+.kicker{
+  font-size:10px;font-weight:700;letter-spacing:4.5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.34);margin-bottom:26px;
+  opacity:0;animation:wordIn 1s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+}
+.h1{
+  font-size:clamp(42px,6.2vw,86px);font-weight:300;
+  color:#fff;letter-spacing:-2.5px;line-height:1.04;
+  margin:0 auto 22px;max-width:960px;overflow:hidden;
+}
+.h1-line{
+  display:block;overflow:hidden;
+}
+.h1-line span{
+  display:block;
+  opacity:0;transform:translateY(100%);
+}
+.h1-line:nth-child(1) span{animation:lineUp 1s cubic-bezier(0.16,1,0.3,1) 0.45s both}
+.h1-line:nth-child(2) span{animation:lineUp 1s cubic-bezier(0.16,1,0.3,1) 0.62s both}
+@keyframes lineUp{to{opacity:1;transform:translateY(0)}}
+.h1 strong{font-weight:800}
+
+.sub{
+  font-size:clamp(15px,1.55vw,19px);font-weight:300;
+  color:rgba(255,255,255,0.44);line-height:1.68;
+  max-width:460px;margin:0 auto;
+  opacity:0;animation:wordIn 1s ease 0.88s both;
+}
+@keyframes wordIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+.rule{
+  width:32px;height:1.5px;
+  background:linear-gradient(90deg,transparent,rgba(99,102,241,0.65),transparent);
+  margin:38px auto 0;
+  opacity:0;animation:wordIn 0.8s ease 1.05s both;
+}
+
+/* Data strip — animated live indicators */
+.data-strip{
+  position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
+  z-index:3;display:flex;align-items:center;gap:32px;
+  opacity:0;animation:wordIn 1s ease 1.3s both;
+  white-space:nowrap;
+}
+.ds-item{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,0.28);letter-spacing:.5px}
+.ds-dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:dsGlow 2.5s ease-in-out infinite}
+@keyframes dsGlow{0%,100%{opacity:0.5;box-shadow:0 0 0 rgba(74,222,128,0)}50%{opacity:1;box-shadow:0 0 6px rgba(74,222,128,0.5)}}
+.ds-sep{opacity:0.15}
+
+/* Scroll indicator */
+.scroll-ind{
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  z-index:3;display:flex;flex-direction:column;align-items:center;gap:9px;
+  opacity:0;animation:wordIn 1s ease 1.6s both;
+}
+.scroll-line{
+  width:1px;height:40px;
+  background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,0.22));
+  animation:scrollAnim 2.2s ease-in-out infinite;
+}
+@keyframes scrollAnim{
+  0%,100%{opacity:0.35;transform:scaleY(1)}50%{opacity:0.9;transform:scaleY(0.55)}
+}
+.scroll-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.16)}
+
+/* ── Below hero ──────────────────────────────────────── */
+.below{background:#fff;padding:96px 40px}
+.below-in{max-width:1160px;margin:0 auto;text-align:center}
+.below-lbl{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--indigo);margin-bottom:18px}
+.below-h{font-size:clamp(24px,3vw,44px);font-weight:300;color:var(--navy);letter-spacing:-.6px;line-height:1.2;margin:0}
+.below-p{font-size:16px;line-height:1.75;color:#64748b;max-width:600px;margin:20px auto 0}
+
+/* Variant badge */
+.vbadge{
+  position:fixed;bottom:20px;right:20px;z-index:999;
+  background:rgba(3,5,14,0.85);border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(8px);border-radius:8px;
+  padding:10px 16px;font-size:11px;font-weight:600;letter-spacing:.5px;
+  color:rgba(255,255,255,0.55);
+}
+.vbadge span{color:#fff}
+
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .navl{display:none}
+  .below{padding:72px 24px}
+  .data-strip{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo">
+    <svg width="32" height="32" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
+      <rect x="5" y="7" width="38" height="3.5" rx="1.5" fill="white"/>
+      <rect x="5" y="10.5" width="38" height="1.5" rx="0.75" fill="#6366F1"/>
+      <rect x="8" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="20.5" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="33" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="5" y="37" width="38" height="3.5" rx="1.5" fill="white"/>
+    </svg>
+    <div class="logon">Sterling <span>Tax Expert</span></div>
+  </div>
+  <div class="navl">
+    <a>Services</a><a>Free Tools</a><a>Deadlines</a><a>Insights</a><a>About</a>
+  </div>
+  <button class="navcta">Book free call</button>
+</nav>
+
+<section class="hero">
+  <!-- Depth layers (back to front) -->
+  <div class="layer-aurora"></div>
+  <div class="layer-grid"></div>
+  <div class="layer-glow"></div>
+  <div class="layer-horizon-glow"></div>
+  <div class="layer-horizon"></div>
+  <canvas id="particles"></canvas>
+  <div class="hero-ov"></div>
+
+  <!-- Content -->
+  <div class="hero-ct-wrap" id="hero-ct">
+    <div class="kicker">Sterling Tax Expert</div>
+    <h1 class="h1">
+      <span class="h1-line"><span>UK Tax Intelligence</span></span>
+      <span class="h1-line"><span>for a <strong>Changing Economy.</strong></span></span>
+    </h1>
+    <p class="sub">Professional tax, payroll and compliance tools built around current UK legislation.</p>
+    <div class="rule"></div>
+  </div>
+
+  <div class="data-strip">
+    <div class="ds-item"><span class="ds-dot"></span>2026/27 Tax Year Live</div>
+    <span class="ds-sep">&middot;</span>
+    <div class="ds-item">25 Free Calculators</div>
+    <span class="ds-sep">&middot;</span>
+    <div class="ds-item">HMRC-Aligned</div>
+  </div>
+
+  <div class="scroll-ind">
+    <div class="scroll-line"></div>
+    <span class="scroll-lbl">Scroll</span>
+  </div>
+</section>
+
+<div class="below">
+  <div class="below-in">
+    <div class="below-lbl">About the Platform</div>
+    <h2 class="below-h">Combining modern technology with<br>current UK legislation.</h2>
+    <p class="below-p">Every calculator reflects the 2026/27 tax year from 6 April 2026. No account required. No data stored. All calculations run entirely in your browser.</p>
+  </div>
+</div>
+
+<div class="vbadge">Variant <span>B</span> &mdash; Atmospheric Motion</div>
+
+<script>
+(function(){
+'use strict';
+
+// ── Particle system ────────────────────────────────────
+var canvas = document.getElementById('particles');
+var ctx    = canvas.getContext('2d');
+var W, H, PARTICLES = [];
+var RAF   = null;
+
+function resize(){
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  initParticles();
+}
+
+function initParticles(){
+  PARTICLES = [];
+  var n = Math.min(80, Math.floor(W * H / 18000));
+  for(var i=0; i<n; i++){
+    PARTICLES.push(mkParticle(true));
+  }
+}
+
+function mkParticle(anywhere){
+  var zone = Math.random(); // 0-1
+  // Concentrate near horizon band (60-75% down)
+  var py = anywhere
+    ? Math.random() * H
+    : (zone < 0.6 ? (0.55+Math.random()*0.22)*H : Math.random()*H);
+  return {
+    x: Math.random() * W,
+    y: py,
+    vx: (Math.random()-.5)*0.18,
+    vy: -(0.04+Math.random()*0.12),  // slow upward drift
+    r:  0.4+Math.random()*1.4,
+    a:  0.05+Math.random()*0.22,
+    ta: 0.05+Math.random()*0.22,    // target alpha
+    pulse: Math.random()*Math.PI*2,
+    ps:    0.004+Math.random()*0.008,
+    warm:  Math.random(),           // 0=cool blue, 1=warm amber
+  };
+}
+
+var lastT=0;
+function tick(t){
+  RAF = requestAnimationFrame(tick);
+  var dt = Math.min(t-lastT, 32); lastT=t;
+
+  ctx.clearRect(0,0,W,H);
+
+  for(var i=0; i<PARTICLES.length; i++){
+    var p = PARTICLES[i];
+    p.pulse += p.ps;
+    var pa = p.a * (0.7+Math.sin(p.pulse)*0.3);
+
+    // Colour: warm amber vs cool indigo-white
+    var r,g,b;
+    if(p.warm > 0.55){
+      r=(185+p.warm*60)|0; g=(150+p.warm*40)|0; b=(55+p.warm*20)|0;
+    } else {
+      r=(150+p.warm*40)|0; g=(170+p.warm*35)|0; b=(240)|0;
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+
+    // Glow on brighter particles
+    if(pa>0.14){
+      ctx.shadowBlur=p.r*6;
+      ctx.shadowColor='rgba('+r+','+g+','+b+',0.6)';
+    }
+    ctx.fillStyle='rgba('+r+','+g+','+b+','+pa+')';
+    ctx.fill();
+    ctx.shadowBlur=0;
+
+    p.x += p.vx*(dt/16);
+    p.y += p.vy*(dt/16);
+
+    // Fade alpha toward target
+    p.a += (p.ta - p.a)*0.008;
+
+    // Reset when off-screen or faded
+    if(p.y < -10 || p.x < -10 || p.x > W+10){
+      Object.assign(PARTICLES[i], mkParticle(false));
+      PARTICLES[i].y = (0.55+Math.random()*0.35)*H;
+    }
+  }
+}
+
+resize();
+window.addEventListener('resize',function(){
+  clearTimeout(window._rT);
+  window._rT=setTimeout(resize,80);
+},{passive:true});
+requestAnimationFrame(tick);
+
+// ── Mouse parallax ─────────────────────────────────────
+var mx=0.5, my=0.5, cx=0.5, cy=0.5;
+window.addEventListener('mousemove',function(e){
+  mx = e.clientX/window.innerWidth;
+  my = e.clientY/window.innerHeight;
+},{passive:true});
+
+(function parallaxLoop(){
+  cx += (mx-cx)*0.045;
+  cy += (my-cy)*0.045;
+  var dx=(cx-0.5)*22, dy=(cy-0.5)*12;
+  var el=document.getElementById('hero-ct');
+  if(el) el.style.transform='translate('+dx*.25+'px,'+dy*.12+'px)';
+  var aurora=document.querySelector('.layer-aurora');
+  if(aurora) aurora.style.transform+=
+    ' translate('+(dx*.18)+'px,'+(dy*.1)+'px)';
+  requestAnimationFrame(parallaxLoop);
+})();
+
+// ── Nav scroll tint ────────────────────────────────────
+window.addEventListener('scroll',function(){
+  document.getElementById('nav').classList.toggle('scrolled',scrollY>20);
+},{passive:true});
+
+})();
+</script>
+</body>
+</html>

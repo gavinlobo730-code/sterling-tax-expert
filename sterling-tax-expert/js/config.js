@@ -31,16 +31,17 @@ window.STERLING_CONFIG = {
   contactEmail: 'sterlingtaxexpert@gmail.com',
 
   emailjs: {
-    publicKey:  'YOUR_EMAILJS_PUBLIC_KEY',
-    serviceId:  'YOUR_EMAILJS_SERVICE_ID',
-    templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
+    publicKey:  'Wiy-AGwPgs8KChEsB',
+    serviceId:  'service_tp0kt6d',
+    templateId: 'template_61wheps',
   },
 
   // Optional fullscreen hero background video (MP4). Blank = gradient only.
   // Example (self-hosted): 'assets/hero.mp4'
   heroVideo: '',
 
-  // CMS public API base URL. Points to the Cloudflare Worker.
-  // Change to 'http://localhost:8787/api' for local development.
-  cmsApiBase: 'https://sterling-tax.co.uk/api',
+  // Base URL of the Cloudflare Worker. Do NOT include a trailing /api.
+  // The contact form appends /api/enquiry to this value.
+  // Change to 'http://localhost:8787' for local development.
+  cmsApiBase: 'https://sterling-tax.co.uk',
 };

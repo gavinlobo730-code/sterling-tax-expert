@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title>Sterling Tax Expert — Variant A: Premium Static Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0B1E3D;--midnight:#050D1A;--indigo:#6366F1;
+  --sans:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+html,body{height:100%;background:#02040C;color:#fff;font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* ── NAV ─────────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:0 40px;height:68px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+nav.scrolled{
+  background:rgba(4,6,15,0.82);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.logo{display:flex;align-items:center;gap:12px}
+.logon{font-size:15px;font-weight:600;color:#fff;letter-spacing:-.2px}
+.logon span{color:rgba(255,255,255,0.42)}
+.navl{display:flex;gap:32px}
+.navl a{font-size:13px;color:rgba(255,255,255,0.48);cursor:pointer;text-decoration:none;transition:color .2s;letter-spacing:.3px}
+.navl a:hover{color:#fff}
+.navcta{
+  font-size:13px;font-weight:600;letter-spacing:.4px;color:#fff;
+  background:rgba(99,102,241,0.88);border:none;border-radius:6px;
+  padding:9px 20px;cursor:pointer;transition:background .2s;
+}
+.navcta:hover{background:var(--indigo)}
+
+/* ── HERO ────────────────────────────────────────────── */
+.hero{
+  position:relative;width:100%;height:100vh;min-height:700px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+#cityscape{
+  position:absolute;inset:0;width:100%;height:100%;display:block;
+}
+.hero-ov{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(180deg,
+      rgba(3,5,14,0.18) 0%,
+      rgba(3,5,14,0.28) 35%,
+      rgba(3,5,14,0.62) 72%,
+      rgba(3,5,14,0.96) 100%),
+    radial-gradient(ellipse 100% 60% at 50% 100%, rgba(3,5,14,0.5) 0%, transparent 100%);
+}
+.hero-ct{
+  position:relative;z-index:2;
+  text-align:center;padding:0 32px;
+  opacity:0;animation:fadeUp 1.6s cubic-bezier(0.16,1,0.3,1) 0.35s both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+
+.kicker{
+  font-size:10px;font-weight:700;letter-spacing:4.5px;text-transform:uppercase;
+  color:rgba(255,255,255,0.36);margin-bottom:26px;
+}
+.h1{
+  font-size:clamp(42px,6.2vw,86px);font-weight:300;
+  color:#fff;letter-spacing:-2.5px;line-height:1.04;
+  margin:0 auto 22px;max-width:960px;
+  text-shadow:0 2px 48px rgba(3,5,14,0.6),0 0 80px rgba(3,5,14,0.3);
+}
+.h1 strong{font-weight:800;color:#fff}
+.sub{
+  font-size:clamp(15px,1.55vw,19px);font-weight:300;
+  color:rgba(255,255,255,0.46);line-height:1.68;
+  max-width:460px;margin:0 auto;
+  text-shadow:0 1px 24px rgba(3,5,14,0.7);
+}
+.rule{
+  width:32px;height:1.5px;
+  background:linear-gradient(90deg,transparent,rgba(99,102,241,0.65),transparent);
+  margin:38px auto 0;
+}
+
+/* Scroll indicator */
+.scroll-ind{
+  position:absolute;bottom:38px;left:50%;transform:translateX(-50%);
+  z-index:2;display:flex;flex-direction:column;align-items:center;gap:9px;
+  opacity:0;animation:fadeUp 1s ease 1.5s both;
+}
+.scroll-line{
+  width:1px;height:40px;
+  background:linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.22));
+  animation:scrollAnim 2.2s ease-in-out infinite;
+}
+@keyframes scrollAnim{
+  0%,100%{opacity:0.35;transform:scaleY(1)}
+  50%{opacity:0.9;transform:scaleY(0.55)}
+}
+.scroll-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.18)}
+
+/* ── Below hero ──────────────────────────────────────── */
+.below{background:#fff;padding:96px 40px;border-top:none}
+.below-in{max-width:1160px;margin:0 auto;text-align:center}
+.below-lbl{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--indigo);margin-bottom:18px}
+.below-h{font-size:clamp(24px,3vw,44px);font-weight:300;color:var(--navy);letter-spacing:-.6px;line-height:1.2;margin:0}
+.below-p{font-size:16px;line-height:1.75;color:#64748b;max-width:600px;margin:20px auto 0}
+
+/* Variant badge */
+.vbadge{
+  position:fixed;bottom:20px;right:20px;z-index:999;
+  background:rgba(3,5,14,0.85);border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(8px);border-radius:8px;
+  padding:10px 16px;font-size:11px;font-weight:600;letter-spacing:.5px;
+  color:rgba(255,255,255,0.55);
+}
+.vbadge span{color:#fff}
+
+@media(max-width:768px){
+  nav{padding:0 20px}
+  .navl{display:none}
+  .below{padding:72px 24px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo">
+    <svg width="32" height="32" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
+      <rect x="5" y="7" width="38" height="3.5" rx="1.5" fill="white"/>
+      <rect x="5" y="10.5" width="38" height="1.5" rx="0.75" fill="#6366F1"/>
+      <rect x="8" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="20.5" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="33" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="5" y="37" width="38" height="3.5" rx="1.5" fill="white"/>
+    </svg>
+    <div class="logon">Sterling <span>Tax Expert</span></div>
+  </div>
+  <div class="navl">
+    <a>Services</a><a>Free Tools</a><a>Deadlines</a><a>Insights</a><a>About</a>
+  </div>
+  <button class="navcta">Book free call</button>
+</nav>
+
+<section class="hero">
+  <canvas id="cityscape"></canvas>
+  <div class="hero-ov"></div>
+  <div class="hero-ct">
+    <div class="kicker">Sterling Tax Expert</div>
+    <h1 class="h1">UK Tax Intelligence<br>for a <strong>Changing Economy.</strong></h1>
+    <p class="sub">Professional tax, payroll and compliance tools built around current UK legislation.</p>
+    <div class="rule"></div>
+  </div>
+  <div class="scroll-ind">
+    <div class="scroll-line"></div>
+    <span class="scroll-lbl">Scroll</span>
+  </div>
+</section>
+
+<div class="below">
+  <div class="below-in">
+    <div class="below-lbl">About the Platform</div>
+    <h2 class="below-h">Combining modern technology with<br>current UK legislation.</h2>
+    <p class="below-p">Every calculator reflects the 2026/27 tax year from 6 April 2026. No account required. No data stored. All calculations run entirely in your browser.</p>
+  </div>
+</div>
+
+<div class="vbadge">Variant <span>A</span> &mdash; Static Canvas City</div>
+
+<script>
+(function(){
+'use strict';
+var canvas = document.getElementById('cityscape');
+var ctx = canvas.getContext('2d');
+
+// Seeded LCG random — same scene every render
+function mkRand(s){
+  var seed = (s|0) >>> 0;
+  return function(){
+    seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
+    return seed / 0xFFFFFFFF;
+  };
+}
+
+function render(){
+  var W = canvas.width  = window.innerWidth;
+  var H = canvas.height = window.innerHeight;
+  var HZ = H * 0.625; // horizon
+
+  ctx.clearRect(0,0,W,H);
+
+  // ── 1. Sky gradient ──────────────────────────────────
+  var sky = ctx.createLinearGradient(0,0,0,HZ);
+  sky.addColorStop(0,    '#03040D');
+  sky.addColorStop(0.22, '#050819');
+  sky.addColorStop(0.58, '#080E2C');
+  sky.addColorStop(0.82, '#0C1640');
+  sky.addColorStop(1,    '#111E55');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0,0,W,HZ+4);
+
+  // ── 2. City upward glow ──────────────────────────────
+  // Centre glow
+  var cg = ctx.createRadialGradient(W*.5,HZ,0, W*.5,HZ, W*.68);
+  cg.addColorStop(0,   'rgba(16,40,108,0.55)');
+  cg.addColorStop(0.45,'rgba(10,26,78,0.22)');
+  cg.addColorStop(1,   'rgba(0,0,0,0)');
+  ctx.fillStyle = cg; ctx.fillRect(0,0,W,HZ+4);
+  // Left cluster (Canary Wharf direction)
+  var lg = ctx.createRadialGradient(W*.22,HZ,0, W*.22,HZ, W*.32);
+  lg.addColorStop(0,'rgba(20,48,118,0.32)'); lg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=lg; ctx.fillRect(0,0,W,HZ+4);
+  // Right cluster
+  var rg = ctx.createRadialGradient(W*.76,HZ,0, W*.76,HZ, W*.36);
+  rg.addColorStop(0,'rgba(24,55,130,0.28)'); rg.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=rg; ctx.fillRect(0,0,W,HZ+4);
+
+  // ── 3. Stars ─────────────────────────────────────────
+  var rs = mkRand(9001);
+  for(var i=0;i<100;i++){
+    var sx=rs()*W, sy=rs()*HZ*.6;
+    var sa=0.07+rs()*0.3, sr=0.3+rs()*.7;
+    ctx.beginPath(); ctx.arc(sx,sy,sr,0,Math.PI*2);
+    ctx.fillStyle='rgba(200,215,255,'+sa+')'; ctx.fill();
+  }
+
+  // ── 4. Building layers ────────────────────────────────
+  function drawLayer(seed, minH,maxH, minW,maxW, R,G,B, winA){
+    var r=mkRand(seed), x=-r()*60;
+    while(x<W+100){
+      var bw=minW+r()*(maxW-minW)|0;
+      var bh=minH+r()*(maxH-minH)|0;
+      var bTop=HZ-bh;
+      // Building fill
+      var bg=ctx.createLinearGradient(0,bTop,0,HZ);
+      bg.addColorStop(0,'rgba('+R+','+G+','+B+',1)');
+      bg.addColorStop(1,'rgba('+(R-3)+','+(G-3)+','+(B-3)+',1)');
+      ctx.fillStyle=bg;
+      ctx.fillRect(x|0, bTop|0, bw, (HZ-bTop+2)|0);
+      // Windows
+      var wgx=5+r()*3.5, wgy=5+r()*3.5;
+      for(var wy=bTop+8; wy<HZ-4; wy+=wgy+2){
+        for(var wx=x+5; wx<x+bw-3; wx+=wgx+2){
+          if(r()<0.46){
+            var wm=r();
+            var wr=(198+wm*46)|0, wg=(162+wm*36)|0, wb=(64+wm*26)|0;
+            ctx.shadowBlur=3+r()*4;
+            ctx.shadowColor='rgba('+wr+','+wg+','+wb+',0.88)';
+            ctx.fillStyle='rgba('+wr+','+wg+','+wb+','+winA+')';
+            ctx.fillRect(wx|0, wy|0, 2, 2);
+          }
+        }
+      }
+      ctx.shadowBlur=0;
+      x+=bw+(r()<0.28?r()*5:0);
+    }
+  }
+
+  // Far background (faintest)
+  drawLayer(11111, 65,170,  30,80,  14,27,64, 0.28);
+  // Midground
+  drawLayer(22222, 120,265, 44,112, 8,14,40,  0.52);
+
+  // ── 5. Iconic buildings ───────────────────────────────
+  var sc = Math.min(1, W/1440);
+  var mid = W * 0.5;
+
+  function winDots(bx,bTop2,bw2,seed2,alpha){
+    var rw=mkRand(seed2);
+    for(var wy=bTop2+10; wy<HZ-5; wy+=7){
+      for(var wx=bx+5; wx<bx+bw2-3; wx+=6){
+        if(rw()<0.5){
+          var wm=rw(), wr=(202+wm*48)|0, wg=(166+wm*34)|0, wb=(68+wm*22)|0;
+          ctx.shadowBlur=4; ctx.shadowColor='rgba('+wr+','+wg+','+wb+',0.85)';
+          ctx.fillStyle='rgba('+wr+','+wg+','+wb+','+alpha+')';
+          ctx.fillRect(wx|0,wy|0,2,2);
+        }
+      }
+    }
+    ctx.shadowBlur=0;
+  }
+
+  // St Paul's area — dome mass (left)
+  (function(){
+    var cx2=mid-280*sc, bh=HZ*0.36, bTop2=HZ-bh, bw2=88*sc;
+    ctx.fillStyle='#081630';
+    ctx.fillRect((cx2-bw2/2)|0, bTop2|0, bw2|0, bh|0);
+    // Dome
+    ctx.beginPath();
+    ctx.ellipse(cx2, bTop2, bw2*.38*sc, bh*.28, 0, Math.PI, 0);
+    ctx.fillStyle='#091830'; ctx.fill();
+    winDots((cx2-bw2/2)|0, bTop2|0, bw2|0, 44444, 0.44);
+  })();
+
+  // The Gherkin — tapered elliptical tower
+  (function(){
+    var cx2=mid-90*sc, gh=HZ*0.57, gTop=HZ-gh, gwM=42*sc;
+    ctx.beginPath();
+    ctx.moveTo(cx2, gTop+4);
+    ctx.bezierCurveTo(cx2+gwM*.68,gTop+gh*.28, cx2+gwM,gTop+gh*.55, cx2+gwM*.5,HZ);
+    ctx.lineTo(cx2-gwM*.5, HZ);
+    ctx.bezierCurveTo(cx2-gwM,gTop+gh*.55, cx2-gwM*.68,gTop+gh*.28, cx2, gTop+4);
+    ctx.closePath();
+    ctx.fillStyle='#06102B'; ctx.fill();
+    winDots((cx2-gwM)|0, gTop|0, (gwM*2)|0, 55555, 0.62);
+  })();
+
+  // Walkie-Talkie — trapezoid wider at top
+  (function(){
+    var cx2=mid+24*sc, wh=HZ*0.49, wTop=HZ-wh;
+    var wTopW=70*sc, wBotW=50*sc;
+    ctx.beginPath();
+    ctx.moveTo(cx2-wTopW/2, wTop); ctx.lineTo(cx2+wTopW/2, wTop);
+    ctx.lineTo(cx2+wBotW/2, HZ);  ctx.lineTo(cx2-wBotW/2, HZ);
+    ctx.closePath(); ctx.fillStyle='#050E26'; ctx.fill();
+    winDots((cx2-wTopW/2)|0, wTop|0, wTopW|0, 66666, 0.66);
+  })();
+
+  // Leadenhall / Cheesegrater — diagonal top-right cut
+  (function(){
+    var cx2=mid+118*sc, lh=HZ*0.63, lTop=HZ-lh, lw=50*sc;
+    ctx.beginPath();
+    ctx.moveTo(cx2-lw/2, lTop+lh*.1);
+    ctx.lineTo(cx2+lw/2, lTop);
+    ctx.lineTo(cx2+lw/2, HZ);
+    ctx.lineTo(cx2-lw/2, HZ);
+    ctx.closePath(); ctx.fillStyle='#060F28'; ctx.fill();
+    winDots((cx2-lw/2)|0, lTop|0, lw|0, 77777, 0.68);
+  })();
+
+  // Tower 42 — stepped profile
+  (function(){
+    var cx2=mid+205*sc, t42h=HZ*0.44, t42Top=HZ-t42h, t42w=34*sc;
+    ctx.fillStyle='#060E26';
+    ctx.fillRect((cx2-t42w/2)|0, t42Top|0, t42w|0, t42h|0);
+    var sw=t42w*1.5, sh=t42h*0.28;
+    ctx.fillRect((cx2-sw/2)|0, (HZ-sh)|0, sw|0, sh|0);
+    winDots((cx2-t42w/2)|0, t42Top|0, t42w|0, 88888, 0.58);
+  })();
+
+  // Foreground infill (darkest)
+  drawLayer(33333, 155,340, 52,132, 5,8,22, 0.72);
+
+  // ── 6. Thames water ───────────────────────────────────
+  var wTop = HZ+2, wBot = HZ + H*.13;
+  var wg = ctx.createLinearGradient(0,wTop,0,wBot);
+  wg.addColorStop(0,'rgba(8,15,38,0.96)'); wg.addColorStop(1,'rgba(2,4,12,1)');
+  ctx.fillStyle=wg; ctx.fillRect(0,wTop|0,W,(wBot-wTop)|0);
+
+  // Light reflections — vertical amber streaks
+  var rr2=mkRand(55555);
+  for(var ri=0;ri<70;ri++){
+    var rx=rr2()*W, rlen=10+rr2()*45, rA=0.04+rr2()*0.1;
+    var rwm=rr2(), rwr=(178+rwm*52)|0, rwg=(144+rwm*42)|0, rwb=(58+rwm*28)|0;
+    var rfl=ctx.createLinearGradient(0,wTop,0,wTop+rlen);
+    rfl.addColorStop(0,'rgba('+rwr+','+rwg+','+rwb+','+rA+')');
+    rfl.addColorStop(1,'rgba('+rwr+','+rwg+','+rwb+',0)');
+    ctx.fillStyle=rfl; ctx.fillRect((rx-.8)|0, wTop+2, 1.6, rlen|0);
+  }
+
+  // Ground below water
+  ctx.fillStyle='#01030A';
+  ctx.fillRect(0, wBot|0, W, H-(wBot|0));
+
+  // ── 7. Edge vignettes ─────────────────────────────────
+  var vl=ctx.createLinearGradient(0,0,W*.14,0);
+  vl.addColorStop(0,'rgba(3,4,12,0.72)'); vl.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=vl; ctx.fillRect(0,0,W,H);
+  var vr=ctx.createLinearGradient(W,0,W*.86,0);
+  vr.addColorStop(0,'rgba(3,4,12,0.72)'); vr.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=vr; ctx.fillRect(0,0,W,H);
+}
+
+render();
+var rt; window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(render,80)},{passive:true});
+window.addEventListener('scroll',function(){
+  document.getElementById('nav').classList.toggle('scrolled',scrollY>20);
+},{passive:true});
+})();
+</script>
+</body>
+</html>

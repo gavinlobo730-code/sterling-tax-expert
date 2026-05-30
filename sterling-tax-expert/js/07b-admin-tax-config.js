@@ -49,8 +49,12 @@ function resetTaxOverrides(){
   location.reload();
 }
 
-// Apply overrides as soon as auth.js loads (which is after data.js)
-if (window.TAX) applyTaxOverrides();
+// Tax overrides are disabled for public use. The override UI requires server-side
+// authentication before it can be re-enabled. Any previously stored overrides
+// are intentionally not applied — tax data is read from 01-data.js constants only.
+// Clear any stale override key left from development so no visitor ever runs
+// on modified rates from a previous session.
+try { localStorage.removeItem(TAX_OVERRIDES_KEY); } catch(_) {}
 
 /* ── Tax-config CMS tab (called from cms.js cmsTab handler) ── */
 window.renderTaxConfigTab = function(){
