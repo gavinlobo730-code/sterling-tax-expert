@@ -50,9 +50,9 @@
         vy:     Math.sin(angle) * speed,
         drift:  (Math.random() - 0.5) * 0.005,
         r:      0.8 + Math.random() * 1.8,
-        baseA:  0.6  + Math.random() * 0.4,
+        baseA:  0.82 + Math.random() * 0.18,
         phase:  Math.random() * Math.PI * 2,
-        tSpeed: 0.018 + Math.random() * 0.021,
+        tSpeed: 0.012 + Math.random() * 0.014,
         gold:   Math.random() < 0.28
       };
     }
@@ -61,7 +61,7 @@
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
       /* ~300 particles on desktop — smooth at 60fps */
-      var count = Math.min(320, Math.max(120, Math.floor(W * H / 4500)));
+      var count = Math.min(520, Math.max(200, Math.floor(W * H / 2800)));
       pts = [];
       for (var i = 0; i < count; i++) pts.push(mkPt());
       goldPts  = pts.filter(function(p){ return  p.gold; });
