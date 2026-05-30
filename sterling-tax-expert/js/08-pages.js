@@ -7,265 +7,218 @@
 // HOME
 // ─────────────────────────────────────────────────────────
 function mountHome(){
-  // Hero video — lazy-load sources to avoid blocking initial paint
-  const heroV = document.getElementById('pm-hero-video');
-  if (heroV) {
-    // Allow config override (external CDN/CMS video URL)
-    const cfgSrc = window.STERLING_CONFIG && window.STERLING_CONFIG.heroVideo;
-    if (cfgSrc) {
-      heroV.src = cfgSrc;
-    } else {
-      // Activate the <source data-src="..."> elements
-      heroV.querySelectorAll('source[data-src]').forEach(s => {
-        s.src = s.dataset.src;
-      });
-      heroV.load();
-    }
-    // Fade in once enough data is buffered
-    heroV.addEventListener('canplay', () => heroV.classList.add('loaded'), { once: true });
-    // If video fails (no file yet), keep gradient visible — no error shown
-    heroV.addEventListener('error', () => {}, { once: true });
-  }
 
-  // ── Section 1: Who We Are ────────────────────────────────
-  const about = document.getElementById('home-about');
-  if (about) about.innerHTML = `
-    <section class="px-edit">
-      <div class="px-edit-inner">
-        <div class="px-label px-anim">About the Platform</div>
-        <blockquote class="px-edit-statement px-anim" style="animation-delay:.1s">
-          Sterling Tax Expert combines modern technology with current UK legislation to provide
-          accurate, accessible and professional tax intelligence.
-        </blockquote>
-        <div class="px-edit-rule px-anim" style="animation-delay:.2s"></div>
-        <div class="px-edit-cols px-anim" style="animation-delay:.3s">
-          <p class="px-edit-col-p">
-            The platform is designed to simplify complex calculations while maintaining
-            professional-grade accuracy &mdash; covering every aspect of UK tax, from PAYE and
-            employer NI to corporation tax, VAT, statutory pay and NHS pension.
-          </p>
-          <p class="px-edit-col-p">
-            Every calculator reflects the current 2026/27 tax year from the moment it began on
-            6&nbsp;April 2026. No account is required. No data is stored. All calculations run
-            entirely within your browser.
-          </p>
+  // ── Section 1: Trust & Credibility ──────────────────────
+  const trust = document.getElementById('home-trust');
+  if (trust) trust.innerHTML = `
+    <section class="hp-trust">
+      <div class="hp-inner">
+        <div class="hp-trust-grid">
+          <div class="hp-trust-item hp-anim">
+            <div class="hp-trust-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+            </div>
+            <div class="hp-trust-body">
+              <div class="hp-trust-heading">HMRC-Aligned Advice</div>
+              <p class="hp-trust-text">Every recommendation reflects current UK tax legislation and HMRC guidance, updated for the 2026/27 tax year.</p>
+            </div>
+          </div>
+          <div class="hp-trust-item hp-anim" style="animation-delay:.08s">
+            <div class="hp-trust-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <div class="hp-trust-body">
+              <div class="hp-trust-heading">End-to-End Tax &amp; Payroll Support</div>
+              <p class="hp-trust-text">Payroll, self assessment, corporation tax, VAT, CIS and advisory services managed under one roof.</p>
+            </div>
+          </div>
+          <div class="hp-trust-item hp-anim" style="animation-delay:.16s">
+            <div class="hp-trust-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="hp-trust-body">
+              <div class="hp-trust-heading">Personalised Service</div>
+              <p class="hp-trust-text">Your circumstances drive the advice, not a template. We take time to understand your situation before making any recommendation.</p>
+            </div>
+          </div>
+          <div class="hp-trust-item hp-anim" style="animation-delay:.24s">
+            <div class="hp-trust-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.08 5.18 2 2 0 0 1 5.07 3h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L9.91 10.9a16 16 0 0 0 6.16 6.16l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="hp-trust-body">
+              <div class="hp-trust-heading">Dedicated Point of Contact</div>
+              <p class="hp-trust-text">You speak to the same expert every time. No call centres, no rotating teams — just consistent, reliable professional support.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   `;
 
-  // ── Section 2: Platform Coverage ────────────────────────
-  const coverage = document.getElementById('home-coverage');
-  if (coverage) coverage.innerHTML = `
-    <section class="px-cov">
-      <div class="px-cov-inner">
-        <div class="px-cov-header">
-          <div class="px-label px-label-light px-anim">Platform Coverage</div>
-          <h2 class="px-cov-h px-anim" style="animation-delay:.1s">Areas of expertise</h2>
-        </div>
-        <div class="px-cov-grid">
-          ${[
-            { n:'PAYE & Income Tax',       i:'01' },
-            { n:'National Insurance',       i:'02' },
-            { n:'Payroll Costs',            i:'03' },
-            { n:'Salary Sacrifice',         i:'04' },
-            { n:'Statutory Pay',            i:'05' },
-            { n:'Gross-to-Net',             i:'06' },
-            { n:'VAT & Compliance',         i:'07' },
-            { n:'Corporation Tax',          i:'08' },
-            { n:'Capital Gains & Dividends',i:'09' },
-            { n:'Self Assessment',          i:'10' },
-            { n:'NHS Pension',              i:'11' },
-            { n:'Tax Deadlines',            i:'12' },
-          ].map((c, idx) => `
-            <div class="px-cov-tile px-anim" style="animation-delay:${(idx * 0.05).toFixed(2)}s">
-              <div class="px-cov-tile-num">${c.i}</div>
-              <div class="px-cov-tile-name">${c.n}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    </section>
-  `;
-
-  // ── Section 3: 2026/27 Tax Year Data ────────────────────
-  const taxdata = document.getElementById('home-taxdata');
-  if (taxdata) {
-    const T = window.TAX || {};
-    const f = n => (n || 0).toLocaleString('en-GB');
-    const pct = n => ((n || 0) * 100).toFixed(0) + '%';
-    taxdata.innerHTML = `
-      <section class="px-tyr">
-        <div class="px-tyr-inner">
-          <div class="px-tyr-header">
-            <div class="px-label px-anim">Current Tax Year</div>
-            <h2 class="px-tyr-h px-anim" style="animation-delay:.1s">Built for 2026/27</h2>
-            <p class="px-tyr-p px-anim" style="animation-delay:.15s">All thresholds, rates and statutory figures reflect the UK tax year commencing 6 April 2026.</p>
+  // ── Section 2: Services ──────────────────────────────────
+  const services = document.getElementById('home-services');
+  if (services) {
+    const svcs = [
+      {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>`,
+        name: 'Payroll Services',
+        desc: 'Accurate, compliant payroll managed for businesses of all sizes — RTI submissions, payslips and year-end included.',
+      },
+      {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+        name: 'Self Assessment',
+        desc: 'Personal tax returns prepared and filed correctly, on time, with full HMRC compliance and maximum legitimate efficiency.',
+      },
+      {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+        name: 'Corporation Tax',
+        desc: 'CT600 returns and computations for limited companies, prepared accurately and submitted within statutory deadlines.',
+      },
+      {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>`,
+        name: 'VAT Services',
+        desc: 'VAT registration, quarterly returns and compliance — including MTD submissions — handled with precision and care.',
+      },
+      {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20"/><path d="M5 20V8l7-6 7 6v12"/><path d="M9 20v-5h6v5"/></svg>`,
+        name: 'CIS Services',
+        desc: 'CIS returns, subcontractor verification and compliance for contractors operating in the construction industry.',
+      },
+      {
+        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
+        name: 'Tax Advisory',
+        desc: 'Forward-looking tax planning and advisory support to help individuals and businesses make informed, compliant decisions.',
+      },
+    ];
+    services.innerHTML = `
+      <section class="hp-services">
+        <div class="hp-inner">
+          <div class="hp-section-header hp-anim">
+            <div class="hp-kicker">Our Services</div>
+            <h2 class="hp-h2">Professional tax and payroll services<br>tailored to your situation</h2>
           </div>
-          <div class="px-tyr-cols">
-            <div class="px-tyr-col px-anim" style="animation-delay:.1s">
-              <div class="px-tyr-col-label">Income Tax</div>
-              <div class="px-tyr-col-rule"></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Personal allowance</span><span class="px-tyr-row-v">&pound;${f(T.PA)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Basic rate (20%) ceiling</span><span class="px-tyr-row-v">&pound;${f(T.BR_LIMIT)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Higher rate (40%) ceiling</span><span class="px-tyr-row-v">&pound;${f(T.HR_LIMIT)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Additional rate</span><span class="px-tyr-row-v">45%</span></div>
-            </div>
-            <div class="px-tyr-col px-anim" style="animation-delay:.18s">
-              <div class="px-tyr-col-label">National Insurance</div>
-              <div class="px-tyr-col-rule"></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Primary threshold</span><span class="px-tyr-row-v">&pound;${f(T.NI_PT)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Upper earnings limit</span><span class="px-tyr-row-v">&pound;${f(T.NI_UEL)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Employee main rate</span><span class="px-tyr-row-v">${pct(T.NI_MAIN)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Employer rate</span><span class="px-tyr-row-v">${pct(T.NI_ER)}</span></div>
-            </div>
-            <div class="px-tyr-col px-anim" style="animation-delay:.26s">
-              <div class="px-tyr-col-label">Statutory &amp; Other</div>
-              <div class="px-tyr-col-rule"></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">National Living Wage</span><span class="px-tyr-row-v">&pound;${(T.NLW_21||0).toFixed(2)}/hr</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">SSP weekly rate</span><span class="px-tyr-row-v">&pound;${(T.SSP_RATE||0).toFixed(2)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">VAT standard rate</span><span class="px-tyr-row-v">${pct(T.VAT_STD)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">VAT registration</span><span class="px-tyr-row-v">&pound;${f(T.VAT_REG_THR)}</span></div>
-            </div>
-          </div>
-          <div class="px-tyr-note px-anim" style="animation-delay:.35s">
-            Updated 6 April 2026 &nbsp;&middot;&nbsp; All figures per HMRC guidance &nbsp;&middot;&nbsp;
-            <a onclick="navigate('tools')" style="color:var(--indigo3);cursor:pointer">Open a calculator &rarr;</a>
+          <div class="hp-services-grid">
+            ${svcs.map((s, i) => `
+              <div class="hp-svc-card hp-anim" style="animation-delay:${(i * 0.07).toFixed(2)}s" onclick="navigate('services')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')navigate('services')">
+                <div class="hp-svc-icon">${s.icon}</div>
+                <div class="hp-svc-name">${s.name}</div>
+                <p class="hp-svc-desc">${s.desc}</p>
+                <span class="hp-svc-link">Learn more &rarr;</span>
+              </div>
+            `).join('')}
           </div>
         </div>
       </section>
     `;
   }
 
-  // ── Section 4: Principles ────────────────────────────────
-  const principles = document.getElementById('home-principles');
-  if (principles) principles.innerHTML = `
-    <section class="px-phil">
-      <div class="px-phil-inner">
-        <div class="px-label px-anim">How we work</div>
-        <div class="px-phil-items">
-          <div class="px-phil-item px-anim" style="animation-delay:.05s">
-            <div class="px-phil-rule"></div>
-            <div class="px-phil-row">
-              <div class="px-phil-num">01</div>
-              <div class="px-phil-body-wrap">
-                <div class="px-phil-title">Accuracy Before<br>Assumptions</div>
-                <p class="px-phil-body">Every calculation is derived from current HMRC legislation, not approximation or estimation. If something cannot be calculated precisely, we say so clearly.</p>
-              </div>
-            </div>
+  // ── Section 3: Who We Help ───────────────────────────────
+  const audience = document.getElementById('home-audience');
+  if (audience) {
+    const groups = [
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`, label: 'Individuals' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`, label: 'Sole Traders' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`, label: 'Contractors' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`, label: 'SMEs' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`, label: 'Growing Businesses' },
+    ];
+    audience.innerHTML = `
+      <section class="hp-audience">
+        <div class="hp-inner">
+          <div class="hp-section-header hp-anim" style="text-align:center">
+            <div class="hp-kicker">Who We Help</div>
+            <h2 class="hp-h2 hp-h2-center">We work with clients across<br>all sectors and circumstances</h2>
           </div>
-          <div class="px-phil-item px-anim" style="animation-delay:.12s">
-            <div class="px-phil-rule"></div>
-            <div class="px-phil-row">
-              <div class="px-phil-num">02</div>
-              <div class="px-phil-body-wrap">
-                <div class="px-phil-title">Legislation Before<br>Opinion</div>
-                <p class="px-phil-body">The platform presents what the law requires &mdash; not what is convenient, optimistic or simplified for presentation. The numbers are what they are.</p>
+          <div class="hp-audience-row">
+            ${groups.map((g, i) => `
+              <div class="hp-audience-tile hp-anim" style="animation-delay:${(i * 0.08).toFixed(2)}s">
+                <div class="hp-audience-icon">${g.icon}</div>
+                <div class="hp-audience-label">${g.label}</div>
               </div>
-            </div>
+            `).join('')}
           </div>
-          <div class="px-phil-item px-anim" style="animation-delay:.19s">
-            <div class="px-phil-rule"></div>
-            <div class="px-phil-row">
-              <div class="px-phil-num">03</div>
-              <div class="px-phil-body-wrap">
-                <div class="px-phil-title">Clarity Before<br>Complexity</div>
-                <p class="px-phil-body">Professional-grade calculations presented with the clarity that any professional &mdash; or individual &mdash; deserves. Complex tax matters explained without jargon.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  `;
-
-  // ── Section 5: Product Showcase ─────────────────────────
-  const showcase = document.getElementById('home-showcase');
-  if (showcase) showcase.innerHTML = `
-    <section class="px-product">
-      <div class="px-product-inner">
-        <div class="px-product-text">
-          <div class="px-label px-anim">The Platform</div>
-          <h2 class="px-product-h px-anim" style="animation-delay:.08s">25 calculators.<br>No account required.</h2>
-          <p class="px-product-p px-anim" style="animation-delay:.16s">
-            From PAYE and employer NI to corporation tax, NHS pension and annual allowance &mdash;
-            every calculator is aligned with the 2026/27 tax year, runs entirely in your browser,
-            and is free to use without registration.
-          </p>
-          <div class="px-product-acts px-anim" style="animation-delay:.22s">
-            <button class="px-btn-outline" onclick="navigate('tools')">Browse all calculators</button>
-            <button class="px-btn-ghost" onclick="navigate('deadlines')">View tax deadlines</button>
-          </div>
-        </div>
-        <div class="px-product-mock px-anim" style="animation-delay:.2s">
-          <div class="px-mock">
-            <div class="px-mock-chrome">
-              <div class="px-mock-dots"><span></span><span></span><span></span></div>
-              <div class="px-mock-title">PAYE Tax &amp; NI Calculator &mdash; 2026/27</div>
-              <div class="px-mock-live"><span class="px-mock-pulse"></span>Live</div>
-            </div>
-            <div class="px-mock-inputs">
-              <div class="px-mock-field">
-                <div class="px-mock-field-label">Annual salary</div>
-                <div class="px-mock-field-value">&pound;45,000</div>
-              </div>
-              <div class="px-mock-field">
-                <div class="px-mock-field-label">Tax regime</div>
-                <div class="px-mock-field-value">England &amp; Wales</div>
-              </div>
-              <div class="px-mock-field">
-                <div class="px-mock-field-label">Employee pension</div>
-                <div class="px-mock-field-value">5%</div>
-              </div>
-            </div>
-            <div class="px-mock-divider"></div>
-            <div class="px-mock-kpi-row">
-              <div class="px-mock-kpi px-mock-kpi-a">
-                <div class="px-mock-kpi-lbl">Net take-home</div>
-                <div class="px-mock-kpi-val">&pound;31,034</div>
-                <div class="px-mock-kpi-sub">&pound;2,586 / month</div>
-              </div>
-              <div class="px-mock-kpi px-mock-kpi-b">
-                <div class="px-mock-kpi-lbl">Total employer cost</div>
-                <div class="px-mock-kpi-val">&pound;51,222</div>
-                <div class="px-mock-kpi-sub">&pound;4,268 / month</div>
-              </div>
-            </div>
-            <div class="px-mock-bk-row">
-              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#C0392B"></span><span class="px-mock-bk-k">Income tax</span><span class="px-mock-bk-v">&pound;6,432</span></div>
-              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#C49A2E"></span><span class="px-mock-bk-k">Employee NI</span><span class="px-mock-bk-v">&pound;3,034</span></div>
-              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#7C3AED"></span><span class="px-mock-bk-k">Employee pension</span><span class="px-mock-bk-v">&pound;2,250</span></div>
-              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#EA580C"></span><span class="px-mock-bk-k">Employer NI</span><span class="px-mock-bk-v">&pound;4,222</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  `;
-
-  // ── Section 6: Insights ──────────────────────────────────
-  const blog = document.getElementById('home-blog');
-  if (blog) {
-    const featured = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).slice(0, 3);
-    blog.innerHTML = `
-      <section class="px-press">
-        <div class="px-press-inner">
-          <div class="px-press-header">
-            <div>
-              <div class="px-label px-anim">Insights &amp; Analysis</div>
-              <h2 class="px-press-h px-anim" style="animation-delay:.08s">UK Tax Intelligence</h2>
-            </div>
-            <button class="px-btn-ghost px-anim" onclick="navigate('insights')" style="animation-delay:.1s">All articles &rarr;</button>
-          </div>
-          <div class="bc-grid px-press-grid">${
-            featured.length
-              ? featured.map(a => blogCardHTML(a)).join('')
-              : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:13.5px">Articles loading…</div>'
-          }</div>
         </div>
       </section>
     `;
   }
+
+  // ── Section 4: Why Sterling Tax Expert ──────────────────
+  const why = document.getElementById('home-why');
+  if (why) {
+    const reasons = [
+      { h: 'Personalised Service',         b: 'We take the time to understand your specific circumstances before offering any advice. You are not a case number — your situation is unique and we treat it that way.' },
+      { h: 'Responsive Support',           b: 'When you have a question, you get an answer promptly. We understand that tax and payroll matters often have time-sensitive implications.' },
+      { h: 'Practical, Actionable Advice', b: 'We give you straightforward guidance you can understand and act on — not dense legal text. Complex tax obligations explained in plain English.' },
+      { h: 'Compliance Confidence',        b: 'We stay current with every HMRC update, legislative change and deadline. Your obligations are met accurately, fully and on time.' },
+      { h: 'Long-term Relationships',      b: 'We work with clients year after year, building a genuine understanding of their needs. The same adviser, consistent service, no handoffs.' },
+    ];
+    why.innerHTML = `
+      <section class="hp-why">
+        <div class="hp-inner">
+          <div class="hp-section-header hp-anim">
+            <div class="hp-kicker hp-kicker-light">Why Choose Us</div>
+            <h2 class="hp-h2 hp-h2-light">Why clients choose<br>Sterling Tax Expert</h2>
+          </div>
+          <div class="hp-why-grid">
+            ${reasons.map((r, i) => `
+              <div class="hp-why-item hp-anim" style="animation-delay:${(i * 0.09).toFixed(2)}s">
+                <div class="hp-why-heading">${r.h}</div>
+                <p class="hp-why-body">${r.b}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  // ── Section 5: How We Work ───────────────────────────────
+  const process = document.getElementById('home-process');
+  if (process) {
+    const steps = [
+      { n: '01', h: 'Initial Consultation', b: 'We take time to understand your situation, goals and obligations — no charge, no obligation.' },
+      { n: '02', h: 'Tailored Solution',    b: 'We design an approach that fits your specific needs, timeline and circumstances.' },
+      { n: '03', h: 'Ongoing Support',      b: 'We remain your dedicated point of contact as your business and tax needs evolve.' },
+    ];
+    process.innerHTML = `
+      <section class="hp-process">
+        <div class="hp-inner">
+          <div class="hp-section-header hp-anim" style="text-align:center">
+            <div class="hp-kicker">How We Work</div>
+            <h2 class="hp-h2 hp-h2-center">A straightforward process</h2>
+          </div>
+          <div class="hp-process-steps">
+            ${steps.map((s, i) => `
+              <div class="hp-step hp-anim" style="animation-delay:${(i * 0.1).toFixed(2)}s">
+                <div class="hp-step-num">${s.n}</div>
+                <div class="hp-step-rule"></div>
+                <div class="hp-step-heading">${s.h}</div>
+                <p class="hp-step-body">${s.b}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  // ── Section 6: Final CTA ─────────────────────────────────
+  const cta = document.getElementById('home-cta');
+  if (cta) cta.innerHTML = `
+    <section class="hp-cta">
+      <div class="hp-inner hp-cta-inner">
+        <h2 class="hp-cta-h hp-anim">Let&rsquo;s Discuss Your Tax and<br>Payroll Requirements</h2>
+        <p class="hp-cta-p hp-anim" style="animation-delay:.1s">
+          Speak with a UK tax expert who will take time to understand your situation
+          and provide clear, practical guidance you can act on.
+        </p>
+        <div class="hp-cta-acts hp-anim" style="animation-delay:.2s">
+          <button class="btn btn-white" onclick="navigate('contact')">Book a Consultation</button>
+          <button class="hp-cta-ghost" onclick="navigate('contact')">Contact Us</button>
+        </div>
+      </div>
+    </section>
+  `;
 
   // ── Scroll animations ────────────────────────────────────
   try {
@@ -274,18 +227,17 @@ function mountHome(){
         entries.forEach(en => {
           if (!en.isIntersecting) return;
           io.unobserve(en.target);
-          // Find all un-animated siblings within the same section, stagger them
-          const section = en.target.closest('[class*="px-"]') || en.target.parentElement;
-          const siblings = section ? Array.from(section.querySelectorAll('.px-anim:not(.px-in)')) : [];
+          const section = en.target.closest('section') || en.target.parentElement;
+          const siblings = section ? Array.from(section.querySelectorAll('.hp-anim:not(.hp-in)')) : [];
           const targets = siblings.length ? siblings : [en.target];
           targets.forEach((el, i) => {
-            el.style.transitionDelay = (i * 75) + 'ms';
-            el.classList.add('px-in');
+            el.style.transitionDelay = (i * 80) + 'ms';
+            el.classList.add('hp-in');
             io.unobserve(el);
           });
         });
-      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-      document.querySelectorAll('#page-home .px-anim').forEach(el => io.observe(el));
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('#page-home .hp-anim').forEach(el => io.observe(el));
     }
   } catch(e) {}
 }
