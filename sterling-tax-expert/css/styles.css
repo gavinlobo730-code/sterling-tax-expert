@@ -2215,11 +2215,19 @@ td,th { font-family:var(--sans) !important; }
 
 /* ══════════════════════════════════════════════════════════
    FONT UNIFICATION — Inter everywhere, Cormorant only on hero h1
-   Overrides all previous --display font assignments.
+   Targeted overrides (no * selector — avoids style-recalc cost).
    ══════════════════════════════════════════════════════════ */
 
-/* Nuclear reset: everything uses Inter */
-*, *::before, *::after {
+/* Override all --display assignments back to Inter */
+h1,h2,h3,h4,h5,h6,
+.tool-t,.bc-t,.dl-nm,.hsvc-t,.why-h,.hp-trust-heading,
+.hp-svc-name,.hp-step-heading,.hp-why-heading,
+.about-audience-label,.about-service-title,
+.pc-plan,.tip-label,.adm-tt,.ci-title,
+.ch-h,.post-h1,.post-body h2,.post-body h3,
+.adm-t,.login-h,.cta-bh,.nl-t,.fa-h,.hmrc-sb-t,
+.dh-list-nm,.adm-mn,.sc-n,.about-fact-n,
+.pm-pillar-value,.pc-amt {
   font-family: var(--sans) !important;
 }
 
@@ -2230,9 +2238,9 @@ td,th { font-family:var(--sans) !important; }
   letter-spacing: -0.02em !important;
 }
 
-/* Mono stays mono for numeric outputs */
-.kpi-value, .sc-n, .bk-amt, .dl-dt,
+/* Mono for numeric outputs */
+.kpi-value, .bk-amt, .dl-dt,
 .dh-list-date, .pm-pillar-value, .about-fact-n,
-.jetbrains, code, pre, kbd {
+code, pre, kbd {
   font-family: 'JetBrains Mono', 'Courier New', monospace !important;
 }
