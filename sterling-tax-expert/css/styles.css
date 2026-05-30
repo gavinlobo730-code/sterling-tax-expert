@@ -2212,3 +2212,27 @@ td,th { font-family:var(--sans) !important; }
     opacity:1; animation:none;
   }
 }
+
+/* ══════════════════════════════════════════════════════════
+   FONT UNIFICATION — Inter everywhere, Cormorant only on hero h1
+   Overrides all previous --display font assignments.
+   ══════════════════════════════════════════════════════════ */
+
+/* Nuclear reset: everything uses Inter */
+*, *::before, *::after {
+  font-family: var(--sans) !important;
+}
+
+/* Hero h1 only keeps Cormorant Garamond for dramatic impact */
+.pm-hero-h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* Mono stays mono for numeric outputs */
+.kpi-value, .sc-n, .bk-amt, .dl-dt,
+.dh-list-date, .pm-pillar-value, .about-fact-n,
+.jetbrains, code, pre, kbd {
+  font-family: 'JetBrains Mono', 'Courier New', monospace !important;
+}
