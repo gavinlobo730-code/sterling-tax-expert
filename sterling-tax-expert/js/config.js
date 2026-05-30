@@ -33,7 +33,7 @@ window.STERLING_CONFIG = {
   emailjs: {
     publicKey:  'Wiy-AGwPgs8KChEsB',
     serviceId:  'service_tp0kt6d',
-    templateId: 'template_61wheps',
+    templateId: '61wheps',
   },
 
   // Optional fullscreen hero background video (MP4). Blank = gradient only.
