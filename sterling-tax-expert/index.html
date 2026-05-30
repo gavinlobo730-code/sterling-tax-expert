@@ -209,29 +209,13 @@
       }
     } catch (e) { console.warn('EmailJS init skipped:', e); }
 
-    // Scroll-reveal animation system
-    try {
-      function _check() {
-        var vh = window.innerHeight;
-        document.querySelectorAll('.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale').forEach(function(el) {
-          if (el.classList.contains('ta-in')) return;
-          var rect = el.getBoundingClientRect();
-          if (rect.top < vh - 50) el.classList.add('ta-in');
-        });
-      }
-
-      // Run every 100ms for the first 3 seconds to catch any timing issues
-      var _bootCount = 0;
-      var _bootTimer = setInterval(function() {
-        _check();
-        if (++_bootCount >= 30) clearInterval(_bootTimer);
-      }, 100);
-
-      // Then on every scroll
-      window.addEventListener('scroll', _check, { passive: true });
-
-      window.initReveal = _check;
-    } catch(e) {}
+    // Scroll-reveal animation system — force all elements after 1s to test CSS
+    setTimeout(function() {
+      document.querySelectorAll('.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale').forEach(function(el) {
+        el.classList.add('ta-in');
+      });
+    }, 1000);
+    window.initReveal = function() {};
   });
 </script>
 </body>
