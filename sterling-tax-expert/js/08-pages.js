@@ -163,6 +163,7 @@ function mountHome(){
     </section>
   `;
 
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 
 
@@ -258,6 +259,7 @@ function mountServices(){
     ${renderFooter()}
   `;
   updateBreadcrumbs('services');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 
 // ─────────────────────────────────────────────────────────
@@ -327,6 +329,7 @@ function mountTools(){
   `;
   renderToolsGrid();
   updateBreadcrumbs('tools');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 function setToolCat(c){
   CURRENT_TOOL_CAT = c;
@@ -903,6 +906,7 @@ function mountAbout(){
     ${renderFooter()}
   `;
   updateBreadcrumbs('about');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 
 // ─────────────────────────────────────────────────────────
@@ -962,6 +966,7 @@ function mountContact(){
     ${renderFooter()}
   `;
   updateBreadcrumbs('contact');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 
 // ─────────────────────────────────────────────────────────

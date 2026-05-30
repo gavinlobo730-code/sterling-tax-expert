@@ -219,29 +219,34 @@
               revealIO.unobserve(en.target);
             }
           });
-        }, { threshold: 0.08, rootMargin:'0px 0px -32px 0px' });
+        }, { threshold: 0.06, rootMargin:'0px 0px -24px 0px' });
+
+        var taSelectors =
+          '.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale,' +
+          '.ds-reveal,.hp-anim,.px-anim,.reveal,' +
+          '.tool-card,.bc,.dl-c,.kpi,' +
+          '.about-audience-card,.about-service-card,' +
+          '.tcard,.why-card,.hsvc,.tc,.pricing-card';
 
         function initReveal() {
-          document.querySelectorAll(
-            '.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale,' +
-            '.ds-reveal,.hp-anim,.px-anim,.reveal,' +
-            '.tool-card,.bc,.dl-c,.kpi,' +
-            '.about-audience-card,.about-service-card,' +
-            '.tcard,.why-card,.hsvc,.tc,.pricing-card'
-          ).forEach(function(el){
+          document.querySelectorAll(taSelectors).forEach(function(el){
             if (!el.classList.contains('ta-in') && !el.classList.contains('ds-in')) {
               revealIO.observe(el);
             }
           });
         }
 
-        // Run on initial load and after every navigation
+        // Expose globally so page-mount functions can call it directly
+        window.initReveal = initReveal;
+
+        // Run on initial load and after every navigation (with longer delay for async mounts)
         initReveal();
         var _origNavigate = window.navigate;
         if (typeof _origNavigate === 'function') {
           window.navigate = function() {
             _origNavigate.apply(this, arguments);
-            setTimeout(initReveal, 280);
+            setTimeout(initReveal, 100);
+            setTimeout(initReveal, 400);
           };
         }
       }
