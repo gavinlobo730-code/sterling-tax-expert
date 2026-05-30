@@ -219,18 +219,17 @@
               revealIO.unobserve(en.target);
             }
           });
-        }, { threshold: 0.07, rootMargin:'0px 0px -40px 0px' });
+        }, { threshold: 0.08, rootMargin:'0px 0px -32px 0px' });
 
         function initReveal() {
           document.querySelectorAll(
+            '.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale,' +
             '.ds-reveal,.hp-anim,.px-anim,.reveal,' +
-            '.ta-up,.ta-left,.ta-right,.ta-scale,' +
-            '.tool-card,.bc,.dl-c,.kpi,.about-audience-card,' +
-            '.about-service-card,.hp-trust-item,.hp-svc-card,' +
-            '.hp-why-item,.hp-step,.hp-audience-tile,' +
+            '.tool-card,.bc,.dl-c,.kpi,' +
+            '.about-audience-card,.about-service-card,' +
             '.tcard,.why-card,.hsvc,.tc,.pricing-card'
           ).forEach(function(el){
-            if (!el.classList.contains('ds-in') && !el.classList.contains('ta-in')) {
+            if (!el.classList.contains('ta-in') && !el.classList.contains('ds-in')) {
               revealIO.observe(el);
             }
           });

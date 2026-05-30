@@ -13,8 +13,8 @@ function mountHome(){
   if (trust) trust.innerHTML = `
     <section class="hp-trust">
       <div class="hp-inner">
-        <div class="hp-trust-grid">
-          <div class="hp-trust-item hp-anim">
+        <div class="hp-trust-grid ta-stagger">
+          <div class="hp-trust-item ta-up">
             <div class="hp-trust-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
             </div>
@@ -23,7 +23,7 @@ function mountHome(){
               <p class="hp-trust-text">Every recommendation reflects current UK tax legislation and HMRC guidance, updated for the 2026/27 tax year.</p>
             </div>
           </div>
-          <div class="hp-trust-item hp-anim" style="animation-delay:.08s">
+          <div class="hp-trust-item ta-up">
             <div class="hp-trust-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
             </div>
@@ -32,7 +32,7 @@ function mountHome(){
               <p class="hp-trust-text">Payroll, self assessment, corporation tax, VAT, CIS and advisory services managed under one roof.</p>
             </div>
           </div>
-          <div class="hp-trust-item hp-anim" style="animation-delay:.16s">
+          <div class="hp-trust-item ta-up">
             <div class="hp-trust-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             </div>
@@ -41,7 +41,7 @@ function mountHome(){
               <p class="hp-trust-text">Your circumstances drive the advice, not a template. We take time to understand your situation before making any recommendation.</p>
             </div>
           </div>
-          <div class="hp-trust-item hp-anim" style="animation-delay:.24s">
+          <div class="hp-trust-item ta-up">
             <div class="hp-trust-icon">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.08 5.18 2 2 0 0 1 5.07 3h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L9.91 10.9a16 16 0 0 0 6.16 6.16l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             </div>
@@ -69,13 +69,13 @@ function mountHome(){
     audience.innerHTML = `
       <section class="hp-audience">
         <div class="hp-inner">
-          <div class="hp-section-header ta-up" style="text-align:center">
-            <div class="hp-kicker">Who We Help</div>
-            <h2 class="hp-h2 hp-h2-center">From sole traders to multi-entity businesses —<br>we understand the full range of UK tax complexity</h2>
+          <div class="hp-section-header" style="text-align:center">
+            <div class="hp-kicker ta-up">Who We Help</div>
+            <h2 class="hp-h2 hp-h2-center ta-up ta-d1">From sole traders to multi-entity businesses —<br>we understand the full range of UK tax complexity</h2>
           </div>
-          <div class="hp-audience-row">
+          <div class="hp-audience-row ta-stagger">
             ${groups.map((g, i) => `
-              <div class="hp-audience-tile hp-anim" style="animation-delay:${(i * 0.08).toFixed(2)}s">
+              <div class="hp-audience-tile ta-up">
                 <div class="hp-audience-icon">${g.icon}</div>
                 <div class="hp-audience-label">${g.label}</div>
               </div>
@@ -98,13 +98,13 @@ function mountHome(){
     why.innerHTML = `
       <section class="hp-why">
         <div class="hp-inner">
-          <div class="hp-section-header ta-up">
-            <div class="hp-kicker hp-kicker-light">Why Choose Us</div>
-            <h2 class="hp-h2 hp-h2-light">Why clients choose<br>Sterling Tax Expert</h2>
+          <div class="hp-section-header">
+            <div class="hp-kicker hp-kicker-light ta-left">Why Choose Us</div>
+            <h2 class="hp-h2 hp-h2-light ta-left ta-d1">Why clients choose<br>Sterling Tax Expert</h2>
           </div>
-          <div class="hp-why-grid">
+          <div class="hp-why-grid ta-stagger">
             ${reasons.map((r, i) => `
-              <div class="hp-why-item hp-anim" style="animation-delay:${(i * 0.09).toFixed(2)}s">
+              <div class="hp-why-item ta-up">
                 <div class="hp-why-heading">${r.h}</div>
                 <p class="hp-why-body">${r.b}</p>
               </div>
@@ -126,13 +126,13 @@ function mountHome(){
     process.innerHTML = `
       <section class="hp-process">
         <div class="hp-inner">
-          <div class="hp-section-header ta-up" style="text-align:center">
-            <div class="hp-kicker">How We Work</div>
-            <h2 class="hp-h2 hp-h2-center">A straightforward process</h2>
+          <div class="hp-section-header" style="text-align:center">
+            <div class="hp-kicker ta-up">How We Work</div>
+            <h2 class="hp-h2 hp-h2-center ta-up ta-d1">A straightforward process</h2>
           </div>
-          <div class="hp-process-steps">
+          <div class="hp-process-steps ta-stagger">
             ${steps.map((s, i) => `
-              <div class="hp-step hp-anim" style="animation-delay:${(i * 0.1).toFixed(2)}s">
+              <div class="hp-step ta-up">
                 <div class="hp-step-num">${s.n}</div>
                 <div class="hp-step-rule"></div>
                 <div class="hp-step-heading">${s.h}</div>
@@ -163,26 +163,6 @@ function mountHome(){
     </section>
   `;
 
-  // ── Scroll animations ────────────────────────────────────
-  try {
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(en => {
-          if (!en.isIntersecting) return;
-          io.unobserve(en.target);
-          const section = en.target.closest('section') || en.target.parentElement;
-          const siblings = section ? Array.from(section.querySelectorAll('.hp-anim:not(.hp-in)')) : [];
-          const targets = siblings.length ? siblings : [en.target];
-          targets.forEach((el, i) => {
-            el.style.transitionDelay = (i * 80) + 'ms';
-            el.classList.add('hp-in');
-            io.unobserve(el);
-          });
-        });
-      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-      document.querySelectorAll('#page-home .hp-anim').forEach(el => io.observe(el));
-    }
-  } catch(e) {}
 }
 
 
@@ -257,15 +237,15 @@ function mountServices(){
     <div class="crumbs"></div>
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
-        <div class="eyebrow ey-blue">Services</div>
-        <h1 style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Eight pillars of UK tax expertise</h1>
-        <p style="font-size:14.5px;color:var(--t2);max-width:560px;line-height:1.75">Full-service accounting for limited companies, sole traders and partnerships. Every engagement is fixed-fee, with a named senior accountant assigned from day one.</p>
+        <div class="eyebrow ey-blue ta-left">Services</div>
+        <h1 class="ta-left ta-d1" style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Eight pillars of UK tax expertise</h1>
+        <p class="ta-left ta-d2" style="font-size:14.5px;color:var(--t2);max-width:560px;line-height:1.75">Full-service accounting for limited companies, sole traders and partnerships. Every engagement is fixed-fee, with a named senior accountant assigned from day one.</p>
       </div>
     </div>
     <div class="sec"><div class="sec-inner">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px" class="ta-stagger">
         ${(window.SVCS || []).map(s => `
-          <div style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:24px;transition:border-color .15s,box-shadow .15s,transform .15s;cursor:pointer" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='var(--shadow)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'" onclick="navigate('contact')">
+          <div class="ta-up" style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:24px;transition:border-color .15s,box-shadow .15s,transform .15s;cursor:pointer" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='var(--shadow)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'" onclick="navigate('contact')">
             <div style="width:42px;height:42px;background:var(--bluel);border-radius:10px;display:grid;place-items:center;font-size:19px;margin-bottom:14px">${s.icon}</div>
             <div style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px">${s.t}</div>
             <div style="font-size:12.5px;color:var(--t3);line-height:1.65;margin-bottom:14px">${s.d}</div>
@@ -293,9 +273,9 @@ function mountTools(){
       <div class="th-bg"></div><div class="th-glow"></div>
       <div class="th-inner">
         <div>
-          <div class="th-kicker">⚡ ${window.TAX_YEAR_LABEL}</div>
-          <h1 class="th-h">UK payroll &amp; tax tools — <em>built on HMRC rates</em></h1>
-          <p class="th-p">${window.TOOLS.length} fully-functional calculators for payroll, statutory pay, compliance and tax — every one updated for the 2026/27 UK tax year.</p>
+          <div class="th-kicker ta-up">⚡ ${window.TAX_YEAR_LABEL}</div>
+          <h1 class="th-h ta-up ta-d1">UK payroll &amp; tax tools — <em>built on HMRC rates</em></h1>
+          <p class="th-p ta-up ta-d2">${window.TOOLS.length} fully-functional calculators for payroll, statutory pay, compliance and tax — every one updated for the 2026/27 UK tax year.</p>
           <div class="th-acts">
             <button class="btn btn-blue" style="padding:11px 18px;font-size:13px" onclick="navigate('calc','paye')">Try the PAYE calculator</button>
             <button class="btn btn-white" style="padding:11px 18px;font-size:13px" onclick="navigate('deadlines')">View deadlines hub →</button>
@@ -804,10 +784,10 @@ function mountAbout(){
     <div class="about-hero">
       <div class="about-hero-bg"></div>
       <div class="about-hero-inner">
-        <div class="eyebrow ey-indigo-light">About Sterling Tax Expert</div>
-        <h1 class="about-hero-h">Built to make UK tax <em>easier to understand</em></h1>
-        <p class="about-hero-p">UK tax rules are precise, frequently updated, and spread across a landscape of HMRC guidance, statutory instruments and Finance Acts. Businesses and individuals deserve clear, accurate, free access to that information — not locked behind paywalls or buried in jargon.</p>
-        <p class="about-hero-p" style="margin-top:12px">Sterling Tax Expert exists to provide that access: practical tools, plain-English insights, and professional services — all built on the same foundation of accuracy and transparency.</p>
+        <div class="eyebrow ey-indigo-light ta-up">About Sterling Tax Expert</div>
+        <h1 class="about-hero-h ta-up ta-d1">Built to make UK tax <em>easier to understand</em></h1>
+        <p class="about-hero-p ta-up ta-d2">UK tax rules are precise, frequently updated, and spread across a landscape of HMRC guidance, statutory instruments and Finance Acts. Businesses and individuals deserve clear, accurate, free access to that information — not locked behind paywalls or buried in jargon.</p>
+        <p class="about-hero-p ta-up ta-d3" style="margin-top:12px">Sterling Tax Expert exists to provide that access: practical tools, plain-English insights, and professional services — all built on the same foundation of accuracy and transparency.</p>
       </div>
     </div>
 
@@ -844,9 +824,9 @@ function mountAbout(){
     <div class="sec"><div class="sec-inner">
       <div class="about-split">
         <div class="about-split-main">
-          <div class="eyebrow ey-blue">Why it exists</div>
-          <div class="sec-h">Accurate tax information should not be a privilege</div>
-          <p class="about-body-p">Tax rules in the UK change every April. Rates shift, thresholds move, statutory amounts are updated by statutory instrument. Keeping up requires constant attention to HMRC guidance, GOV.UK publications, and the Finance Acts that underpin them.</p>
+          <div class="eyebrow ey-blue ta-left">Why it exists</div>
+          <div class="sec-h ta-left ta-d1">Accurate tax information should not be a privilege</div>
+          <p class="about-body-p ta-left ta-d2">Tax rules in the UK change every April. Rates shift, thresholds move, statutory amounts are updated by statutory instrument. Keeping up requires constant attention to HMRC guidance, GOV.UK publications, and the Finance Acts that underpin them.</p>
           <p class="about-body-p">Most free tools on the internet lag behind by months, apply approximate formulae, or hide the key edge cases — the personal allowance taper above £100,000, the Class 2 NI reform that took effect in April 2024, the day-one SSP entitlement introduced by the Employment Rights Act 2025. These details matter. Getting them wrong costs money.</p>
           <p class="about-body-p">Sterling Tax Expert is built on the principle that clarity and precision are not luxuries. Every calculator documents its source. Every rate is cited. Every known limitation is disclosed. The goal is tools you can actually rely on — and insights that help you understand <em>why</em> the numbers are what they are, not just what they are.</p>
         </div>
@@ -870,9 +850,9 @@ function mountAbout(){
     <div class="sec" style="background:var(--g50);border-top:1px solid var(--br);border-bottom:1px solid var(--br)">
       <div class="sec-inner">
         <div style="text-align:center;margin-bottom:40px">
-          <div class="eyebrow ey-blue">Who it is for</div>
-          <div class="sec-h">Practical tools for anyone navigating UK tax</div>
-          <p class="sec-p" style="margin:0 auto;text-align:center;max-width:520px">Whether you run a business, file your own tax return, or are trying to understand what you actually take home — the platform is built for you.</p>
+          <div class="eyebrow ey-blue ta-up">Who it is for</div>
+          <div class="sec-h ta-up ta-d1">Practical tools for anyone navigating UK tax</div>
+          <p class="sec-p ta-up ta-d2" style="margin:0 auto;text-align:center;max-width:520px">Whether you run a business, file your own tax return, or are trying to understand what you actually take home — the platform is built for you.</p>
         </div>
         <div class="about-audience-grid">
           ${audiences.map(a => `
@@ -935,14 +915,14 @@ function mountContact(){
     <div class="crumbs"></div>
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
-        <div class="eyebrow ey-blue">Get in touch</div>
-        <h1 style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Book your free consultation</h1>
-        <p style="font-size:14px;color:var(--t2);max-width:520px;line-height:1.8">A free, no-obligation 30-minute call with a senior UK tax expert. We'll assess your situation and recommend the right approach.</p>
+        <div class="eyebrow ey-blue ta-left">Get in touch</div>
+        <h1 class="ta-left ta-d1" style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Book your free consultation</h1>
+        <p class="ta-left ta-d2" style="font-size:14px;color:var(--t2);max-width:520px;line-height:1.8">A free, no-obligation 30-minute call with a senior UK tax expert. We'll assess your situation and recommend the right approach.</p>
       </div>
     </div>
     <div class="sec"><div class="sec-inner">
       <div style="display:grid;grid-template-columns:1fr 340px;gap:36px;align-items:start" class="contact-grid">
-        <div style="background:var(--w);border:1px solid var(--br);border-radius:13px;padding:28px">
+        <div class="ta-left ta-d1" style="background:var(--w);border:1px solid var(--br);border-radius:13px;padding:28px">
           <div style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px">Your details</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
             <div class="fg"><div class="fl">First name *</div><input class="fi" id="cf-fn" type="text" placeholder="Sarah"></div>
@@ -962,7 +942,7 @@ function mountContact(){
           <button class="btn btn-navy" id="cf-submit" style="width:100%;padding:12px" onclick="submitContact()">Send enquiry →</button>
           <div class="succ" id="cf-suc">✓ Enquiry sent — we'll be in touch within 48 hours.</div>
         </div>
-        <aside>
+        <aside class="ta-right ta-d2">
           <div style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:22px;margin-bottom:14px">
             <div class="eyebrow ey-blue">Quick contact</div>
             <div style="font-family:var(--sans);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px">Direct contact</div>
