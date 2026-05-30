@@ -7,171 +7,187 @@
 // HOME
 // ─────────────────────────────────────────────────────────
 function mountHome(){
-  // Blog teasers
-  const hbg = document.getElementById('home-blog-grid');
-  if (hbg) {
-    const featured = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).slice(0, 3);
-    hbg.innerHTML = featured.length
-      ? featured.map(a => blogCardHTML(a)).join('')
-      : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:13.5px">Articles loading…</div>';
+  // Hero video (optional — configure in STERLING_CONFIG.heroVideo)
+  const heroV = document.getElementById('pm-hero-video');
+  if (heroV && window.STERLING_CONFIG && window.STERLING_CONFIG.heroVideo) {
+    heroV.src = window.STERLING_CONFIG.heroVideo;
+    heroV.addEventListener('canplay', () => heroV.classList.add('loaded'), { once: true });
   }
 
-  // FAQ
-  const fq = document.getElementById('faq-set');
-  if (fq) fq.innerHTML = (window.FAQS || []).map((f, i) => `
-    <div class="faq-item">
-      <button class="faq-q" onclick="toggleFAQ(${i})" id="fq${i}"><span>${f.q}</span><span class="faq-ch" id="fc${i}">▾</span></button>
-      <div class="faq-a" id="fa${i}">${f.a}</div>
+  // About section
+  const about = document.getElementById('home-about');
+  if (about) about.innerHTML = `
+    <div class="pm-about">
+      <div class="pm-about-inner">
+        <div class="pm-about-text">
+          <div class="pm-about-eyebrow">About</div>
+          <h2 class="pm-about-h">Professional UK tax intelligence &mdash; <strong>built for precision.</strong></h2>
+          <p class="pm-about-p">Sterling Tax Expert provides professional UK tax, payroll and compliance tools designed to deliver clarity, accuracy and confidence. Every calculator is aligned with current HMRC guidance and updated for each new tax year.</p>
+          <div class="pm-about-rule"></div>
+          <div class="pm-about-pillars">
+            <div class="pm-about-pillar">
+              <div class="pm-pillar-label">Tax Year</div>
+              <div class="pm-pillar-value">2026/27</div>
+            </div>
+            <div class="pm-about-pillar">
+              <div class="pm-pillar-label">Free Calculators</div>
+              <div class="pm-pillar-value">25</div>
+            </div>
+            <div class="pm-about-pillar">
+              <div class="pm-pillar-label">HMRC Aligned</div>
+              <div class="pm-pillar-value">Always</div>
+            </div>
+          </div>
+        </div>
+        <div class="pm-about-visual">
+          <div class="pm-about-card">
+            <div class="pm-about-card-eyebrow">Coverage</div>
+            <div class="pm-about-card-list">
+              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>PAYE &amp; Income Tax</div>
+              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>National Insurance</div>
+              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>Payroll &amp; Statutory Pay</div>
+              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>Corporation Tax</div>
+              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>VAT &amp; Compliance</div>
+              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>Capital Gains &amp; Dividends</div>
+              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>NHS Pension &amp; Self-Assessment</div>
+            </div>
+            <div class="pm-about-card-footer">Updated 6 April 2026</div>
+          </div>
+        </div>
+      </div>
     </div>
-  `).join('');
-
-  // Why Choose Sterling
-  const why = document.getElementById('home-why');
-  if (why) why.innerHTML = `
-    <div class="sec bg-w"><div class="sec-inner">
-      <div class="row-hdr">
-        <div>
-          <div class="eyebrow ey-blue">Why Sterling Tax Expert</div>
-          <div class="sec-h" style="margin-bottom:0">Professional advice you can rely on</div>
-        </div>
-      </div>
-      <div class="why-grid">
-        <div class="why-card reveal">
-          <div class="why-ic">🎯</div>
-          <div class="why-h">Deep UK expertise</div>
-          <div class="why-p">Our advisers specialise exclusively in UK tax law — income tax, corporation tax, VAT, NI, and every edge case between them.</div>
-        </div>
-        <div class="why-card reveal">
-          <div class="why-ic">👤</div>
-          <div class="why-h">Personal service</div>
-          <div class="why-p">A named senior accountant handles your engagement from first call to final submission. No call centres, no juniors.</div>
-        </div>
-        <div class="why-card reveal">
-          <div class="why-ic">💷</div>
-          <div class="why-h">Transparent pricing</div>
-          <div class="why-p">Fixed-fee engagements wherever possible. You know the cost before we start, with no hidden charges or surprise invoices.</div>
-        </div>
-        <div class="why-card reveal">
-          <div class="why-ic">📈</div>
-          <div class="why-h">Proactive approach</div>
-          <div class="why-p">We do not wait for you to ask — we flag planning opportunities, approaching deadlines, and changes in HMRC guidance before they affect you.</div>
-        </div>
-      </div>
-    </div></div>
   `;
 
-  // Services
-  const svcs = document.getElementById('home-services');
-  if (svcs) {
-    const svcData = (window.SVCS || []).slice(0, 6).map(s => `
-      <div class="hsvc reveal" onclick="navigate('services')">
-        <div class="hsvc-ic">${s.ic || '💼'}</div>
-        <div class="hsvc-body">
-          <div class="hsvc-t">${s.t}</div>
-          <div class="hsvc-d">${s.desc || s.d || ''}</div>
+  // Principles section
+  const principles = document.getElementById('home-principles');
+  if (principles) principles.innerHTML = `
+    <div class="pm-principles">
+      <div class="pm-principles-inner">
+        <div class="pm-principles-header">
+          <div class="pm-about-eyebrow pm-ey-light">Our Principles</div>
+          <h2 class="pm-principles-h">The standards we hold ourselves to.</h2>
+        </div>
+        <div class="pm-principles-grid">
+          <div class="pm-prin-card reveal">
+            <div class="pm-prin-num">01</div>
+            <div class="pm-prin-title">Accuracy First</div>
+            <div class="pm-prin-rule"></div>
+            <div class="pm-prin-body">Every calculation is built with precision and aligned with current UK tax and payroll requirements. No rounding shortcuts, no approximation.</div>
+          </div>
+          <div class="pm-prin-card reveal">
+            <div class="pm-prin-num">02</div>
+            <div class="pm-prin-title">Professional by Design</div>
+            <div class="pm-prin-rule"></div>
+            <div class="pm-prin-body">Designed to provide a clear, efficient and reliable experience for professionals and individuals alike &mdash; without unnecessary complexity.</div>
+          </div>
+          <div class="pm-prin-card reveal">
+            <div class="pm-prin-num">03</div>
+            <div class="pm-prin-title">Always Evolving</div>
+            <div class="pm-prin-rule"></div>
+            <div class="pm-prin-body">Continuously refined to reflect changing legislation, payroll requirements and HMRC standards &mdash; so you can trust the numbers, every time.</div>
+          </div>
         </div>
       </div>
-    `).join('');
-    svcs.innerHTML = `
-      <div class="sec bg-g25"><div class="sec-inner">
-        <div class="row-hdr">
-          <div>
-            <div class="eyebrow ey-blue">Our Services</div>
-            <div class="sec-h" style="margin-bottom:0">Comprehensive UK tax &amp; accounting</div>
+    </div>
+  `;
+
+  // Visual showcase
+  const showcase = document.getElementById('home-showcase');
+  if (showcase) showcase.innerHTML = `
+    <div class="pm-showcase">
+      <div class="pm-showcase-panel">
+        <div class="pm-showcase-inner">
+          <div class="pm-showcase-text">
+            <div class="pm-about-eyebrow">Free Tools</div>
+            <h2 class="pm-showcase-h">25 HMRC-aligned calculators. Free. No account required.</h2>
+            <p class="pm-showcase-p">From PAYE and employer NI to corporation tax, VAT, NHS pension and annual allowance &mdash; every calculator is aligned with the 2026/27 tax year and requires no registration.</p>
+            <button class="pm-showcase-btn" onclick="navigate('tools')">Browse all calculators</button>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="navigate('services')">All services →</button>
+          <div class="pm-showcase-mock">
+            <div class="pm-mock">
+              <div class="pm-mock-chrome">
+                <div class="pm-mock-dots"><span></span><span></span><span></span></div>
+                <div class="pm-mock-title">PAYE Tax &amp; NI Calculator</div>
+                <div class="pm-mock-badge"><span class="pm-mock-pulse"></span>2026/27</div>
+              </div>
+              <div class="pm-mock-body">
+                <div class="pm-mock-input-row">
+                  <div class="pm-mock-input-label">Annual salary</div>
+                  <div class="pm-mock-input-value">&pound;45,000</div>
+                </div>
+                <div class="pm-mock-input-row">
+                  <div class="pm-mock-input-label">Tax regime</div>
+                  <div class="pm-mock-input-value">England &amp; Wales</div>
+                </div>
+                <div class="pm-mock-divider"></div>
+                <div class="pm-mock-kpis">
+                  <div class="pm-mock-kpi pm-mock-kpi-primary">
+                    <div class="pm-mock-kpi-label">Net take-home</div>
+                    <div class="pm-mock-kpi-value">&pound;33,284</div>
+                    <div class="pm-mock-kpi-sub">&pound;2,774 / month</div>
+                  </div>
+                  <div class="pm-mock-kpi pm-mock-kpi-secondary">
+                    <div class="pm-mock-kpi-label">Total employer cost</div>
+                    <div class="pm-mock-kpi-value">&pound;51,222</div>
+                    <div class="pm-mock-kpi-sub">&pound;4,268 / month</div>
+                  </div>
+                </div>
+                <div class="pm-mock-kpis pm-mock-kpis-4">
+                  <div class="pm-mock-kpi-sm">
+                    <div class="pm-mock-kpi-label">Income tax</div>
+                    <div class="pm-mock-kpi-value-sm">&pound;6,432</div>
+                  </div>
+                  <div class="pm-mock-kpi-sm">
+                    <div class="pm-mock-kpi-label">Employee NI</div>
+                    <div class="pm-mock-kpi-value-sm">&pound;3,034</div>
+                  </div>
+                  <div class="pm-mock-kpi-sm">
+                    <div class="pm-mock-kpi-label">Employer NI</div>
+                    <div class="pm-mock-kpi-value-sm">&pound;4,222</div>
+                  </div>
+                  <div class="pm-mock-kpi-sm">
+                    <div class="pm-mock-kpi-label">Pension (5%)</div>
+                    <div class="pm-mock-kpi-value-sm">&pound;2,250</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="home-svcs-grid">${svcData}</div>
-      </div></div>
+      </div>
+    </div>
+  `;
+
+  // Insights/blog teaser
+  const blog = document.getElementById('home-blog');
+  if (blog) {
+    const featured = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).slice(0, 3);
+    blog.innerHTML = `
+      <div class="pm-insights">
+        <div class="pm-insights-inner">
+          <div class="pm-insights-header">
+            <div>
+              <div class="pm-about-eyebrow">Insights &amp; Guides</div>
+              <h2 class="pm-insights-h">UK tax &amp; payroll explained.</h2>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('insights')">All articles &rarr;</button>
+          </div>
+          <div class="bc-grid">${featured.length ? featured.map(a => blogCardHTML(a)).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:13.5px">Articles loading…</div>'}</div>
+        </div>
+      </div>
     `;
   }
 
-  // Testimonials
-  const tms = document.getElementById('home-testimonials');
-  if (tms) tms.innerHTML = `
-    <div class="tms-section">
-      <div class="tms-inner">
-        <div class="eyebrow ey-light" style="text-align:center">Client feedback</div>
-        <div class="sec-h light" style="text-align:center;margin-bottom:0">What our clients say</div>
-        <div class="tms-grid">
-          <div class="tcard">
-            <div class="tcard-stars">★★★★★</div>
-            <div class="tcard-q">"Sterling helped us restructure our payroll ahead of the NI rate increase. Their advice saved us over £12,000 in employer contributions and the whole engagement was handled in under two weeks."</div>
-            <div class="tcard-rule"></div>
-            <div class="tcard-author">
-              <div class="tcard-av">SM</div>
-              <div><div class="tcard-name">Sarah Mitchell</div><div class="tcard-role">Director, Mitchell Consulting Ltd</div></div>
-            </div>
-          </div>
-          <div class="tcard">
-            <div class="tcard-stars">★★★★★</div>
-            <div class="tcard-q">"I had avoided self-assessment for two years because it seemed impenetrable. Sterling walked me through everything in one call and had my returns filed within the week. Straightforward and no jargon."</div>
-            <div class="tcard-rule"></div>
-            <div class="tcard-author">
-              <div class="tcard-av">JR</div>
-              <div><div class="tcard-name">James Robertson</div><div class="tcard-role">Freelance Consultant</div></div>
-            </div>
-          </div>
-          <div class="tcard">
-            <div class="tcard-stars">★★★★★</div>
-            <div class="tcard-q">"Our R&amp;D claim had been refused once before. Sterling identified exactly what was missing, prepared the technical narrative, and secured a six-figure relief. Genuinely excellent advisers."</div>
-            <div class="tcard-rule"></div>
-            <div class="tcard-author">
-              <div class="tcard-av">AT</div>
-              <div><div class="tcard-name">Amanda Torres</div><div class="tcard-role">CEO, Horizon Technologies</div></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Trust & Compliance
-  const trust = document.getElementById('home-trust');
-  if (trust) trust.innerHTML = `
-    <div class="trust-section">
-      <div class="trust-inner">
-        <div style="text-align:center;margin-bottom:4px">
-          <div class="eyebrow ey-blue" style="text-align:center">Compliance &amp; Accuracy</div>
-          <div class="sec-h" style="margin-bottom:0;text-align:center">Built on verifiable standards</div>
-        </div>
-        <div class="trust-grid">
-          <div class="trust-item reveal">
-            <div class="trust-ic">📘</div>
-            <div class="trust-h">Open methodology</div>
-            <div class="trust-p">Every calculator shows the exact HMRC thresholds and formulae it applies. No black boxes.</div>
-          </div>
-          <div class="trust-item reveal">
-            <div class="trust-ic">🔄</div>
-            <div class="trust-h">Updated 6 April 2026</div>
-            <div class="trust-p">All rates, thresholds and statutory pay figures align with the 2026/27 tax year from day one.</div>
-          </div>
-          <div class="trust-item reveal">
-            <div class="trust-ic">🔒</div>
-            <div class="trust-h">Secure &amp; private</div>
-            <div class="trust-p">No data is stored. All calculations run in your browser. Nothing is sent to our servers.</div>
-          </div>
-          <div class="trust-item reveal">
-            <div class="trust-ic">⚡</div>
-            <div class="trust-h">No account required</div>
-            <div class="trust-p">All 25 calculators are free to use without registration. No email address required, ever.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Reveal-on-scroll for new cards
+  // Reveal-on-scroll for principle cards
   try {
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
       }, { threshold: 0.07 });
-      document.querySelectorAll('.why-card,.hsvc,.trust-item').forEach(el => io.observe(el));
+      document.querySelectorAll('.pm-prin-card').forEach(el => { el.classList.add('reveal'); io.observe(el); });
     }
   } catch(e) {}
 }
-
 function daysUntil(dateStr){
   const today = new Date(); today.setHours(0,0,0,0);
   const target = new Date(dateStr); target.setHours(0,0,0,0);

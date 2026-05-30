@@ -109,91 +109,34 @@
 <div class="page active" id="page-home">
   <div class="crumbs" style="display:none"></div>
 
-  <!-- HERO -->
-  <div class="hero" id="hero">
-    <div class="hero-inner">
-      <div class="hero-text">
-        <div class="hero-kicker">Professional UK Tax &amp; Accounting Services</div>
-        <h1>Expert tax advice<br>for UK <em>business</em></h1>
-        <p class="hero-sub">Sterling Tax Expert provides tax planning, payroll management, VAT compliance and business advisory for UK businesses and individuals. Personal service, transparent pricing, and a named accountant on every engagement.</p>
-        <div class="hero-acts">
-          <button class="btn btn-indigo" style="padding:12px 24px;font-size:13.5px;font-weight:600" onclick="navigate('contact')">Book a free consultation</button>
-          <button class="btn btn-white" style="padding:12px 22px;font-size:13.5px" onclick="navigate('services')">Our services</button>
-          <button class="btn btn-ghost-light" style="padding:12px 18px;font-size:13.5px" onclick="navigate('contact')">Get tax support</button>
-        </div>
-        <div class="hero-proof">
-          <div class="hp"><div class="hpd">✓</div>Free 30-minute initial consultation</div>
-          <div class="hp"><div class="hpd">✓</div>Named senior accountant assigned</div>
-          <div class="hp"><div class="hpd">✓</div>Response within 48 hours, weekdays</div>
-          <div class="hp"><div class="hpd">✓</div>HMRC-aligned tools &amp; methodology</div>
-        </div>
+  <!-- CINEMATIC HERO -->
+  <div class="pm-hero" id="pm-hero">
+    <div class="pm-hero-bg">
+      <div class="pm-hero-gradient"></div>
+      <div class="pm-hero-grid"></div>
+      <video class="pm-hero-video" id="pm-hero-video" autoplay muted loop playsinline></video>
+      <div class="pm-hero-overlay"></div>
+    </div>
+    <div class="pm-hero-content" id="pm-hero-content">
+      <div class="pm-wordmark">
+        <div class="pm-wordmark-rule"></div>
+        <div class="pm-wordmark-text">Sterling <span>Tax Expert</span></div>
+        <div class="pm-wordmark-rule"></div>
       </div>
-      <div class="hero-card">
-        <div class="hc-header">
-          <div class="hc-label">Our expertise</div>
-          <div class="hc-sub">Covering every aspect of UK tax</div>
-        </div>
-        <ul class="hc-list" id="hero-services-list">
-          <li>Income Tax &amp; Self Assessment</li>
-          <li>Corporation Tax Planning</li>
-          <li>VAT Returns &amp; Compliance</li>
-          <li>Payroll &amp; PAYE Management</li>
-          <li>Capital Gains Tax Advice</li>
-          <li>R&amp;D Tax Relief Claims</li>
-        </ul>
-        <button class="btn btn-indigo" style="width:100%;padding:11px;font-size:13px;margin-top:18px;font-weight:600" onclick="navigate('contact')">Book free consultation →</button>
-      </div>
+      <h1 class="pm-hero-h1">UK Tax &amp; Payroll<br><em>Excellence.</em></h1>
+      <div class="pm-hero-rule"></div>
+    </div>
+    <div class="pm-scroll" id="pm-scroll">
+      <div class="pm-scroll-line"></div>
+      <span class="pm-scroll-label">Scroll</span>
     </div>
   </div>
 
-  <!-- CREDENTIALS STRIP -->
-  <div class="creds-strip">
-    <div class="creds-inner">
-      <div class="cred-item"><span class="cred-n">Free</span><span class="cred-l">Initial consultation</span></div>
-      <div class="cred-div"></div>
-      <div class="cred-item"><span class="cred-n">48hr</span><span class="cred-l">Response guarantee</span></div>
-      <div class="cred-div"></div>
-      <div class="cred-item"><span class="cred-n">2026/27</span><span class="cred-l">Tax year aligned</span></div>
-      <div class="cred-div"></div>
-      <div class="cred-item"><span class="cred-n">25</span><span class="cred-l">Free HMRC calculators</span></div>
-    </div>
-  </div>
-
-  <!-- WHY CHOOSE (JS-rendered) -->
-  <div id="home-why"></div>
-
-  <!-- SERVICES (JS-rendered) -->
-  <div id="home-services"></div>
-
-  <!-- INSIGHTS TEASER -->
-  <div class="sec bg-g25"><div class="sec-inner">
-    <div class="row-hdr">
-      <div>
-        <div class="eyebrow ey-blue">Insights &amp; Guides</div>
-        <div class="sec-h" style="margin-bottom:0">UK tax &amp; payroll explained</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="navigate('insights')">All articles →</button>
-    </div>
-    <div class="bc-grid" id="home-blog-grid"></div>
-  </div></div>
-
-  <!-- TESTIMONIALS (JS-rendered) -->
-  <div id="home-testimonials"></div>
-
-  <!-- TRUST (JS-rendered) -->
-  <div id="home-trust"></div>
-
-  <!-- FAQ -->
-  <div class="sec"><div class="sec-inner sec-narrow">
-    <div class="row-hdr" style="margin-bottom:24px;justify-content:center;text-align:center;flex-direction:column;align-items:center">
-      <div class="eyebrow ey-blue">FAQ</div>
-      <div class="sec-h" style="margin-bottom:0">Common questions</div>
-    </div>
-    <div class="faq-wrap" id="faq-set"></div>
-  </div></div>
-
-  <!-- CTA + footer -->
-  <div id="home-cta"></div>
+  <!-- JS-RENDERED PREMIUM SECTIONS -->
+  <div id="home-about"></div>
+  <div id="home-principles"></div>
+  <div id="home-showcase"></div>
+  <div id="home-blog"></div>
   <div id="home-footer"></div>
 </div>
 
