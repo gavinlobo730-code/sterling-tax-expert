@@ -55,63 +55,6 @@ function mountHome(){
     </section>
   `;
 
-  // ── Section 2: Services ──────────────────────────────────
-  const services = document.getElementById('home-services');
-  if (services) {
-    const svcs = [
-      {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>`,
-        name: 'Payroll Services',
-        desc: 'Compliant payroll for businesses of any size — from a single director to large multi-employee operations. RTI submissions, payslips, auto-enrolment and year-end all included.',
-      },
-      {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
-        name: 'Self Assessment',
-        desc: 'Personal tax returns for individuals, directors and high earners — prepared accurately, filed on time, with all legitimate reliefs and allowances applied.',
-      },
-      {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
-        name: 'Corporation Tax',
-        desc: 'CT600 returns, tax computations and group tax planning for limited companies and multi-entity structures — submitted accurately within statutory deadlines.',
-      },
-      {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></svg>`,
-        name: 'VAT Services',
-        desc: 'VAT registration, scheme selection, quarterly returns and full MTD compliance — for businesses at every stage and turnover level.',
-      },
-      {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 20h20"/><path d="M5 20V8l7-6 7 6v12"/><path d="M9 20v-5h6v5"/></svg>`,
-        name: 'CIS Services',
-        desc: 'End-to-end CIS management — monthly returns, subcontractor verification, deduction statements and compliance for contractors of all sizes.',
-      },
-      {
-        icon: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`,
-        name: 'Tax Advisory',
-        desc: 'Strategic tax planning covering R&amp;D relief, IR35 compliance, group structures, profit extraction and forward-looking advisory for established and growing businesses.',
-      },
-    ];
-    services.innerHTML = `
-      <section class="hp-services">
-        <div class="hp-inner">
-          <div class="hp-section-header hp-anim">
-            <div class="hp-kicker">Our Services</div>
-            <h2 class="hp-h2">Professional tax and payroll services<br>tailored to your situation</h2>
-          </div>
-          <div class="hp-services-grid">
-            ${svcs.map((s, i) => `
-              <div class="hp-svc-card hp-anim" style="animation-delay:${(i * 0.07).toFixed(2)}s" onclick="navigate('services')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')navigate('services')">
-                <div class="hp-svc-icon">${s.icon}</div>
-                <div class="hp-svc-name">${s.name}</div>
-                <p class="hp-svc-desc">${s.desc}</p>
-                <span class="hp-svc-link">Learn more &rarr;</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      </section>
-    `;
-  }
-
   // ── Section 3: Who We Help ───────────────────────────────
   const audience = document.getElementById('home-audience');
   if (audience) {
