@@ -1481,3 +1481,545 @@ tr:hover td{background:var(--g50)}
   .hp-h2{font-size:clamp(22px,6vw,32px);margin-bottom:32px}
   .hp-audience-row{justify-content:flex-start}
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   DESIGN SYSTEM v2 — Site-wide cohesion
+   Applies uniformly to every page: nav, footer, hero, cards,
+   buttons, forms, calculator, deadlines, CMS, blog, about,
+   contact, services. No page uses a different visual language.
+   ─────────────────────────────────────────────────────────── */
+
+/* ── New design tokens ─────────────────────────────────── */
+:root {
+  --display:'Cormorant Garamond','Garamond',Georgia,serif;
+
+  /* Gold — used for accents, not backgrounds */
+  --gold-accent:#A67C00;
+  --gold-light:#FDF6E3;
+  --gold-rule:rgba(166,124,0,.35);
+
+  /* Refined radius */
+  --r:12px; --rs:8px; --rl:18px;
+
+  /* Refined shadows */
+  --shadow-sm:0 1px 3px rgba(11,30,61,.07),0 1px 2px rgba(11,30,61,.04);
+  --shadow:0 4px 20px rgba(11,30,61,.08),0 2px 6px rgba(11,30,61,.04);
+  --shadow-lg:0 16px 48px rgba(11,30,61,.12),0 4px 12px rgba(11,30,61,.06);
+  --shadow-xl:0 32px 80px rgba(11,30,61,.18),0 8px 24px rgba(11,30,61,.08);
+  --shadow-indigo:0 8px 28px rgba(99,102,241,.22);
+
+  /* Easing */
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-in-out:cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Global heading override — display font everywhere ─── */
+h1,h2,h3,h4,
+.sec-h,
+.hero h1,
+.pm-hero-h1,
+.pm-about-h,
+.pm-principles-h,
+.pm-showcase-h,
+.pm-insights-h strong,
+.px-edit-statement,
+.px-cov-h,
+.px-tyr-h,
+.px-phil-title,
+.px-product-h,
+.px-press-h,
+.hp-h2,
+.hp-step-heading,
+.hp-cta-h,
+.hp-trust-heading,
+.hp-why-heading,
+.hp-svc-name,
+.about-hero-h,
+.th-h,
+.ch-h,
+.post-h1,
+.post-body h2,
+.post-body h3,
+.adm-t,
+.login-h,
+.cta-bh,
+.nl-t,
+.fa-h,
+.bc-t,
+.hmrc-sb-t,
+.dh-list-nm,
+.dl-nm,
+.tool-t,
+.kpi-value,
+.adm-mn,
+.sc-n,
+.about-fact-n,
+.pm-pillar-value,
+.pc-plan,
+.pc-amt {
+  font-family:var(--display) !important;
+  letter-spacing:-.01em;
+}
+
+/* Body copy stays Inter */
+body,p,span,a,li,td,th,input,textarea,select,button,label {
+  font-family:var(--sans);
+}
+
+/* ── Unified scroll-reveal animation system ────────────── */
+/* Replaces hp-anim/hp-in, px-anim/px-in, reveal/reveal.in  */
+.ds-reveal,
+.hp-anim,
+.px-anim,
+.reveal {
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .75s var(--ease-out),transform .75s var(--ease-out);
+}
+.ds-reveal.ds-in,
+.hp-anim.hp-in,
+.px-anim.px-in,
+.reveal.in {
+  opacity:1;
+  transform:none;
+}
+@media(prefers-reduced-motion:reduce) {
+  .ds-reveal,.hp-anim,.px-anim,.reveal {
+    opacity:1;transform:none;transition:none;
+  }
+}
+
+/* ── Navigation refinement ─────────────────────────────── */
+#nav {
+  background:rgba(255,255,255,.98);
+  border-bottom:1px solid rgba(11,30,61,.08);
+  transition:box-shadow .2s,border-color .2s;
+}
+#nav.scrolled {
+  box-shadow:0 2px 24px rgba(11,30,61,.10);
+  border-color:rgba(11,30,61,.12);
+}
+.nl {
+  font-size:13px;
+  font-weight:500;
+  color:var(--t2);
+  letter-spacing:.01em;
+}
+.nl:hover,.nl.on { color:var(--navy); }
+.nl::after { background:var(--gold-accent); }
+.nl-tools { color:var(--indigo); }
+.nl-tools::after { background:var(--indigo); }
+.ln { font-family:var(--sans) !important; font-size:14px; font-weight:700; letter-spacing:-.2px; }
+.ln span { color:var(--indigo); }
+.ls { font-size:9px; letter-spacing:1.8px; color:var(--t3); }
+
+/* ── Buttons — unified ─────────────────────────────────── */
+.btn {
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.01em;
+  border-radius:8px;
+  transition:all .18s var(--ease-out);
+}
+.btn-indigo,.btn-blue {
+  background:var(--indigo);
+  color:#fff;
+  border:none;
+  box-shadow:0 2px 10px rgba(99,102,241,.25);
+}
+.btn-indigo:hover,.btn-blue:hover {
+  background:var(--indigo2);
+  box-shadow:0 6px 20px rgba(99,102,241,.35);
+  transform:translateY(-1px);
+}
+.btn-navy {
+  background:var(--navy);
+  color:#fff;
+  box-shadow:0 2px 10px rgba(11,30,61,.2);
+}
+.btn-navy:hover {
+  background:var(--navy2);
+  box-shadow:0 6px 20px rgba(11,30,61,.28);
+  transform:translateY(-1px);
+}
+.btn-ghost {
+  background:transparent;
+  border:1.5px solid var(--br2);
+  color:var(--t2);
+  box-shadow:none;
+}
+.btn-ghost:hover {
+  border-color:var(--navy);
+  color:var(--navy);
+  transform:translateY(-1px);
+}
+.btn-white {
+  background:#fff;
+  color:var(--navy);
+  font-weight:700;
+}
+.btn-white:hover {
+  background:var(--g50);
+  transform:translateY(-1px);
+}
+.btn-sm { font-size:12px; padding:7px 15px; border-radius:7px; }
+
+/* ── Cards — site-wide consistency ────────────────────── */
+/* Tool cards */
+.tool-card {
+  border-radius:var(--r);
+  border:1px solid var(--br);
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.tool-card:hover {
+  border-color:var(--indigo);
+  box-shadow:0 8px 32px rgba(99,102,241,.12);
+  transform:translateY(-4px);
+}
+/* Blog cards */
+.bc {
+  border-radius:var(--r);
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.bc:hover {
+  border-color:var(--indigo);
+  box-shadow:0 8px 28px rgba(99,102,241,.10);
+  transform:translateY(-3px);
+}
+/* Deadline cards */
+.dl-c {
+  border-radius:var(--r);
+  transition:border-color .2s,box-shadow .2s,transform .18s;
+}
+.dl-c:hover {
+  border-color:var(--indigo);
+  box-shadow:0 8px 28px rgba(99,102,241,.12);
+  transform:translateY(-3px);
+}
+/* KPI cards */
+.kpi { border-radius:var(--r); }
+/* Breakdown */
+.breakdown { border-radius:var(--r); }
+/* About cards */
+.about-audience-card,.about-service-card {
+  border-radius:var(--r);
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.about-audience-card:hover,.about-service-card:hover {
+  border-color:var(--indigo);
+  box-shadow:0 8px 28px rgba(99,102,241,.10);
+  transform:translateY(-3px);
+}
+/* Featured article */
+.featured-art {
+  border-radius:var(--rl);
+  transition:border-color .2s,box-shadow .2s;
+}
+.featured-art:hover {
+  border-color:var(--indigo);
+  box-shadow:0 8px 32px rgba(99,102,241,.12);
+}
+/* Why grid home cards */
+.why-card {
+  border-radius:var(--r);
+  transition:border-color .2s,box-shadow .2s,transform .2s;
+}
+.why-card:hover {
+  border-color:var(--indigo);
+  box-shadow:0 8px 28px rgba(99,102,241,.10);
+  transform:translateY(-3px);
+}
+/* Pricing */
+.pricing-card {
+  border-radius:var(--rl);
+}
+
+/* ── Forms — site-wide consistency ────────────────────── */
+.fi,
+.ci-input,
+.ci-select,
+.nl-f {
+  border-radius:8px;
+  border:1.5px solid var(--br2);
+  font-size:14px;
+  transition:border-color .15s,box-shadow .15s;
+}
+.fi:focus,
+.ci-input:focus,
+.ci-select:focus {
+  border-color:var(--indigo);
+  box-shadow:0 0 0 3px rgba(99,102,241,.10);
+  outline:none;
+}
+/* Submit buttons in forms */
+.ci-calc-btn {
+  border-radius:8px;
+  font-weight:600;
+  letter-spacing:.01em;
+  transition:background .18s,transform .15s;
+}
+.ci-calc-btn:hover {
+  transform:translateY(-1px);
+  background:var(--navy2);
+}
+
+/* ── Section headings — display font refinements ───────── */
+.sec-h {
+  font-size:clamp(28px,3vw,40px);
+  font-weight:700;
+  line-height:1.18;
+  letter-spacing:-.03em;
+  color:var(--navy);
+}
+.hp-h2 {
+  font-size:clamp(28px,3.5vw,44px);
+  font-weight:700;
+  letter-spacing:-.03em;
+  line-height:1.15;
+}
+.pm-hero-h1 {
+  font-size:clamp(44px,7vw,90px);
+  font-weight:700;
+  letter-spacing:-.04em;
+  line-height:1.04;
+}
+.pm-about-h {
+  font-size:clamp(30px,3.5vw,48px);
+  font-weight:300;
+  line-height:1.18;
+  letter-spacing:-.02em;
+}
+.pm-about-h strong { font-weight:700; }
+.pm-principles-h {
+  font-size:clamp(28px,3.5vw,44px);
+  font-weight:300;
+  line-height:1.18;
+  letter-spacing:-.02em;
+}
+.about-hero-h {
+  font-size:clamp(36px,5vw,56px);
+  font-weight:700;
+  letter-spacing:-.03em;
+}
+.post-h1 {
+  font-size:clamp(28px,3.5vw,44px);
+  font-weight:700;
+  letter-spacing:-.02em;
+  line-height:1.18;
+}
+.post-body h2 {
+  font-size:clamp(22px,2.5vw,30px);
+  font-weight:600;
+  letter-spacing:-.02em;
+}
+.th-h {
+  font-size:clamp(30px,4vw,46px);
+  font-weight:700;
+  letter-spacing:-.03em;
+}
+.ch-h {
+  font-size:clamp(24px,3vw,36px);
+  font-weight:700;
+  letter-spacing:-.02em;
+}
+
+/* ── Eyebrow / kicker — gold accent ───────────────────── */
+.hp-kicker,
+.eyebrow.ey-blue,
+.pm-about-eyebrow,
+.px-label,
+.ey-gold,
+.ch-kicker,
+.th-kicker,
+.hero-kicker {
+  color:var(--gold-accent);
+  font-weight:700;
+  letter-spacing:3px;
+}
+.pm-about-eyebrow::before {
+  background:var(--gold-accent) !important;
+}
+.hp-kicker-light,
+.px-label-light,
+.pm-ey-light {
+  color:rgba(210,170,90,.7) !important;
+}
+.pm-ey-light::before {
+  background:rgba(210,170,90,.5) !important;
+}
+
+/* ── Nav gold accent rule ──────────────────────────────── */
+.nl::after { background:var(--gold-accent); }
+.nl-tools::after { background:var(--indigo); }
+
+/* ── Trust grid on homepage ────────────────────────────── */
+.hp-trust-heading {
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-.02em;
+  line-height:1.25;
+}
+.hp-trust-icon {
+  background:var(--gold-light);
+  color:var(--gold-accent);
+}
+
+/* ── Services cards ────────────────────────────────────── */
+.hp-svc-icon {
+  background:var(--gold-light);
+  color:var(--gold-accent);
+}
+.hp-svc-card:hover {
+  border-color:var(--gold-accent);
+  box-shadow:0 12px 40px rgba(166,124,0,.10),0 2px 8px rgba(11,30,61,.06);
+}
+.hp-svc-link { color:var(--gold-accent); }
+
+/* ── Audience tiles ────────────────────────────────────── */
+.hp-audience-icon {
+  background:#fff;
+  border:1px solid var(--br);
+  color:var(--navy);
+}
+.hp-audience-tile:hover {
+  border-color:var(--gold-accent);
+  background:var(--gold-light);
+}
+
+/* ── Why Sterling — navy panel ─────────────────────────── */
+.hp-why-item { border-left:3px solid var(--gold-accent); }
+.hp-why-heading { font-size:17px; }
+
+/* ── How we work — step numbers ───────────────────────── */
+.hp-step-num { color:var(--gold-accent); opacity:.22; }
+.hp-step-rule { background:var(--gold-accent); }
+.hp-step-heading { font-size:20px; letter-spacing:-.02em; }
+
+/* ── CTA band ─────────────────────────────────────────── */
+.hp-cta {
+  background:linear-gradient(135deg,var(--navy) 0%,#1B3461 60%,#4F46E5 130%);
+}
+
+/* ── Footer refinements ────────────────────────────────── */
+footer { background:var(--midnight); }
+.f-rule {
+  height:2px;
+  background:linear-gradient(90deg,var(--gold-accent),rgba(166,124,0,.4) 50%,transparent 80%);
+  opacity:.6;
+}
+.f-col h4 { color:rgba(255,255,255,.3); letter-spacing:2.5px; }
+.f-col a { color:rgba(255,255,255,.48); }
+.f-col a:hover { color:rgba(255,255,255,.9); }
+.f-bl,.f-bls a { color:rgba(255,255,255,.28); }
+.f-bls a:hover { color:rgba(255,255,255,.65); }
+.f-cert { border-color:rgba(255,255,255,.07); color:rgba(255,255,255,.3); }
+.f-bd { color:rgba(255,255,255,.38); }
+
+/* ── Tools hub ─────────────────────────────────────────── */
+.tools-hero { background:var(--midnight); }
+.tcat-btn:hover { border-color:var(--gold-accent); color:var(--gold-accent); }
+.tcat-btn.on { background:var(--navy); border-color:var(--navy); color:#fff; }
+
+/* ── Calculator hero ───────────────────────────────────── */
+.calc-hero { background:var(--midnight); }
+
+/* ── Deadlines ─────────────────────────────────────────── */
+.dh-tab.on { color:var(--gold-accent); border-color:var(--gold-accent); }
+
+/* ── Blog/insights page ────────────────────────────────── */
+.bc-r { color:var(--gold-accent); }
+.fa-tag { color:var(--gold-accent); }
+
+/* ── Post page ─────────────────────────────────────────── */
+.post-body a { color:var(--gold-accent); border-bottom-color:var(--gold-light); }
+.post-body a:hover { border-bottom-color:var(--gold-accent); }
+.post-body blockquote { border-left-color:var(--gold-accent); }
+.post-body .callout { background:var(--gold-light); border-left-color:var(--gold-accent); }
+.post-tag { background:var(--gold-light); color:var(--gold-accent); }
+
+/* ── About page ────────────────────────────────────────── */
+.about-service-title { border-bottom-color:var(--gold-accent); }
+.about-method-ck { color:var(--gold-accent); }
+
+/* ── Calculator input focus ────────────────────────────── */
+.ci-input:focus,.ci-select:focus { border-color:var(--gold-accent); box-shadow:0 0 0 3px rgba(166,124,0,.10); }
+.ci-calc-btn { background:var(--navy); }
+.ci-calc-btn:hover { background:var(--navy2); }
+.ci-reset-btn:hover { border-color:var(--gold-accent); color:var(--gold-accent); }
+
+/* ── KPI cards — gold primary ─────────────────────────── */
+.kpi-primary::before { background:var(--gold-accent); }
+
+/* ── Breadcrumbs ───────────────────────────────────────── */
+.crumbs a:hover { color:var(--gold-accent); }
+.crumbs-back:hover { border-color:var(--gold-accent); color:var(--gold-accent); }
+
+/* ── Admin CMS ─────────────────────────────────────────── */
+.sb-i.on { border-color:var(--gold-accent); }
+.login-card { border-radius:var(--rl); }
+
+/* ── Contact form success ──────────────────────────────── */
+.succ { border-color:rgba(166,124,0,.3); background:var(--gold-light); color:var(--gold-accent); }
+
+/* ── Page transition ───────────────────────────────────── */
+.page.active { animation:pgIn .3s var(--ease-out); }
+@keyframes pgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ── Section background alternation (consistent rhythm) ── */
+/* Light sections keep --canvas, navy sections keep --navy */
+.hp-trust   { background:#fff; }
+.hp-audience { background:#fff; }
+.hp-process  { background:var(--g25); }
+.hp-why      { background:var(--midnight); }
+.hp-cta      { background:linear-gradient(135deg,var(--midnight) 0%,#1B3461 60%,#4F46E5 130%); }
+.pm-about    { background:#fff; }
+.pm-principles { background:var(--midnight); }
+.pm-showcase { background:var(--g25); }
+.pm-insights { background:#fff; }
+
+/* ── Scrollbar (webkit) ───────────────────────────────── */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(11,30,61,.18); border-radius:6px; }
+::-webkit-scrollbar-thumb:hover { background:rgba(11,30,61,.32); }
+
+/* ── Selection highlight ──────────────────────────────── */
+::selection { background:rgba(166,124,0,.18); color:var(--navy); }
+
+/* ── Focus ring — accessible ──────────────────────────── */
+:focus-visible { outline:2px solid var(--gold-accent); outline-offset:3px; }
+
+/* ── Loader brand ─────────────────────────────────────── */
+.loader { background:var(--midnight); }
+.loader-name span { color:var(--gold-accent); }
+.loader-bar-fill { background:var(--gold-accent); }
+
+/* ── Reading progress bar ─────────────────────────────── */
+.rbar { background:var(--gold-accent); }
+
+/* ── Toast ────────────────────────────────────────────── */
+.toast { border-radius:10px; font-size:13px; }
+
+/* ── Mobile menu ──────────────────────────────────────── */
+.mob { background:var(--midnight); }
+
+/* ── Global link hover on nav ─────────────────────────── */
+.nl.on::after,.nl:hover::after { transform:scaleX(1); }
+
+/* ══════════════════════════════════════════════════════════
+   Responsive design system adjustments
+═══════════════════════════════════════════════════════════ */
+@media(max-width:960px){
+  .pm-hero-h1 { letter-spacing:-.03em; }
+  .hp-h2 { margin-bottom:36px; }
+  .hp-svc-card:hover { transform:none; }
+  .tool-card:hover,.bc:hover,.dl-c:hover,.about-audience-card:hover { transform:none; }
+}
+@media(max-width:680px){
+  :root { --r:10px; --rl:14px; }
+  .pm-hero-h1 { font-size:clamp(36px,10vw,52px); letter-spacing:-.03em; }
+  .hp-h2 { font-size:clamp(24px,6vw,34px); }
+  .btn { padding:10px 20px; }
+  .btn-sm { padding:7px 14px; font-size:11.5px; }
+}

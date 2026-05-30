@@ -30,7 +30,7 @@
 <!-- Fonts: Inter (primary) + JetBrains Mono (code/figures) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 
 <!-- Stylesheet -->
 <link rel="stylesheet" href="css/styles.css">
@@ -213,13 +213,42 @@
       }
     } catch (e) { console.warn('EmailJS init skipped:', e); }
 
-    // Reveal-on-scroll for cards/sections
+    // Unified reveal-on-scroll (ds-reveal / hp-anim / px-anim / reveal)
     try {
       if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-        }, { threshold: 0.08 });
-        document.querySelectorAll('.sec, .hmrc-wrap, .sbar').forEach(function (el) { el.classList.add('reveal'); io.observe(el); });
+        var revealIO = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) {
+              en.target.classList.add('ds-in','hp-in','px-in','in');
+              revealIO.unobserve(en.target);
+            }
+          });
+        }, { threshold: 0.07, rootMargin:'0px 0px -40px 0px' });
+
+        function initReveal() {
+          document.querySelectorAll(
+            '.ds-reveal,.hp-anim,.px-anim,.reveal,' +
+            '.tool-card,.bc,.dl-c,.kpi,.about-audience-card,' +
+            '.about-service-card,.hp-trust-item,.hp-svc-card,' +
+            '.hp-why-item,.hp-step,.hp-audience-tile,' +
+            '.tcard,.why-card,.hsvc,.tc,.pricing-card'
+          ).forEach(function(el){
+            if (!el.classList.contains('ds-in') && !el.classList.contains('hp-in')) {
+              el.classList.add('ds-reveal');
+              revealIO.observe(el);
+            }
+          });
+        }
+
+        // Run on initial load and after every navigation
+        initReveal();
+        var _origNavigate = window.navigate;
+        if (typeof _origNavigate === 'function') {
+          window.navigate = function() {
+            _origNavigate.apply(this, arguments);
+            setTimeout(initReveal, 280);
+          };
+        }
       }
     } catch (e) { /* no-op */ }
   });
