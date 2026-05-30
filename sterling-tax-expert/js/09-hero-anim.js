@@ -26,7 +26,7 @@
         /* gentle wander — each particle has a slow angular drift */
         drift:  (Math.random() - 0.5) * 0.006,
         r:      0.9 + Math.random() * 2.0,
-        baseA:  0.7  + Math.random() * 0.3,
+        baseA:  0.85 + Math.random() * 0.15,
         /* twinkle phase so not all particles pulse together */
         phase:  Math.random() * Math.PI * 2,
         tSpeed: 0.008 + Math.random() * 0.018,
@@ -78,13 +78,13 @@
         var alpha   = p.baseA * twinkle;
 
         /* Glow halo for brighter particles */
-        if (alpha > 0.55) {
+        {
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r * 3.5, 0, Math.PI * 2);
-          var glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3.5);
+          ctx.arc(p.x, p.y, p.r * 5, 0, Math.PI * 2);
+          var glow = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 5);
           glow.addColorStop(0, p.gold
-            ? 'rgba(212,175,80,' + (alpha * 0.2) + ')'
-            : 'rgba(165,180,252,' + (alpha * 0.15) + ')');
+            ? 'rgba(255,210,80,' + (alpha * 0.45) + ')'
+            : 'rgba(185,200,255,' + (alpha * 0.35) + ')');
           glow.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = glow;
           ctx.fill();
