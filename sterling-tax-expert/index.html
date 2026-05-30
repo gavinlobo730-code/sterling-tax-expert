@@ -215,7 +215,7 @@
         var revealIO = new IntersectionObserver(function (entries) {
           entries.forEach(function (en) {
             if (en.isIntersecting) {
-              en.target.classList.add('ds-in','hp-in','px-in','in');
+              en.target.classList.add('ds-in','hp-in','px-in','in','ta-in');
               revealIO.unobserve(en.target);
             }
           });
@@ -224,13 +224,13 @@
         function initReveal() {
           document.querySelectorAll(
             '.ds-reveal,.hp-anim,.px-anim,.reveal,' +
+            '.ta-up,.ta-left,.ta-right,.ta-scale,' +
             '.tool-card,.bc,.dl-c,.kpi,.about-audience-card,' +
             '.about-service-card,.hp-trust-item,.hp-svc-card,' +
             '.hp-why-item,.hp-step,.hp-audience-tile,' +
             '.tcard,.why-card,.hsvc,.tc,.pricing-card'
           ).forEach(function(el){
-            if (!el.classList.contains('ds-in') && !el.classList.contains('hp-in')) {
-              el.classList.add('ds-reveal');
+            if (!el.classList.contains('ds-in') && !el.classList.contains('ta-in')) {
               revealIO.observe(el);
             }
           });

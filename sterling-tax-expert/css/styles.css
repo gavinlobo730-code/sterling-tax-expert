@@ -2105,3 +2105,110 @@ footer { background:var(--midnight); }
 
 /* Table cells — always Inter */
 td,th { font-family:var(--sans) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   TEXT ANIMATION SYSTEM
+   Hero: staggered slide-up per element on load
+   Sections: slide-up on scroll with child stagger
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Hero element animations (load-time, staggered) ── */
+@keyframes heroSlideUp {
+  from { opacity:0; transform:translateY(32px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes heroFadeIn {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+
+.pm-hero-kicker {
+  opacity:0;
+  animation: heroSlideUp .7s cubic-bezier(0.22,1,0.36,1) .4s forwards;
+}
+.pm-hero-h1 {
+  opacity:0;
+  animation: heroSlideUp .85s cubic-bezier(0.22,1,0.36,1) .65s forwards;
+}
+.pm-hero-sub {
+  opacity:0;
+  animation: heroSlideUp .8s cubic-bezier(0.22,1,0.36,1) .9s forwards;
+}
+.pm-hero-acts {
+  opacity:0;
+  animation: heroSlideUp .75s cubic-bezier(0.22,1,0.36,1) 1.1s forwards;
+}
+
+/* ── Scroll-reveal: slide up (default) ── */
+.ta-up {
+  opacity:0;
+  transform:translateY(28px);
+  transition:opacity .7s cubic-bezier(0.22,1,0.36,1),
+             transform .7s cubic-bezier(0.22,1,0.36,1);
+}
+.ta-up.ta-in { opacity:1; transform:none; }
+
+/* ── Slide in from left ── */
+.ta-left {
+  opacity:0;
+  transform:translateX(-32px);
+  transition:opacity .7s cubic-bezier(0.22,1,0.36,1),
+             transform .7s cubic-bezier(0.22,1,0.36,1);
+}
+.ta-left.ta-in { opacity:1; transform:none; }
+
+/* ── Slide in from right ── */
+.ta-right {
+  opacity:0;
+  transform:translateX(32px);
+  transition:opacity .7s cubic-bezier(0.22,1,0.36,1),
+             transform .7s cubic-bezier(0.22,1,0.36,1);
+}
+.ta-right.ta-in { opacity:1; transform:none; }
+
+/* ── Scale + fade (for stat numbers / kpis) ── */
+.ta-scale {
+  opacity:0;
+  transform:scale(0.92);
+  transition:opacity .6s cubic-bezier(0.22,1,0.36,1),
+             transform .6s cubic-bezier(0.22,1,0.36,1);
+}
+.ta-scale.ta-in { opacity:1; transform:none; }
+
+/* ── Stagger delays for child elements ── */
+.ta-stagger > *:nth-child(1)  { transition-delay:.05s; }
+.ta-stagger > *:nth-child(2)  { transition-delay:.13s; }
+.ta-stagger > *:nth-child(3)  { transition-delay:.21s; }
+.ta-stagger > *:nth-child(4)  { transition-delay:.29s; }
+.ta-stagger > *:nth-child(5)  { transition-delay:.37s; }
+.ta-stagger > *:nth-child(6)  { transition-delay:.45s; }
+.ta-stagger > *:nth-child(7)  { transition-delay:.53s; }
+.ta-stagger > *:nth-child(8)  { transition-delay:.61s; }
+
+/* ── Section heading style helpers ── */
+.section-eyebrow {
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--indigo);
+  margin-bottom:12px;
+}
+.section-h { margin-bottom:14px; }
+.section-sub {
+  font-size:clamp(15px,1.6vw,18px);
+  color:var(--muted);
+  line-height:1.72;
+  max-width:560px;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion:reduce) {
+  .ta-up,.ta-left,.ta-right,.ta-scale {
+    opacity:1; transform:none; transition:none;
+  }
+  .pm-hero-kicker,.pm-hero-h1,.pm-hero-sub,.pm-hero-acts {
+    opacity:1; animation:none;
+  }
+}

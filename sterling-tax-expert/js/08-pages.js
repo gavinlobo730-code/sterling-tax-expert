@@ -69,7 +69,7 @@ function mountHome(){
     audience.innerHTML = `
       <section class="hp-audience">
         <div class="hp-inner">
-          <div class="hp-section-header hp-anim" style="text-align:center">
+          <div class="hp-section-header ta-up" style="text-align:center">
             <div class="hp-kicker">Who We Help</div>
             <h2 class="hp-h2 hp-h2-center">From sole traders to multi-entity businesses —<br>we understand the full range of UK tax complexity</h2>
           </div>
@@ -98,7 +98,7 @@ function mountHome(){
     why.innerHTML = `
       <section class="hp-why">
         <div class="hp-inner">
-          <div class="hp-section-header hp-anim">
+          <div class="hp-section-header ta-up">
             <div class="hp-kicker hp-kicker-light">Why Choose Us</div>
             <h2 class="hp-h2 hp-h2-light">Why clients choose<br>Sterling Tax Expert</h2>
           </div>
@@ -126,7 +126,7 @@ function mountHome(){
     process.innerHTML = `
       <section class="hp-process">
         <div class="hp-inner">
-          <div class="hp-section-header hp-anim" style="text-align:center">
+          <div class="hp-section-header ta-up" style="text-align:center">
             <div class="hp-kicker">How We Work</div>
             <h2 class="hp-h2 hp-h2-center">A straightforward process</h2>
           </div>
@@ -150,12 +150,12 @@ function mountHome(){
   if (cta) cta.innerHTML = `
     <section class="hp-cta">
       <div class="hp-inner hp-cta-inner">
-        <h2 class="hp-cta-h hp-anim">Let&rsquo;s Discuss Your Tax and<br>Payroll Requirements</h2>
-        <p class="hp-cta-p hp-anim" style="animation-delay:.1s">
+        <h2 class="hp-cta-h ta-up">Let&rsquo;s Discuss Your Tax and<br>Payroll Requirements</h2>
+        <p class="hp-cta-p ta-up" style="transition-delay:.12s">
           Book a free 30-minute call with a senior UK tax expert. No commitment —
           just a straight conversation about your situation and what good advice looks like for you.
         </p>
-        <div class="hp-cta-acts hp-anim" style="animation-delay:.2s">
+        <div class="hp-cta-acts ta-up" style="transition-delay:.24s">
           <button class="btn btn-white" onclick="navigate('contact')">Book a Consultation</button>
           <button class="hp-cta-ghost" onclick="navigate('contact')">Contact Us</button>
         </div>
