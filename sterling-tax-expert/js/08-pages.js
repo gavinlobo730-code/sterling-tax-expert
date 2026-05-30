@@ -7,11 +7,24 @@
 // HOME
 // ─────────────────────────────────────────────────────────
 function mountHome(){
-  // Hero video (optional — set STERLING_CONFIG.heroVideo to a direct MP4 URL)
+  // Hero video — lazy-load sources to avoid blocking initial paint
   const heroV = document.getElementById('pm-hero-video');
-  if (heroV && window.STERLING_CONFIG && window.STERLING_CONFIG.heroVideo) {
-    heroV.src = window.STERLING_CONFIG.heroVideo;
+  if (heroV) {
+    // Allow config override (external CDN/CMS video URL)
+    const cfgSrc = window.STERLING_CONFIG && window.STERLING_CONFIG.heroVideo;
+    if (cfgSrc) {
+      heroV.src = cfgSrc;
+    } else {
+      // Activate the <source data-src="..."> elements
+      heroV.querySelectorAll('source[data-src]').forEach(s => {
+        s.src = s.dataset.src;
+      });
+      heroV.load();
+    }
+    // Fade in once enough data is buffered
     heroV.addEventListener('canplay', () => heroV.classList.add('loaded'), { once: true });
+    // If video fails (no file yet), keep gradient visible — no error shown
+    heroV.addEventListener('error', () => {}, { once: true });
   }
 
   // ── Section 1: Who We Are ────────────────────────────────
