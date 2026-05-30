@@ -26,7 +26,7 @@
         /* gentle wander — each particle has a slow angular drift */
         drift:  (Math.random() - 0.5) * 0.006,
         r:      0.9 + Math.random() * 2.0,
-        baseA:  0.4  + Math.random() * 0.5,
+        baseA:  0.7  + Math.random() * 0.3,
         /* twinkle phase so not all particles pulse together */
         phase:  Math.random() * Math.PI * 2,
         tSpeed: 0.008 + Math.random() * 0.018,
