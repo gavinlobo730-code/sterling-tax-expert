@@ -68,6 +68,7 @@ function navigate(page, param = null, opts = {}){
     if (page === 'contact') mountContact();
     if (page === 'calc')    mountCalc(param);
     if (page === 'article') mountArticle(param);
+    if (page === 'admin')   mountAdmin();
 
     // Reading bar
     const rb = document.getElementById('rbar');
@@ -349,7 +350,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Allow URL hash routing for sharing/deep-linking (admin excluded from public routing)
   const h = location.hash.replace('#', '');
-  if (h && h !== 'home' && h.split('/')[0] !== 'admin') {
+  if (h && h !== 'home') {
     const [page, rawParam] = h.split('/');
     const param = rawParam ? decodeURIComponent(rawParam) : null;
     if (page) navigate(page, param, { skipHistory: true, skipBrowserHistory: true });
@@ -363,7 +364,7 @@ window.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('popstate', (e) => {
   if (e.state && e.state.page) {
     const { page, param } = e.state;
-    if (page !== 'admin') navigate(page, param || null, { skipHistory: true, skipBrowserHistory: true });
+    navigate(page, param || null, { skipHistory: true, skipBrowserHistory: true });
   } else {
     navigate('home', null, { skipHistory: true, skipBrowserHistory: true });
   }
