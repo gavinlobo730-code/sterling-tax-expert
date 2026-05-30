@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════
    Sterling Tax Expert — CMS (Admin)
    ───────────────────────────────────────────────────────────
-   Password-gated. Fully functional CRUD with localStorage.
+   Password-gated. Auth via Cloudflare Worker + D1.
    - Posts: create / edit / delete / publish / draft / schedule
    - Rich text editor (contenteditable + execCommand toolbar)
    - Media library (drag-drop / picker, base64 stored locally)
@@ -9,36 +9,48 @@
    - Categories & tags
    ─────────────────────────────────────────────────────────── */
 
-const STERLING_AUTH_KEY = 'ste_admin_session';
-const STERLING_POSTS_KEY = 'ste_posts_v1';
 const STERLING_MEDIA_KEY = 'ste_media_v1';
-const ADMIN_TIMEOUT = 1000 * 60 * 60 * 4; // 4 hours
 
-// ── Data store ─────────────────────────────────────────────
+// ── In-memory article cache (populated on admin load) ───────
+let _cmsPostsCache = null;
+
 function cmsLoadPosts(){
-  const raw = localStorage.getItem(STERLING_POSTS_KEY);
-  if (raw) {
-    try { return JSON.parse(raw); } catch(e) {}
-  }
-  // Seed from SEED_POSTS
-  const seed = (window.SEED_POSTS || []).map(p => ({
-    ...p,
-    excerpt: p.excerpt || '',
-    seoTitle: p.seoTitle || p.t,
-    seoDesc: p.seoDesc || '',
-    slug: p.slug || (p.t.toLowerCase().replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').slice(0,80)),
-    tags: p.tags || [p.cat],
-    bodyHTML: p.bodyHTML || ((window.POST_BODIES && window.POST_BODIES[p.body]) || `<p>${p.t}</p>`),
-    author: p.author || 'Sarah Mitchell',
-    scheduledFor: p.scheduledFor || null,
-  }));
-  localStorage.setItem(STERLING_POSTS_KEY, JSON.stringify(seed));
-  return seed;
+  return _cmsPostsCache || [];
 }
+
 function cmsSavePosts(posts){
-  localStorage.setItem(STERLING_POSTS_KEY, JSON.stringify(posts));
+  _cmsPostsCache = posts;
 }
+
 window.cmsPosts = () => cmsLoadPosts();
+
+async function cmsRefreshPosts(){
+  try {
+    const res = await fetch('/api/articles', { credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      _cmsPostsCache = (data.articles || []).map(a => ({
+        id: a.id,
+        t: a.title,
+        cat: a.category,
+        st: a.status.charAt(0).toUpperCase() + a.status.slice(1),
+        d: (a.created_at || '').split('T')[0],
+        r: Math.max(1, Math.ceil((a.body || '').replace(/<[^>]+>/g,'').split(/\s+/).length / 220)),
+        excerpt: a.excerpt || '',
+        seoTitle: a.title,
+        seoDesc: a.excerpt || '',
+        slug: a.slug || '',
+        tags: a.tags || [],
+        bodyHTML: a.body || '',
+        author: a.author || 'Sterling Tax Expert',
+        scheduledFor: a.scheduled_at || null,
+        e: '📝',
+      }));
+    }
+  } catch(e) {
+    _cmsPostsCache = _cmsPostsCache || [];
+  }
+}
 
 function cmsLoadMedia(){
   const raw = localStorage.getItem(STERLING_MEDIA_KEY);
@@ -55,33 +67,40 @@ function cmsSaveMedia(media){
 }
 
 // ── Auth ───────────────────────────────────────────────────
+let _cmsAuthenticated = false;
+
 function cmsLoggedIn(){
-  const raw = sessionStorage.getItem(STERLING_AUTH_KEY);
-  if (!raw) return false;
+  return _cmsAuthenticated;
+}
+
+async function cmsCheckSession(){
   try {
-    const sess = JSON.parse(raw);
-    if (Date.now() - sess.t > ADMIN_TIMEOUT) {
-      sessionStorage.removeItem(STERLING_AUTH_KEY);
-      return false;
+    const res = await fetch('/api/session', { credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      _cmsAuthenticated = data.authenticated === true;
+    } else {
+      _cmsAuthenticated = false;
     }
-    return true;
-  } catch(e) { return false; }
+  } catch(e) {
+    _cmsAuthenticated = false;
+  }
 }
-function cmsLogin(_user, _pass){
-  // Authentication is managed server-side. This client-side path is disabled.
-  // Wire up a Cloudflare Worker endpoint that validates credentials and returns
-  // a signed session token before re-enabling client login here.
-  return false;
-}
-function cmsLogout(){
-  sessionStorage.removeItem(STERLING_AUTH_KEY);
+
+async function cmsLogout(){
+  try {
+    await fetch('/api/logout', { method: 'POST', credentials: 'include' });
+  } catch(e) { /* ignore */ }
+  _cmsAuthenticated = false;
   mountAdmin();
   showToast('Signed out');
 }
 
 // ── Mount ──────────────────────────────────────────────────
-function mountAdmin(){
+async function mountAdmin(){
   const wrap = document.getElementById('page-admin');
+  wrap.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:60vh;color:var(--t3);font-size:14px">Checking session…</div>`;
+  await cmsCheckSession();
   if (!cmsLoggedIn()) {
     wrap.innerHTML = renderLogin();
     setTimeout(() => {
@@ -90,6 +109,7 @@ function mountAdmin(){
     }, 100);
     return;
   }
+  await cmsRefreshPosts();
   wrap.innerHTML = renderAdminShell();
   cmsTab('dash');
 }
@@ -117,16 +137,36 @@ function renderLogin(){
   `;
 }
 
-function doLogin(){
-  const u = document.getElementById('login-user').value;
+async function doLogin(){
+  const u = (document.getElementById('login-user').value || '').trim();
   const p = document.getElementById('login-pass').value;
-  if (cmsLogin(u, p)) {
-    showLoader(() => {
-      mountAdmin();
-      showToast('Welcome back — signed in to Sterling CMS', 'ok');
+  if (!u || !p) { showToast('Enter your username and password', 'err'); return; }
+
+  const btn = document.querySelector('.login-card button[type="submit"]');
+  if (btn) { btn.textContent = 'Signing in…'; btn.disabled = true; }
+
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p }),
     });
-  } else {
-    showToast('Wrong username or password', 'err');
+    if (res.ok) {
+      _cmsAuthenticated = true;
+      await cmsRefreshPosts();
+      showLoader(() => {
+        const wrap = document.getElementById('page-admin');
+        if (wrap) { wrap.innerHTML = renderAdminShell(); cmsTab('dash'); }
+        showToast('Welcome back — signed in to Sterling CMS', 'ok');
+      });
+    } else {
+      if (btn) { btn.textContent = 'Sign in →'; btn.disabled = false; }
+      showToast('Wrong username or password', 'err');
+    }
+  } catch(e) {
+    if (btn) { btn.textContent = 'Sign in →'; btn.disabled = false; }
+    showToast('Could not reach server — check your connection', 'err');
   }
 }
 
@@ -295,12 +335,21 @@ function cmsEdit(id){
 function cmsPreview(id){
   navigate('post', id);
 }
-function cmsDelete(id){
+async function cmsDelete(id){
   const posts = cmsLoadPosts();
   const idx = posts.findIndex(p => p.id == id);
   if (idx === -1) return;
   if (!confirm(`Delete "${posts[idx].t}"? This cannot be undone.`)) return;
   const title = posts[idx].t;
+
+  try {
+    const res = await fetch(`/api/articles/${id}`, { method: 'DELETE', credentials: 'include' });
+    if (!res.ok) throw new Error('API error ' + res.status);
+  } catch(e) {
+    showToast('Delete failed — ' + e.message, 'err');
+    return;
+  }
+
   posts.splice(idx, 1);
   cmsSavePosts(posts);
   cmsTab('posts');
@@ -509,17 +558,17 @@ function edInsImg(){
   if (url) ed('insertHTML', `<img src="${url}" style="max-width:100%;border-radius:8px;margin:12px 0" alt=""/>`);
 }
 
-function cmsSaveDraft(){
+async function cmsSaveDraft(){
   const state = readEditorState();
   if (!state.t.trim()) { showToast('Add a title first', 'err'); return; }
   state.st = 'Draft';
   state.v = state.v || 0;
-  persistPost(state);
+  await persistPost(state);
   showToast('Draft saved', 'ok');
   cmsTab('drafts');
 }
 
-function cmsPublish(){
+async function cmsPublish(){
   const state = readEditorState();
   if (!state.t.trim()) { showToast('Add a title first', 'err'); return; }
   if (!state.bodyHTML || state.bodyHTML.replace(/<[^>]+>/g,'').trim().length < 20) {
@@ -528,7 +577,7 @@ function cmsPublish(){
   state.st = 'Published';
   state.d = state.d || new Date().toISOString().split('T')[0];
   state.v = state.v || 0;
-  persistPost(state);
+  await persistPost(state);
   showToast('Published — live on the site', 'ok');
   cmsTab('posts');
 }
@@ -545,15 +594,48 @@ function cmsSchedulePrompt(){
   showToast('Set the date below and click Publish to schedule');
 }
 
-function persistPost(state){
+async function persistPost(state){
+  const isNew = !state.id;
+  if (isNew) {
+    state.id = String(Date.now());
+    state.r = Math.max(1, Math.ceil((state.bodyHTML.replace(/<[^>]+>/g,'').split(/\s+/).length) / 220));
+  }
+
+  const payload = {
+    id: state.id,
+    title: state.t,
+    slug: state.slug,
+    body: state.bodyHTML || '',
+    excerpt: state.excerpt || '',
+    status: (state.st || 'Draft').toLowerCase(),
+    author: state.author || 'Sterling Tax Expert',
+    category: state.cat || 'Tax',
+    tags: state.tags || [],
+    scheduled_at: state.scheduledFor || null,
+  };
+
+  try {
+    const url = isNew ? '/api/articles' : `/api/articles/${state.id}`;
+    const method = isNew ? 'POST' : 'PUT';
+    const res = await fetch(url, {
+      method,
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error('API error ' + res.status);
+  } catch(e) {
+    showToast('Save failed — ' + e.message, 'err');
+    return;
+  }
+
+  // Update local cache
   const posts = cmsLoadPosts();
-  if (state.id) {
+  if (isNew) {
+    posts.unshift(state);
+  } else {
     const idx = posts.findIndex(p => p.id == state.id);
     if (idx >= 0) posts[idx] = { ...posts[idx], ...state };
-  } else {
-    state.id = Date.now();
-    state.r = Math.max(1, Math.ceil((state.bodyHTML.replace(/<[^>]+>/g,'').split(/\s+/).length) / 220));
-    posts.unshift(state);
   }
   cmsSavePosts(posts);
 }
