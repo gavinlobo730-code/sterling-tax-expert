@@ -50,9 +50,9 @@
         vy:     Math.sin(angle) * speed,
         drift:  (Math.random() - 0.5) * 0.005,
         r:      0.8 + Math.random() * 1.8,
-        baseA:  0.82 + Math.random() * 0.18,
+        baseA:  0.92 + Math.random() * 0.08,
         phase:  Math.random() * Math.PI * 2,
-        tSpeed: 0.014 + Math.random() * 0.017,
+        tSpeed: 0.016 + Math.random() * 0.019,
         gold:   Math.random() < 0.28
       };
     }
@@ -83,8 +83,8 @@
       /* ── Particles — use shadowBlur for glow, not per-particle radialGradient ── */
 
       /* White/indigo particles */
-      ctx.shadowColor = 'rgba(190,205,255,0.6)';
-      ctx.shadowBlur  = 8;
+      ctx.shadowColor = 'rgba(190,205,255,0.85)';
+      ctx.shadowBlur  = 12;
       ctx.fillStyle   = 'rgba(215,225,255,1)';
       ctx.beginPath();
       for (var i = 0; i < whitePts.length; i++) {
@@ -98,8 +98,8 @@
       ctx.fill();
 
       /* Gold particles */
-      ctx.shadowColor = 'rgba(255,200,60,0.55)';
-      ctx.shadowBlur  = 10;
+      ctx.shadowColor = 'rgba(255,200,60,0.8)';
+      ctx.shadowBlur  = 14;
       ctx.fillStyle   = 'rgba(220,178,80,1)';
       ctx.beginPath();
       for (var j = 0; j < goldPts.length; j++) {
