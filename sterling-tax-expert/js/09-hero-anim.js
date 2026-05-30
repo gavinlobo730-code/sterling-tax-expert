@@ -37,7 +37,7 @@
     function resize() {
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
-      var count = Math.min(1440, Math.max(720, Math.floor(W * H / 688)));
+      var count = Math.min(1000, Math.max(280, Math.floor(W * H / 900)));
       pts = [];
       for (var i = 0; i < count; i++) pts.push(mkPt(i, count));
     }
@@ -67,31 +67,6 @@
       g2.addColorStop(0.6, 'rgba(60,50,180,0.02)');
       g2.addColorStop(1,   'rgba(0,0,0,0)');
       ctx.fillStyle = g2; ctx.fillRect(0, 0, W, H);
-
-      var connDist = Math.min(W, H) * 0.19;
-
-      /* ── Connection lines ── */
-      for (var i = 0; i < pts.length; i++) {
-        for (var j = i + 1; j < pts.length; j++) {
-          var dx = pts[i].x - pts[j].x;
-          var dy = pts[i].y - pts[j].y;
-          var dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < connDist) {
-            var t = 1 - dist / connDist;
-            /* lines fade with distance and also breathe with particle twinkle */
-            var lineA = t * t * 0.28;
-            var isGold = pts[i].gold || pts[j].gold;
-            ctx.beginPath();
-            ctx.moveTo(pts[i].x, pts[i].y);
-            ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.strokeStyle = isGold
-              ? 'rgba(200,158,60,'  + lineA + ')'
-              : 'rgba(165,180,252,' + lineA + ')';
-            ctx.lineWidth = 0.5 + t * 0.5;
-            ctx.stroke();
-          }
-        }
-      }
 
       /* ── Particles ── */
       for (var k = 0; k < pts.length; k++) {
