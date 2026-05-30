@@ -40,12 +40,24 @@
 </head>
 <body>
 <!-- LOADER + TOAST + READING BAR -->
-<div class="loader" id="loader"><div style="display:flex;flex-direction:column;align-items:center"><div class="lring"></div><div class="ltxt">Loading…</div></div></div>
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <svg class="loader-mark" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
+      <rect x="5" y="7" width="38" height="3.5" rx="1.5" fill="white"/>
+      <rect x="5" y="10.5" width="38" height="1.5" rx="0.75" fill="#6366F1"/>
+      <rect x="8" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="20.5" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="33" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="5" y="37" width="38" height="3.5" rx="1.5" fill="white"/>
+    </svg>
+    <div class="loader-name">Sterling <span>Tax Expert</span></div>
+    <div class="loader-bar-track"><div class="loader-bar-fill" id="loader-bar"></div></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <div class="rbar" id="rbar"></div>
 
-<!-- ANNOUNCEMENT BAR -->
-<div class="ann"><strong>Live for 2026/27 ·</strong> All thresholds, NI rates and statutory pay updated for the UK tax year that began 6 April 2026. <a onclick="navigate('tools')">Browse calculators →</a></div>
 
 <!-- NAV -->
 <nav id="nav">
@@ -82,7 +94,6 @@
       <a class="nl nl-contact" data-page="contact" onclick="navigate('contact')">Contact</a>
     </div>
     <div class="nr">
-      <button class="btn btn-ghost btn-sm" onclick="navigate('tools')">Free tools</button>
       <button class="btn btn-indigo btn-sm" onclick="navigate('contact')">Book free call</button>
       <button class="ham" id="ham" onclick="toggleMobileMenu()" aria-label="Open menu">
         <span></span><span></span><span></span>
@@ -91,6 +102,21 @@
   </div>
 </nav>
 <div class="mob" id="mob">
+  <div class="mob-brand">
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
+      <rect x="5" y="7" width="38" height="3.5" rx="1.5" fill="white"/>
+      <rect x="5" y="10.5" width="38" height="1.5" rx="0.75" fill="#6366F1"/>
+      <rect x="8" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="20.5" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="33" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="5" y="37" width="38" height="3.5" rx="1.5" fill="white"/>
+    </svg>
+    <div>
+      <div class="mob-brand-name">Sterling <span>Tax Expert</span></div>
+      <div class="mob-brand-sub">UK Tax Intelligence</div>
+    </div>
+  </div>
   <a class="nl-home" onclick="navigate('home')">Home</a>
   <a class="nl-services" onclick="navigate('services')">Services</a>
   <a class="nl-tools-link" onclick="navigate('tools')">Free tools</a>
@@ -114,10 +140,7 @@
     <div class="pm-hero-bg">
       <div class="pm-hero-gradient"></div>
       <div class="pm-hero-grid"></div>
-      <video class="pm-hero-video" id="pm-hero-video" autoplay muted loop playsinline preload="none" poster="video/hero-poster.jpg">
-        <source data-src="video/hero.webm" type="video/webm">
-        <source data-src="video/hero.mp4"  type="video/mp4">
-      </video>
+      <video class="pm-hero-video" id="pm-hero-video" autoplay muted loop playsinline preload="none"></video>
       <div class="pm-hero-overlay"></div>
     </div>
     <div class="pm-hero-content" id="pm-hero-content">

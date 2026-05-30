@@ -272,7 +272,17 @@ function mountHome(){
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         entries.forEach(en => {
-          if (en.isIntersecting) { en.target.classList.add('px-in'); io.unobserve(en.target); }
+          if (!en.isIntersecting) return;
+          io.unobserve(en.target);
+          // Find all un-animated siblings within the same section, stagger them
+          const section = en.target.closest('[class*="px-"]') || en.target.parentElement;
+          const siblings = section ? Array.from(section.querySelectorAll('.px-anim:not(.px-in)')) : [];
+          const targets = siblings.length ? siblings : [en.target];
+          targets.forEach((el, i) => {
+            el.style.transitionDelay = (i * 75) + 'ms';
+            el.classList.add('px-in');
+            io.unobserve(el);
+          });
         });
       }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
       document.querySelectorAll('#page-home .px-anim').forEach(el => io.observe(el));
