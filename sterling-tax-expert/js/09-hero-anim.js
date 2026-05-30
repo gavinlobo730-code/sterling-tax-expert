@@ -61,7 +61,7 @@
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
       /* ~300 particles on desktop — smooth at 60fps */
-      var count = Math.min(520, Math.max(200, Math.floor(W * H / 2800)));
+      var count = Math.min(800, Math.max(350, Math.floor(W * H / 1800)));
       pts = [];
       for (var i = 0; i < count; i++) pts.push(mkPt());
       goldPts  = pts.filter(function(p){ return  p.gold; });
