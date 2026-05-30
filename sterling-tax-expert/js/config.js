@@ -31,9 +31,9 @@ window.STERLING_CONFIG = {
   contactEmail: 'sterlingtaxexpert@gmail.com',
 
   emailjs: {
-    publicKey:  'YOUR_EMAILJS_PUBLIC_KEY',
-    serviceId:  'YOUR_EMAILJS_SERVICE_ID',
-    templateId: 'YOUR_EMAILJS_TEMPLATE_ID',
+    publicKey:  'Wiy-AGwPgs8KChEsB',
+    serviceId:  'service_tp0kt6d',
+    templateId: 'template_61wheps',
   },
 
   // Optional fullscreen hero background video (MP4). Blank = gradient only.
