@@ -2023,3 +2023,85 @@ footer { background:var(--midnight); }
   .btn { padding:10px 20px; }
   .btn-sm { padding:7px 14px; font-size:11.5px; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   FONT CLARITY FIX — Cormorant only at display sizes (18px+)
+   Small text reverts to Inter for crispness
+   ─────────────────────────────────────────────────────────── */
+
+/* Card titles — Cormorant at 600 weight so it renders crisply */
+.tool-t,.bc-t,.dl-nm,.hsvc-t,.why-h,.hp-trust-heading,
+.hp-svc-name,.hp-step-heading,.hp-why-heading,
+.about-audience-label,.about-service-title,
+.pc-plan,.tip-label,.adm-tt,.ci-title {
+  font-family:var(--display) !important;
+  font-weight:600 !important;
+  font-size:15px;
+  letter-spacing:-.01em;
+}
+
+/* Small UI text — always Inter, no serif */
+.tool-d,.bc-m,.bc-r,.dl-ds,.hp-trust-text,.hp-svc-desc,
+.hp-step-body,.hp-why-body,.hp-audience-label,
+.ttag,.hpill,.sp,.pa-b,.tb-b,.tcat-btn,
+.ci-label,.ci-hint,.ci-section-label,
+.kpi-label,.kpi-sub,.bk-name,.bk-pct,
+.dl-dy,.ch-meta,.ch-badge,.post-meta,
+.bc-cat,.fa-tag,.fa-meta,.eyebrow,
+.hp-kicker,.px-label,.pm-about-eyebrow,
+.adm-ml,.adm-md,.sb-i,.sb-section,
+.f-cert,.f-col h4,.f-col a,.f-bl,.f-bls a,
+.crumbs,.crumbs-back,.crumbs .sep,
+.nav-links .nl,.ls,.ntel,
+.dh-tab,.dh-list-cat,.dh-list-ds,
+.dl-dt small,.hmrc-id,.hmrc-im,.hmrc-it,
+.tool-tags .ttag,.ch-badge,.ch-kicker {
+  font-family:var(--sans) !important;
+}
+
+/* KPI values — mono stays mono */
+.kpi-value,.sc-n,.bk-amt,.dl-dt,
+.dh-list-date,.pm-pillar-value,.about-fact-n {
+  font-family:var(--display) !important;
+  font-weight:700 !important;
+  letter-spacing:-.03em;
+}
+
+/* Deadline date numbers specifically */
+.dh-list-date {
+  font-size:22px !important;
+  font-weight:700 !important;
+  line-height:1.1;
+  letter-spacing:-.03em;
+}
+
+/* Post body stays readable */
+.post-body p,.post-body li,.post-body blockquote {
+  font-family:var(--sans) !important;
+  font-size:15px;
+  line-height:1.85;
+}
+
+/* Tool card title size bump for clarity */
+.tool-t { font-size:15.5px !important; }
+
+/* Blog card title */
+.bc-t { font-size:15px !important; font-weight:600 !important; }
+
+/* Deadline name */
+.dh-list-nm { font-family:var(--sans) !important; font-size:14px !important; font-weight:600 !important; }
+
+/* Nav brand name — stays sans for crispness at small size */
+.ln,.ls { font-family:var(--sans) !important; }
+
+/* Section kickers — sans, all caps, no serif */
+.hp-kicker,.eyebrow,.px-label,.pm-about-eyebrow,
+.ey-blue,.ey-gold,.ey-muted,.ey-light,.pm-ey-light {
+  font-family:var(--sans) !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  letter-spacing:3px !important;
+}
+
+/* Table cells — always Inter */
+td,th { font-family:var(--sans) !important; }

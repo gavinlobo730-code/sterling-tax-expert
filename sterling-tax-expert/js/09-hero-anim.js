@@ -294,4 +294,333 @@
   }
 
   window._heroAnimStop = function () { /* no-op: static render */ };
+  window._heroCityRender = render;
+})();
+
+/* ═══════════════════════════════════════════════════════════
+   HERO BACKGROUND SWITCHER — 4 modes
+   A: City of London (existing canvas, kept)
+   B: Constellation (drifting gold/white particles + connections)
+   C: Gradient bloom (pure gradient + film grain, no animation)
+   D: Geometric grid (animated perspective grid lines)
+   ─────────────────────────────────────────────────────────── */
+(function () {
+  'use strict';
+
+  var raf = null;
+  var currentMode = localStorage.getItem('ste_hero_bg') || 'A';
+
+  /* ── Mode B: Constellation ── */
+  function startConstellation(canvas) {
+    var ctx = canvas.getContext('2d');
+    var W, H, pts;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+      pts = [];
+      var count = Math.min(120, Math.floor(W * H / 9000));
+      for (var i = 0; i < count; i++) {
+        pts.push({
+          x: Math.random() * W,
+          y: Math.random() * H,
+          vx: (Math.random() - 0.5) * 0.28,
+          vy: (Math.random() - 0.5) * 0.18,
+          r: 0.8 + Math.random() * 1.6,
+          a: 0.15 + Math.random() * 0.55,
+          gold: Math.random() < 0.35
+        });
+      }
+    }
+
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Background gradient
+      var bg = ctx.createLinearGradient(0, 0, 0, H);
+      bg.addColorStop(0,   '#020308');
+      bg.addColorStop(0.5, '#060A1E');
+      bg.addColorStop(1,   '#03050F');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Subtle gold bloom centre
+      var bloom = ctx.createRadialGradient(W*.5, H*.45, 0, W*.5, H*.45, W*.5);
+      bloom.addColorStop(0,   'rgba(166,124,0,0.07)');
+      bloom.addColorStop(0.5, 'rgba(99,102,241,0.04)');
+      bloom.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = bloom;
+      ctx.fillRect(0, 0, W, H);
+
+      var connDist = Math.min(W, H) * 0.18;
+
+      // Connections
+      for (var i = 0; i < pts.length; i++) {
+        for (var j = i + 1; j < pts.length; j++) {
+          var dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+          var dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < connDist) {
+            var alpha = (1 - dist / connDist) * 0.12;
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.strokeStyle = pts[i].gold || pts[j].gold
+              ? 'rgba(166,124,0,' + alpha + ')'
+              : 'rgba(165,180,252,' + alpha + ')';
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Dots
+      for (var k = 0; k < pts.length; k++) {
+        var p = pts[k];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.gold
+          ? 'rgba(212,175,80,' + p.a + ')'
+          : 'rgba(210,220,255,' + p.a + ')';
+        ctx.fill();
+
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -10) p.x = W + 10;
+        if (p.x > W+10) p.x = -10;
+        if (p.y < -10) p.y = H + 10;
+        if (p.y > H+10) p.y = -10;
+      }
+
+      // Vignette
+      var vig = ctx.createRadialGradient(W*.5,H*.5,H*.2,W*.5,H*.5,H*.85);
+      vig.addColorStop(0,'rgba(0,0,0,0)');
+      vig.addColorStop(1,'rgba(2,3,10,0.78)');
+      ctx.fillStyle = vig; ctx.fillRect(0,0,W,H);
+
+      raf = requestAnimationFrame(frame);
+    }
+
+    window.addEventListener('resize', function() { resize(); }, { passive: true });
+    resize();
+    frame();
+  }
+
+  /* ── Mode C: Gradient bloom (static, no animation) ── */
+  function renderGradient(canvas) {
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width  = window.innerWidth;
+    var H = canvas.height = window.innerHeight;
+
+    // Base gradient
+    var bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0,    '#01020A');
+    bg.addColorStop(0.28, '#050B20');
+    bg.addColorStop(0.55, '#080D28');
+    bg.addColorStop(0.80, '#060A1E');
+    bg.addColorStop(1,    '#020308');
+    ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+    // Gold bloom left
+    var g1 = ctx.createRadialGradient(W*.15, H*.55, 0, W*.15, H*.55, W*.55);
+    g1.addColorStop(0,   'rgba(166,124,0,0.12)');
+    g1.addColorStop(0.5, 'rgba(120,90,0,0.06)');
+    g1.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = g1; ctx.fillRect(0,0,W,H);
+
+    // Indigo bloom right
+    var g2 = ctx.createRadialGradient(W*.82, H*.38, 0, W*.82, H*.38, W*.48);
+    g2.addColorStop(0,   'rgba(79,70,229,0.14)');
+    g2.addColorStop(0.5, 'rgba(60,50,180,0.06)');
+    g2.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = g2; ctx.fillRect(0,0,W,H);
+
+    // Subtle horizontal light streak
+    var streak = ctx.createLinearGradient(0, H*.42, 0, H*.48);
+    streak.addColorStop(0,   'rgba(166,124,0,0)');
+    streak.addColorStop(0.5, 'rgba(166,124,0,0.04)');
+    streak.addColorStop(1,   'rgba(166,124,0,0)');
+    ctx.fillStyle = streak; ctx.fillRect(0, H*.42, W, H*.06);
+
+    // Vignette
+    var vig = ctx.createRadialGradient(W*.5,H*.5,H*.15,W*.5,H*.5,H*.9);
+    vig.addColorStop(0,'rgba(0,0,0,0)');
+    vig.addColorStop(1,'rgba(1,2,10,0.82)');
+    ctx.fillStyle = vig; ctx.fillRect(0,0,W,H);
+
+    window.addEventListener('resize', function() { renderGradient(canvas); }, { passive:true });
+  }
+
+  /* ── Mode D: Geometric grid ── */
+  function startGrid(canvas) {
+    var ctx = canvas.getContext('2d');
+    var W, H, t = 0;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function frame() {
+      t += 0.004;
+      ctx.clearRect(0, 0, W, H);
+
+      // Background
+      var bg = ctx.createLinearGradient(0,0,0,H);
+      bg.addColorStop(0,'#010208'); bg.addColorStop(1,'#040818');
+      ctx.fillStyle = bg; ctx.fillRect(0,0,W,H);
+
+      // Gold bloom
+      var bloom = ctx.createRadialGradient(W*.5,H*.7,0,W*.5,H*.7,W*.6);
+      bloom.addColorStop(0,  'rgba(166,124,0,0.09)');
+      bloom.addColorStop(0.6,'rgba(99,102,241,0.05)');
+      bloom.addColorStop(1,  'rgba(0,0,0,0)');
+      ctx.fillStyle = bloom; ctx.fillRect(0,0,W,H);
+
+      // Perspective grid
+      var vx = W/2, vy = H*0.52;
+      var cols = 14, rows = 10;
+      var spread = W * 1.1;
+      var pulse = 0.06 + 0.03 * Math.sin(t * 2);
+
+      ctx.save();
+      ctx.globalAlpha = pulse;
+      ctx.strokeStyle = 'rgba(166,124,0,1)';
+      ctx.lineWidth = 0.6;
+
+      // Horizontal lines
+      for (var r = 0; r <= rows; r++) {
+        var frac = r / rows;
+        var ease = frac * frac;
+        var y = vy + (H - vy) * ease;
+        var xLeft  = vx - spread/2 * ease;
+        var xRight = vx + spread/2 * ease;
+        var lineAlpha = (0.08 + frac * 0.18) * (0.7 + 0.3 * Math.sin(t - frac * 3));
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(166,124,0,' + lineAlpha + ')';
+        ctx.moveTo(xLeft, y); ctx.lineTo(xRight, y);
+        ctx.stroke();
+      }
+
+      // Vertical lines (converging)
+      for (var c = 0; c <= cols; c++) {
+        var frac2 = c / cols;
+        var x0    = vx - spread/2 * frac2 + spread/2 * (1-frac2);
+        var xBot  = vx - spread/2 + spread * frac2;
+        var lineAlpha2 = 0.06 + 0.08 * Math.abs(frac2 - 0.5) * 2;
+        ctx.beginPath();
+        ctx.strokeStyle = 'rgba(99,102,241,' + lineAlpha2 + ')';
+        ctx.moveTo(vx - spread/2 + spread * frac2, vy);
+        ctx.lineTo(xBot, H);
+        ctx.stroke();
+      }
+
+      ctx.restore();
+
+      // Vignette
+      var vig = ctx.createRadialGradient(W*.5,H*.5,H*.1,W*.5,H*.5,H*.9);
+      vig.addColorStop(0,'rgba(0,0,0,0)');
+      vig.addColorStop(1,'rgba(1,2,10,0.88)');
+      ctx.fillStyle = vig; ctx.fillRect(0,0,W,H);
+
+      raf = requestAnimationFrame(frame);
+    }
+
+    window.addEventListener('resize', function() { resize(); }, { passive:true });
+    resize(); frame();
+  }
+
+  /* ── Switcher UI ── */
+  function injectSwitcher() {
+    if (document.getElementById('hero-bg-switcher')) return;
+    var sw = document.createElement('div');
+    sw.id = 'hero-bg-switcher';
+    sw.style.cssText = [
+      'position:fixed;bottom:32px;right:24px;z-index:500',
+      'background:rgba(5,10,28,0.82);backdrop-filter:blur(12px)',
+      'border:1px solid rgba(166,124,0,0.25);border-radius:10px',
+      'padding:10px 12px;display:flex;flex-direction:column;gap:6px',
+      'font-family:Inter,sans-serif;font-size:10px;color:rgba(255,255,255,0.4)',
+      'letter-spacing:2px;text-transform:uppercase'
+    ].join(';');
+
+    var modes = [
+      { id:'A', label:'Cityscape' },
+      { id:'B', label:'Constellation' },
+      { id:'C', label:'Gradient' },
+      { id:'D', label:'Grid' },
+    ];
+
+    sw.innerHTML = '<div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.07)">Background</div>' +
+      modes.map(function(m) {
+        return '<button onclick="window._switchHeroBg(\'' + m.id + '\')" id="hbtn-' + m.id + '" style="' +
+          'background:' + (currentMode===m.id ? 'rgba(166,124,0,0.25)' : 'transparent') + ';' +
+          'border:1px solid ' + (currentMode===m.id ? 'rgba(166,124,0,0.5)' : 'rgba(255,255,255,.08)') + ';' +
+          'border-radius:6px;padding:5px 10px;color:' + (currentMode===m.id ? '#D4AF50' : 'rgba(255,255,255,.45)') + ';' +
+          'font-size:10.5px;cursor:pointer;font-family:inherit;letter-spacing:.5px;transition:all .15s;text-align:left">' +
+          m.label + '</button>';
+      }).join('');
+
+    document.body.appendChild(sw);
+  }
+
+  function updateSwitcherButtons(mode) {
+    ['A','B','C','D'].forEach(function(id) {
+      var btn = document.getElementById('hbtn-' + id);
+      if (!btn) return;
+      var on = id === mode;
+      btn.style.background = on ? 'rgba(166,124,0,0.25)' : 'transparent';
+      btn.style.border = '1px solid ' + (on ? 'rgba(166,124,0,0.5)' : 'rgba(255,255,255,.08)');
+      btn.style.color = on ? '#D4AF50' : 'rgba(255,255,255,.45)';
+    });
+  }
+
+  function stopAnim() {
+    if (raf) { cancelAnimationFrame(raf); raf = null; }
+  }
+
+  window._switchHeroBg = function(mode) {
+    stopAnim();
+    currentMode = mode;
+    localStorage.setItem('ste_hero_bg', mode);
+    updateSwitcherButtons(mode);
+
+    var canvas = document.getElementById('hero-canvas');
+    if (!canvas) return;
+
+    if (mode === 'A') {
+      // Restore city canvas
+      if (window._heroCityRender) window._heroCityRender();
+    } else if (mode === 'B') {
+      startConstellation(canvas);
+    } else if (mode === 'C') {
+      renderGradient(canvas);
+    } else if (mode === 'D') {
+      startGrid(canvas);
+    }
+  };
+
+  /* ── Boot ── */
+  function boot() {
+    var hero = document.getElementById('pm-hero');
+    if (!hero) return;
+
+    // Only show switcher when hero is visible
+    var heroObs = new IntersectionObserver(function(entries) {
+      var sw = document.getElementById('hero-bg-switcher');
+      if (!sw) { injectSwitcher(); sw = document.getElementById('hero-bg-switcher'); }
+      if (sw) sw.style.display = entries[0].isIntersecting ? 'flex' : 'none';
+    }, { threshold: 0.1 });
+    heroObs.observe(hero);
+
+    // Apply saved/default mode
+    if (currentMode !== 'A') {
+      var canvas = document.getElementById('hero-canvas');
+      if (canvas) window._switchHeroBg(currentMode);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot);
+  } else {
+    setTimeout(boot, 200);
+  }
 })();
