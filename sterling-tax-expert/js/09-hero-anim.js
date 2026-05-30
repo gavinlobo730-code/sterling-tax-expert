@@ -37,7 +37,7 @@
     function resize() {
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
-      var count = Math.min(720, Math.max(360, Math.floor(W * H / 1375)));
+      var count = Math.min(1440, Math.max(720, Math.floor(W * H / 688)));
       pts = [];
       for (var i = 0; i < count; i++) pts.push(mkPt(i, count));
     }
