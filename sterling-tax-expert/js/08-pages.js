@@ -7,178 +7,267 @@
 // HOME
 // ─────────────────────────────────────────────────────────
 function mountHome(){
-  // Hero video (optional — configure in STERLING_CONFIG.heroVideo)
+  // Hero video (optional — set STERLING_CONFIG.heroVideo to a direct MP4 URL)
   const heroV = document.getElementById('pm-hero-video');
   if (heroV && window.STERLING_CONFIG && window.STERLING_CONFIG.heroVideo) {
     heroV.src = window.STERLING_CONFIG.heroVideo;
     heroV.addEventListener('canplay', () => heroV.classList.add('loaded'), { once: true });
   }
 
-  // About section
+  // ── Section 1: Who We Are ────────────────────────────────
   const about = document.getElementById('home-about');
   if (about) about.innerHTML = `
-    <div class="pm-about">
-      <div class="pm-about-inner">
-        <div class="pm-about-text">
-          <div class="pm-about-eyebrow">About</div>
-          <h2 class="pm-about-h">Professional UK tax intelligence &mdash; <strong>built for precision.</strong></h2>
-          <p class="pm-about-p">Sterling Tax Expert provides professional UK tax, payroll and compliance tools designed to deliver clarity, accuracy and confidence. Every calculator is aligned with current HMRC guidance and updated for each new tax year.</p>
-          <div class="pm-about-rule"></div>
-          <div class="pm-about-pillars">
-            <div class="pm-about-pillar">
-              <div class="pm-pillar-label">Tax Year</div>
-              <div class="pm-pillar-value">2026/27</div>
-            </div>
-            <div class="pm-about-pillar">
-              <div class="pm-pillar-label">Free Calculators</div>
-              <div class="pm-pillar-value">25</div>
-            </div>
-            <div class="pm-about-pillar">
-              <div class="pm-pillar-label">HMRC Aligned</div>
-              <div class="pm-pillar-value">Always</div>
-            </div>
-          </div>
-        </div>
-        <div class="pm-about-visual">
-          <div class="pm-about-card">
-            <div class="pm-about-card-eyebrow">Coverage</div>
-            <div class="pm-about-card-list">
-              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>PAYE &amp; Income Tax</div>
-              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>National Insurance</div>
-              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>Payroll &amp; Statutory Pay</div>
-              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>Corporation Tax</div>
-              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>VAT &amp; Compliance</div>
-              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>Capital Gains &amp; Dividends</div>
-              <div class="pm-about-card-item"><span class="pm-aci-dot"></span>NHS Pension &amp; Self-Assessment</div>
-            </div>
-            <div class="pm-about-card-footer">Updated 6 April 2026</div>
-          </div>
+    <section class="px-edit">
+      <div class="px-edit-inner">
+        <div class="px-label px-anim">About the Platform</div>
+        <blockquote class="px-edit-statement px-anim" style="animation-delay:.1s">
+          Sterling Tax Expert combines modern technology with current UK legislation to provide
+          accurate, accessible and professional tax intelligence.
+        </blockquote>
+        <div class="px-edit-rule px-anim" style="animation-delay:.2s"></div>
+        <div class="px-edit-cols px-anim" style="animation-delay:.3s">
+          <p class="px-edit-col-p">
+            The platform is designed to simplify complex calculations while maintaining
+            professional-grade accuracy &mdash; covering every aspect of UK tax, from PAYE and
+            employer NI to corporation tax, VAT, statutory pay and NHS pension.
+          </p>
+          <p class="px-edit-col-p">
+            Every calculator reflects the current 2026/27 tax year from the moment it began on
+            6&nbsp;April 2026. No account is required. No data is stored. All calculations run
+            entirely within your browser.
+          </p>
         </div>
       </div>
-    </div>
+    </section>
   `;
 
-  // Principles section
+  // ── Section 2: Platform Coverage ────────────────────────
+  const coverage = document.getElementById('home-coverage');
+  if (coverage) coverage.innerHTML = `
+    <section class="px-cov">
+      <div class="px-cov-inner">
+        <div class="px-cov-header">
+          <div class="px-label px-label-light px-anim">Platform Coverage</div>
+          <h2 class="px-cov-h px-anim" style="animation-delay:.1s">Areas of expertise</h2>
+        </div>
+        <div class="px-cov-grid">
+          ${[
+            { n:'PAYE & Income Tax',       i:'01' },
+            { n:'National Insurance',       i:'02' },
+            { n:'Payroll Costs',            i:'03' },
+            { n:'Salary Sacrifice',         i:'04' },
+            { n:'Statutory Pay',            i:'05' },
+            { n:'Gross-to-Net',             i:'06' },
+            { n:'VAT & Compliance',         i:'07' },
+            { n:'Corporation Tax',          i:'08' },
+            { n:'Capital Gains & Dividends',i:'09' },
+            { n:'Self Assessment',          i:'10' },
+            { n:'NHS Pension',              i:'11' },
+            { n:'Tax Deadlines',            i:'12' },
+          ].map((c, idx) => `
+            <div class="px-cov-tile px-anim" style="animation-delay:${(idx * 0.05).toFixed(2)}s">
+              <div class="px-cov-tile-num">${c.i}</div>
+              <div class="px-cov-tile-name">${c.n}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </section>
+  `;
+
+  // ── Section 3: 2026/27 Tax Year Data ────────────────────
+  const taxdata = document.getElementById('home-taxdata');
+  if (taxdata) {
+    const T = window.TAX || {};
+    const f = n => (n || 0).toLocaleString('en-GB');
+    const pct = n => ((n || 0) * 100).toFixed(0) + '%';
+    taxdata.innerHTML = `
+      <section class="px-tyr">
+        <div class="px-tyr-inner">
+          <div class="px-tyr-header">
+            <div class="px-label px-anim">Current Tax Year</div>
+            <h2 class="px-tyr-h px-anim" style="animation-delay:.1s">Built for 2026/27</h2>
+            <p class="px-tyr-p px-anim" style="animation-delay:.15s">All thresholds, rates and statutory figures reflect the UK tax year commencing 6 April 2026.</p>
+          </div>
+          <div class="px-tyr-cols">
+            <div class="px-tyr-col px-anim" style="animation-delay:.1s">
+              <div class="px-tyr-col-label">Income Tax</div>
+              <div class="px-tyr-col-rule"></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">Personal allowance</span><span class="px-tyr-row-v">&pound;${f(T.PA)}</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">Basic rate (20%) ceiling</span><span class="px-tyr-row-v">&pound;${f(T.BR_LIMIT)}</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">Higher rate (40%) ceiling</span><span class="px-tyr-row-v">&pound;${f(T.HR_LIMIT)}</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">Additional rate</span><span class="px-tyr-row-v">45%</span></div>
+            </div>
+            <div class="px-tyr-col px-anim" style="animation-delay:.18s">
+              <div class="px-tyr-col-label">National Insurance</div>
+              <div class="px-tyr-col-rule"></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">Primary threshold</span><span class="px-tyr-row-v">&pound;${f(T.NI_PT)}</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">Upper earnings limit</span><span class="px-tyr-row-v">&pound;${f(T.NI_UEL)}</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">Employee main rate</span><span class="px-tyr-row-v">${pct(T.NI_MAIN)}</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">Employer rate</span><span class="px-tyr-row-v">${pct(T.NI_ER)}</span></div>
+            </div>
+            <div class="px-tyr-col px-anim" style="animation-delay:.26s">
+              <div class="px-tyr-col-label">Statutory &amp; Other</div>
+              <div class="px-tyr-col-rule"></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">National Living Wage</span><span class="px-tyr-row-v">&pound;${(T.NLW_21||0).toFixed(2)}/hr</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">SSP weekly rate</span><span class="px-tyr-row-v">&pound;${(T.SSP_RATE||0).toFixed(2)}</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">VAT standard rate</span><span class="px-tyr-row-v">${pct(T.VAT_STD)}</span></div>
+              <div class="px-tyr-row"><span class="px-tyr-row-k">VAT registration</span><span class="px-tyr-row-v">&pound;${f(T.VAT_REG_THR)}</span></div>
+            </div>
+          </div>
+          <div class="px-tyr-note px-anim" style="animation-delay:.35s">
+            Updated 6 April 2026 &nbsp;&middot;&nbsp; All figures per HMRC guidance &nbsp;&middot;&nbsp;
+            <a onclick="navigate('tools')" style="color:var(--indigo3);cursor:pointer">Open a calculator &rarr;</a>
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  // ── Section 4: Principles ────────────────────────────────
   const principles = document.getElementById('home-principles');
   if (principles) principles.innerHTML = `
-    <div class="pm-principles">
-      <div class="pm-principles-inner">
-        <div class="pm-principles-header">
-          <div class="pm-about-eyebrow pm-ey-light">Our Principles</div>
-          <h2 class="pm-principles-h">The standards we hold ourselves to.</h2>
-        </div>
-        <div class="pm-principles-grid">
-          <div class="pm-prin-card">
-            <div class="pm-prin-num">01</div>
-            <div class="pm-prin-title">Accuracy First</div>
-            <div class="pm-prin-rule"></div>
-            <div class="pm-prin-body">Every calculation is built with precision and aligned with current UK tax and payroll requirements. No rounding shortcuts, no approximation.</div>
-          </div>
-          <div class="pm-prin-card">
-            <div class="pm-prin-num">02</div>
-            <div class="pm-prin-title">Professional by Design</div>
-            <div class="pm-prin-rule"></div>
-            <div class="pm-prin-body">Designed to provide a clear, efficient and reliable experience for professionals and individuals alike &mdash; without unnecessary complexity.</div>
-          </div>
-          <div class="pm-prin-card">
-            <div class="pm-prin-num">03</div>
-            <div class="pm-prin-title">Always Evolving</div>
-            <div class="pm-prin-rule"></div>
-            <div class="pm-prin-body">Continuously refined to reflect changing legislation, payroll requirements and HMRC standards &mdash; so you can trust the numbers, every time.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  // Visual showcase
-  const showcase = document.getElementById('home-showcase');
-  if (showcase) showcase.innerHTML = `
-    <div class="pm-showcase">
-      <div class="pm-showcase-panel">
-        <div class="pm-showcase-inner">
-          <div class="pm-showcase-text">
-            <div class="pm-about-eyebrow">Free Tools</div>
-            <h2 class="pm-showcase-h">25 HMRC-aligned calculators. Free. No account required.</h2>
-            <p class="pm-showcase-p">From PAYE and employer NI to corporation tax, VAT, NHS pension and annual allowance &mdash; every calculator is aligned with the 2026/27 tax year and requires no registration.</p>
-            <button class="pm-showcase-btn" onclick="navigate('tools')">Browse all calculators</button>
-          </div>
-          <div class="pm-showcase-mock">
-            <div class="pm-mock">
-              <div class="pm-mock-chrome">
-                <div class="pm-mock-dots"><span></span><span></span><span></span></div>
-                <div class="pm-mock-title">PAYE Tax &amp; NI Calculator</div>
-                <div class="pm-mock-badge"><span class="pm-mock-pulse"></span>2026/27</div>
+    <section class="px-phil">
+      <div class="px-phil-inner">
+        <div class="px-label px-anim">How we work</div>
+        <div class="px-phil-items">
+          <div class="px-phil-item px-anim" style="animation-delay:.05s">
+            <div class="px-phil-rule"></div>
+            <div class="px-phil-row">
+              <div class="px-phil-num">01</div>
+              <div class="px-phil-body-wrap">
+                <div class="px-phil-title">Accuracy Before<br>Assumptions</div>
+                <p class="px-phil-body">Every calculation is derived from current HMRC legislation, not approximation or estimation. If something cannot be calculated precisely, we say so clearly.</p>
               </div>
-              <div class="pm-mock-body">
-                <div class="pm-mock-input-row">
-                  <div class="pm-mock-input-label">Annual salary</div>
-                  <div class="pm-mock-input-value">&pound;45,000</div>
-                </div>
-                <div class="pm-mock-input-row">
-                  <div class="pm-mock-input-label">Tax regime</div>
-                  <div class="pm-mock-input-value">England &amp; Wales</div>
-                </div>
-                <div class="pm-mock-divider"></div>
-                <div class="pm-mock-kpis">
-                  <div class="pm-mock-kpi pm-mock-kpi-primary">
-                    <div class="pm-mock-kpi-label">Net take-home</div>
-                    <div class="pm-mock-kpi-value">&pound;33,284</div>
-                    <div class="pm-mock-kpi-sub">&pound;2,774 / month</div>
-                  </div>
-                  <div class="pm-mock-kpi pm-mock-kpi-secondary">
-                    <div class="pm-mock-kpi-label">Total employer cost</div>
-                    <div class="pm-mock-kpi-value">&pound;51,222</div>
-                    <div class="pm-mock-kpi-sub">&pound;4,268 / month</div>
-                  </div>
-                </div>
-                <div class="pm-mock-kpis pm-mock-kpis-4">
-                  <div class="pm-mock-kpi-sm">
-                    <div class="pm-mock-kpi-label">Income tax</div>
-                    <div class="pm-mock-kpi-value-sm">&pound;6,432</div>
-                  </div>
-                  <div class="pm-mock-kpi-sm">
-                    <div class="pm-mock-kpi-label">Employee NI</div>
-                    <div class="pm-mock-kpi-value-sm">&pound;3,034</div>
-                  </div>
-                  <div class="pm-mock-kpi-sm">
-                    <div class="pm-mock-kpi-label">Employer NI</div>
-                    <div class="pm-mock-kpi-value-sm">&pound;4,222</div>
-                  </div>
-                  <div class="pm-mock-kpi-sm">
-                    <div class="pm-mock-kpi-label">Pension (5%)</div>
-                    <div class="pm-mock-kpi-value-sm">&pound;2,250</div>
-                  </div>
-                </div>
+            </div>
+          </div>
+          <div class="px-phil-item px-anim" style="animation-delay:.12s">
+            <div class="px-phil-rule"></div>
+            <div class="px-phil-row">
+              <div class="px-phil-num">02</div>
+              <div class="px-phil-body-wrap">
+                <div class="px-phil-title">Legislation Before<br>Opinion</div>
+                <p class="px-phil-body">The platform presents what the law requires &mdash; not what is convenient, optimistic or simplified for presentation. The numbers are what they are.</p>
+              </div>
+            </div>
+          </div>
+          <div class="px-phil-item px-anim" style="animation-delay:.19s">
+            <div class="px-phil-rule"></div>
+            <div class="px-phil-row">
+              <div class="px-phil-num">03</div>
+              <div class="px-phil-body-wrap">
+                <div class="px-phil-title">Clarity Before<br>Complexity</div>
+                <p class="px-phil-body">Professional-grade calculations presented with the clarity that any professional &mdash; or individual &mdash; deserves. Complex tax matters explained without jargon.</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   `;
 
-  // Insights/blog teaser
+  // ── Section 5: Product Showcase ─────────────────────────
+  const showcase = document.getElementById('home-showcase');
+  if (showcase) showcase.innerHTML = `
+    <section class="px-product">
+      <div class="px-product-inner">
+        <div class="px-product-text">
+          <div class="px-label px-anim">The Platform</div>
+          <h2 class="px-product-h px-anim" style="animation-delay:.08s">25 calculators.<br>No account required.</h2>
+          <p class="px-product-p px-anim" style="animation-delay:.16s">
+            From PAYE and employer NI to corporation tax, NHS pension and annual allowance &mdash;
+            every calculator is aligned with the 2026/27 tax year, runs entirely in your browser,
+            and is free to use without registration.
+          </p>
+          <div class="px-product-acts px-anim" style="animation-delay:.22s">
+            <button class="px-btn-outline" onclick="navigate('tools')">Browse all calculators</button>
+            <button class="px-btn-ghost" onclick="navigate('deadlines')">View tax deadlines</button>
+          </div>
+        </div>
+        <div class="px-product-mock px-anim" style="animation-delay:.2s">
+          <div class="px-mock">
+            <div class="px-mock-chrome">
+              <div class="px-mock-dots"><span></span><span></span><span></span></div>
+              <div class="px-mock-title">PAYE Tax &amp; NI Calculator &mdash; 2026/27</div>
+              <div class="px-mock-live"><span class="px-mock-pulse"></span>Live</div>
+            </div>
+            <div class="px-mock-inputs">
+              <div class="px-mock-field">
+                <div class="px-mock-field-label">Annual salary</div>
+                <div class="px-mock-field-value">&pound;45,000</div>
+              </div>
+              <div class="px-mock-field">
+                <div class="px-mock-field-label">Tax regime</div>
+                <div class="px-mock-field-value">England &amp; Wales</div>
+              </div>
+              <div class="px-mock-field">
+                <div class="px-mock-field-label">Employee pension</div>
+                <div class="px-mock-field-value">5%</div>
+              </div>
+            </div>
+            <div class="px-mock-divider"></div>
+            <div class="px-mock-kpi-row">
+              <div class="px-mock-kpi px-mock-kpi-a">
+                <div class="px-mock-kpi-lbl">Net take-home</div>
+                <div class="px-mock-kpi-val">&pound;31,034</div>
+                <div class="px-mock-kpi-sub">&pound;2,586 / month</div>
+              </div>
+              <div class="px-mock-kpi px-mock-kpi-b">
+                <div class="px-mock-kpi-lbl">Total employer cost</div>
+                <div class="px-mock-kpi-val">&pound;51,222</div>
+                <div class="px-mock-kpi-sub">&pound;4,268 / month</div>
+              </div>
+            </div>
+            <div class="px-mock-bk-row">
+              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#C0392B"></span><span class="px-mock-bk-k">Income tax</span><span class="px-mock-bk-v">&pound;6,432</span></div>
+              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#C49A2E"></span><span class="px-mock-bk-k">Employee NI</span><span class="px-mock-bk-v">&pound;3,034</span></div>
+              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#7C3AED"></span><span class="px-mock-bk-k">Employee pension</span><span class="px-mock-bk-v">&pound;2,250</span></div>
+              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#EA580C"></span><span class="px-mock-bk-k">Employer NI</span><span class="px-mock-bk-v">&pound;4,222</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  `;
+
+  // ── Section 6: Insights ──────────────────────────────────
   const blog = document.getElementById('home-blog');
   if (blog) {
     const featured = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).slice(0, 3);
     blog.innerHTML = `
-      <div class="pm-insights">
-        <div class="pm-insights-inner">
-          <div class="pm-insights-header">
+      <section class="px-press">
+        <div class="px-press-inner">
+          <div class="px-press-header">
             <div>
-              <div class="pm-about-eyebrow">Insights &amp; Guides</div>
-              <h2 class="pm-insights-h">UK tax &amp; payroll explained.</h2>
+              <div class="px-label px-anim">Insights &amp; Analysis</div>
+              <h2 class="px-press-h px-anim" style="animation-delay:.08s">UK Tax Intelligence</h2>
             </div>
-            <button class="btn btn-ghost btn-sm" onclick="navigate('insights')">All articles &rarr;</button>
+            <button class="px-btn-ghost px-anim" onclick="navigate('insights')" style="animation-delay:.1s">All articles &rarr;</button>
           </div>
-          <div class="bc-grid">${featured.length ? featured.map(a => blogCardHTML(a)).join('') : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:13.5px">Articles loading…</div>'}</div>
+          <div class="bc-grid px-press-grid">${
+            featured.length
+              ? featured.map(a => blogCardHTML(a)).join('')
+              : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:13.5px">Articles loading…</div>'
+          }</div>
         </div>
-      </div>
+      </section>
     `;
   }
 
+  // ── Scroll animations ────────────────────────────────────
+  try {
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(en => {
+          if (en.isIntersecting) { en.target.classList.add('px-in'); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('#page-home .px-anim').forEach(el => io.observe(el));
+    }
+  } catch(e) {}
 }
+
+
 function daysUntil(dateStr){
   const today = new Date(); today.setHours(0,0,0,0);
   const target = new Date(dateStr); target.setHours(0,0,0,0);
