@@ -2140,67 +2140,42 @@ td,th { font-family:var(--sans) !important; }
 }
 
 /* ── Slide up ── */
-.ta-up {
-  opacity:0;
-  transform:translateY(48px);
-  transition:opacity .8s cubic-bezier(0.16,1,0.3,1),
-             transform .8s cubic-bezier(0.16,1,0.3,1);
-}
-.ta-up.ta-in { opacity:1; transform:none; }
+/* ── Keyframe definitions ── */
+@keyframes taSlideUp   { from{opacity:0;transform:translateY(48px)} to{opacity:1;transform:none} }
+@keyframes taSlideLeft { from{opacity:0;transform:translateX(-56px)} to{opacity:1;transform:none} }
+@keyframes taSlideRight{ from{opacity:0;transform:translateX(56px)}  to{opacity:1;transform:none} }
+@keyframes taFadeIn    { from{opacity:0} to{opacity:1} }
+@keyframes taScaleUp   { from{opacity:0;transform:scale(0.88) translateY(16px)} to{opacity:1;transform:none} }
 
-/* ── Slide from left ── */
-.ta-left {
-  opacity:0;
-  transform:translateX(-56px);
-  transition:opacity .8s cubic-bezier(0.16,1,0.3,1),
-             transform .8s cubic-bezier(0.16,1,0.3,1);
-}
-.ta-left.ta-in { opacity:1; transform:none; }
+/* ── Hidden state before trigger ── */
+.ta-up, .ta-left, .ta-right, .ta-fade, .ta-scale { opacity:0; }
 
-/* ── Slide from right ── */
-.ta-right {
-  opacity:0;
-  transform:translateX(56px);
-  transition:opacity .8s cubic-bezier(0.16,1,0.3,1),
-             transform .8s cubic-bezier(0.16,1,0.3,1);
-}
-.ta-right.ta-in { opacity:1; transform:none; }
+/* ── Animate when .ta-in is added ── */
+.ta-up.ta-in    { animation: taSlideUp    .8s cubic-bezier(0.16,1,0.3,1) both; }
+.ta-left.ta-in  { animation: taSlideLeft  .8s cubic-bezier(0.16,1,0.3,1) both; }
+.ta-right.ta-in { animation: taSlideRight .8s cubic-bezier(0.16,1,0.3,1) both; }
+.ta-fade.ta-in  { animation: taFadeIn     .9s cubic-bezier(0.16,1,0.3,1) both; }
+.ta-scale.ta-in { animation: taScaleUp    .7s cubic-bezier(0.16,1,0.3,1) both; }
 
-/* ── Fade only (subtle, for body text) ── */
-.ta-fade {
-  opacity:0;
-  transition:opacity .9s cubic-bezier(0.16,1,0.3,1);
-}
-.ta-fade.ta-in { opacity:1; }
+/* ── Manual stagger delays ── */
+.ta-d1 { animation-delay:.08s !important; }
+.ta-d2 { animation-delay:.16s !important; }
+.ta-d3 { animation-delay:.24s !important; }
+.ta-d4 { animation-delay:.32s !important; }
+.ta-d5 { animation-delay:.40s !important; }
+.ta-d6 { animation-delay:.48s !important; }
+.ta-d7 { animation-delay:.56s !important; }
+.ta-d8 { animation-delay:.64s !important; }
 
-/* ── Scale + fade (numbers, stats) ── */
-.ta-scale {
-  opacity:0;
-  transform:scale(0.88) translateY(16px);
-  transition:opacity .7s cubic-bezier(0.16,1,0.3,1),
-             transform .7s cubic-bezier(0.16,1,0.3,1);
-}
-.ta-scale.ta-in { opacity:1; transform:none; }
-
-/* ── Stagger delays ── */
-.ta-d1 { transition-delay:.08s !important; }
-.ta-d2 { transition-delay:.16s !important; }
-.ta-d3 { transition-delay:.24s !important; }
-.ta-d4 { transition-delay:.32s !important; }
-.ta-d5 { transition-delay:.40s !important; }
-.ta-d6 { transition-delay:.48s !important; }
-.ta-d7 { transition-delay:.56s !important; }
-.ta-d8 { transition-delay:.64s !important; }
-
-/* Grid stagger via parent class */
-.ta-stagger > *:nth-child(1)  { transition-delay:.06s; }
-.ta-stagger > *:nth-child(2)  { transition-delay:.14s; }
-.ta-stagger > *:nth-child(3)  { transition-delay:.22s; }
-.ta-stagger > *:nth-child(4)  { transition-delay:.30s; }
-.ta-stagger > *:nth-child(5)  { transition-delay:.38s; }
-.ta-stagger > *:nth-child(6)  { transition-delay:.46s; }
-.ta-stagger > *:nth-child(7)  { transition-delay:.54s; }
-.ta-stagger > *:nth-child(8)  { transition-delay:.62s; }
+/* ── Grid stagger via parent ── */
+.ta-stagger > *:nth-child(1)  { animation-delay:.06s; }
+.ta-stagger > *:nth-child(2)  { animation-delay:.14s; }
+.ta-stagger > *:nth-child(3)  { animation-delay:.22s; }
+.ta-stagger > *:nth-child(4)  { animation-delay:.30s; }
+.ta-stagger > *:nth-child(5)  { animation-delay:.38s; }
+.ta-stagger > *:nth-child(6)  { animation-delay:.46s; }
+.ta-stagger > *:nth-child(7)  { animation-delay:.54s; }
+.ta-stagger > *:nth-child(8)  { animation-delay:.62s; }
 
 /* ── Section heading style helpers ── */
 .section-eyebrow {
@@ -2222,11 +2197,12 @@ td,th { font-family:var(--sans) !important; }
 
 /* ── Reduced motion ── */
 @media (prefers-reduced-motion:reduce) {
-  .ta-up,.ta-left,.ta-right,.ta-scale {
-    opacity:1; transform:none; transition:none;
+  .ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale,
+  .ta-up.ta-in,.ta-left.ta-in,.ta-right.ta-in,.ta-fade.ta-in,.ta-scale.ta-in {
+    opacity:1 !important; transform:none !important; animation:none !important;
   }
   .pm-hero-kicker,.pm-hero-h1,.pm-hero-sub,.pm-hero-acts {
-    opacity:1; animation:none;
+    opacity:1 !important; animation:none !important;
   }
 }
 
