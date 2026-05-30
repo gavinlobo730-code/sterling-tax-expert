@@ -209,48 +209,58 @@
       }
     } catch (e) { console.warn('EmailJS init skipped:', e); }
 
-    // Unified reveal-on-scroll (ds-reveal / hp-anim / px-anim / reveal)
+    // Scroll-reveal animation system
     try {
-      if ('IntersectionObserver' in window) {
-        var revealIO = new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) {
-            if (en.isIntersecting) {
-              en.target.classList.add('ds-in','hp-in','px-in','in','ta-in');
-              revealIO.unobserve(en.target);
-            }
-          });
-        }, { threshold: 0.06, rootMargin:'0px 0px -24px 0px' });
+      var TA_SEL = '.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale,.ds-reveal,.hp-anim,.px-anim,.reveal,.tool-card,.bc,.dl-c,.kpi,.about-audience-card,.about-service-card,.tcard,.why-card,.hsvc,.tc,.pricing-card';
+      var _taScheduled = false;
 
-        var taSelectors =
-          '.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale,' +
-          '.ds-reveal,.hp-anim,.px-anim,.reveal,' +
-          '.tool-card,.bc,.dl-c,.kpi,' +
-          '.about-audience-card,.about-service-card,' +
-          '.tcard,.why-card,.hsvc,.tc,.pricing-card';
-
-        function initReveal() {
-          document.querySelectorAll(taSelectors).forEach(function(el){
-            if (!el.classList.contains('ta-in') && !el.classList.contains('ds-in')) {
-              revealIO.observe(el);
-            }
-          });
-        }
-
-        // Expose globally so page-mount functions can call it directly
-        window.initReveal = initReveal;
-
-        // Run on initial load and after every navigation (with longer delay for async mounts)
-        initReveal();
-        var _origNavigate = window.navigate;
-        if (typeof _origNavigate === 'function') {
-          window.navigate = function() {
-            _origNavigate.apply(this, arguments);
-            setTimeout(initReveal, 100);
-            setTimeout(initReveal, 400);
-          };
-        }
+      function _revealVisible() {
+        document.querySelectorAll(TA_SEL).forEach(function(el) {
+          if (el.classList.contains('ta-in') || el.classList.contains('ds-in')) return;
+          var rect = el.getBoundingClientRect();
+          if (rect.top < window.innerHeight - 40 && rect.bottom > 0) {
+            // Double rAF ensures browser paints opacity:0 before we add ta-in
+            requestAnimationFrame(function() {
+              requestAnimationFrame(function() {
+                el.classList.add('ta-in','ds-in','hp-in','px-in','in');
+              });
+            });
+          }
+        });
       }
-    } catch (e) { /* no-op */ }
+
+      function initReveal() {
+        // Small delay so injected HTML is in the DOM
+        setTimeout(function() {
+          _revealVisible();
+        }, 60);
+      }
+
+      window.initReveal = initReveal;
+
+      window.addEventListener('scroll', function() {
+        if (!_taScheduled) {
+          _taScheduled = true;
+          requestAnimationFrame(function() {
+            _revealVisible();
+            _taScheduled = false;
+          });
+        }
+      }, { passive: true });
+
+      // Run on load
+      initReveal();
+
+      // Re-run after every navigation
+      var _origNavigate = window.navigate;
+      if (typeof _origNavigate === 'function') {
+        window.navigate = function() {
+          _origNavigate.apply(this, arguments);
+          setTimeout(initReveal, 80);
+          setTimeout(initReveal, 350);
+        };
+      }
+    } catch(e) { /* no-op */ }
   });
 </script>
 </body>
