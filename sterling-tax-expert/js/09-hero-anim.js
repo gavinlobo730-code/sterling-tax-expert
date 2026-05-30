@@ -52,7 +52,7 @@
         r:      0.8 + Math.random() * 1.8,
         baseA:  0.6  + Math.random() * 0.4,
         phase:  Math.random() * Math.PI * 2,
-        tSpeed: 0.045 + Math.random() * 0.055,
+        tSpeed: 0.034 + Math.random() * 0.042,
         gold:   Math.random() < 0.28
       };
     }
