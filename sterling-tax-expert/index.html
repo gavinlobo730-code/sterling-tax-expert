@@ -211,59 +211,36 @@
 
     // Scroll-reveal animation system
     try {
-      var TA_SEL = '.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale';
       var _taScheduled = false;
 
-      function initReveal() {
-        setTimeout(function() {
-          var vh = window.innerHeight;
-          document.querySelectorAll(TA_SEL).forEach(function(el) {
-            if (el.hasAttribute('data-ta-ready')) return;
-            el.setAttribute('data-ta-ready', '1');
-            var rect = el.getBoundingClientRect();
-            if (rect.top < vh - 20) {
-              // Already visible — show immediately, no animation
-              el.classList.add('ta-in');
-            }
-            // Below fold — it will animate when scrolled into view
-          });
-        }, 80);
-      }
-
-      function _onScroll() {
-        if (_taScheduled) return;
-        _taScheduled = true;
-        requestAnimationFrame(function() {
-          _taScheduled = false;
-          var vh = window.innerHeight;
-          document.querySelectorAll(TA_SEL + ':not(.ta-in)').forEach(function(el) {
-            var rect = el.getBoundingClientRect();
-            if (rect.top < vh - 60) {
-              el.classList.add('ta-in');
-            }
-          });
+      function _check() {
+        var vh = window.innerHeight;
+        document.querySelectorAll('.ta-up,.ta-left,.ta-right,.ta-fade,.ta-scale').forEach(function(el) {
+          if (el.classList.contains('ta-in')) return;
+          var rect = el.getBoundingClientRect();
+          if (rect.top < vh - 50) el.classList.add('ta-in');
         });
       }
 
-      window.initReveal = initReveal;
-      window.addEventListener('scroll', _onScroll, { passive: true });
+      window.initReveal = function() { setTimeout(_check, 120); };
 
-      initReveal();
+      window.addEventListener('scroll', function() {
+        if (_taScheduled) return;
+        _taScheduled = true;
+        requestAnimationFrame(function() { _check(); _taScheduled = false; });
+      }, { passive: true });
 
-      var _origNavigate = window.navigate;
-      if (typeof _origNavigate === 'function') {
+      setTimeout(_check, 200);
+
+      var _origNav = window.navigate;
+      if (typeof _origNav === 'function') {
         window.navigate = function() {
-          _origNavigate.apply(this, arguments);
-          // Reset so new page elements get re-evaluated
-          document.querySelectorAll('[data-ta-ready]').forEach(function(el) {
-            el.removeAttribute('data-ta-ready');
-            el.classList.remove('ta-in');
-          });
-          setTimeout(initReveal, 100);
-          setTimeout(initReveal, 400);
+          _origNav.apply(this, arguments);
+          setTimeout(_check, 150);
+          setTimeout(_check, 500);
         };
       }
-    } catch(e) { /* no-op */ }
+    } catch(e) {}
   });
 </script>
 </body>
