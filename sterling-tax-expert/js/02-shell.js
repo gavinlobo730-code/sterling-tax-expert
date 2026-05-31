@@ -24,10 +24,19 @@ function showToast(msg, type=''){
 }
 
 // ── Navigation ─────────────────────────────────────────────
+function buildHash(page, param){
+  return '#' + page + (param ? '/' + encodeURIComponent(param) : '');
+}
+
 function navigate(page, param = null, opts = {}){
   if (!opts.skipHistory && CURRENT_PAGE) {
     NAV_HISTORY.push({ page: CURRENT_PAGE, calc: CURRENT_CALC, post: CURRENT_POST });
     if (NAV_HISTORY.length > 30) NAV_HISTORY.shift();
+  }
+  // Push a browser history entry so the native back/forward buttons work
+  if (!opts.skipBrowserHistory) {
+    const hash = buildHash(page, param);
+    history.pushState({ page, param }, '', hash);
   }
   showLoader(() => {
     document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
@@ -59,6 +68,7 @@ function navigate(page, param = null, opts = {}){
     if (page === 'contact') mountContact();
     if (page === 'calc')    mountCalc(param);
     if (page === 'article') mountArticle(param);
+    if (page === 'admin')   mountAdmin();
 
     // Reading bar
     const rb = document.getElementById('rbar');
@@ -328,7 +338,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (pathMatch) {
     mountHome();
     updateNavActive('article');
-    navigate('article', decodeURIComponent(pathMatch[1]), { skipHistory: true });
+    navigate('article', decodeURIComponent(pathMatch[1]), { skipHistory: true, skipBrowserHistory: true });
     return;
   }
 
@@ -340,16 +350,22 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // Allow URL hash routing for sharing/deep-linking (admin excluded from public routing)
   const h = location.hash.replace('#', '');
-  if (h && h !== 'home' && h.split('/')[0] !== 'admin') {
-    const [page, param] = h.split('/');
-    if (page) navigate(page, param || null, { skipHistory: true });
+  if (h && h !== 'home') {
+    const [page, rawParam] = h.split('/');
+    const param = rawParam ? decodeURIComponent(rawParam) : null;
+    if (page) navigate(page, param, { skipHistory: true, skipBrowserHistory: true });
+  } else {
+    // Replace the initial state so the very first back press goes somewhere sensible
+    history.replaceState({ page: 'home', param: null }, '', location.href);
   }
 });
 
-window.addEventListener('hashchange', () => {
-  const h = location.hash.replace('#', '');
-  if (h) {
-    const [page, param] = h.split('/');
-    if (page && page !== CURRENT_PAGE && page !== 'admin') navigate(page, param || null);
+// Browser back/forward — restore the page the user navigated away from
+window.addEventListener('popstate', (e) => {
+  if (e.state && e.state.page) {
+    const { page, param } = e.state;
+    navigate(page, param || null, { skipHistory: true, skipBrowserHistory: true });
+  } else {
+    navigate('home', null, { skipHistory: true, skipBrowserHistory: true });
   }
 });

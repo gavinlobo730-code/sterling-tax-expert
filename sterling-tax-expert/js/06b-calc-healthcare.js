@@ -64,26 +64,19 @@ CALCS['nhs-payroll'] = {
     const gross = s.nhs_gross;
     const totalGross = gross + (s.nhs_extra || 0) + (s.nhs_other || 0);
 
-    // NHS pension tier uses base NHS salary only (WTE-adjusted in advanced mode;
-    // default WTE = 1.0 so pensionable pay = gross for full-time staff)
     const pensionablePay = gross;
     const tier = nhsPensionTier(pensionablePay);
     const employeePension = optedIn ? pensionablePay * tier.rate : 0;
     const employerPension = optedIn ? pensionablePay * T.NHS_ER_CONTRIB : 0;
 
-    // Taxable pay: pension is via NHS scheme (occupational, pre-tax under s.188 FA 2004)
     const taxablePay = totalGross - employeePension;
 
-    // Income tax
     const taxCalc = s.nhs_regime === 'scotland'
       ? scottishIncomeTaxOn(taxablePay)
       : incomeTaxOn(taxablePay);
     const incomeTax = taxCalc.tax;
 
-    // NI is on total gross (pension does not reduce NI base for NHS scheme)
     const ni = employeeNI(totalGross);
-
-    // Student loan
     const sl = studentLoan(totalGross, s.nhs_plan);
 
     const netAnnual = totalGross - incomeTax - ni - employeePension - sl;
@@ -91,7 +84,6 @@ CALCS['nhs-payroll'] = {
     const effRate = totalGross > 0 ? ((incomeTax + ni + sl) / totalGross * 100) : 0;
     const totalDeductions = incomeTax + ni + sl + employeePension;
 
-    // Annual Allowance (simplified proxy — 1/54 × pensionable pay × AA_DB_FACTOR)
     const pensionInputProxy = optedIn ? (pensionablePay / T.NHS_ACCRUAL_DENOM) * T.AA_DB_FACTOR : 0;
     const adjustedIncome = totalGross + employerPension;
     let taperAA = T.AA_STANDARD;
@@ -107,9 +99,8 @@ CALCS['nhs-payroll'] = {
     if (aaRatio >= 1) aaStatus = 'red';
     else if (aaRatio >= 0.75) aaStatus = 'amber';
 
-    // Pension accrual illustration (flat CPI assumption — illustrative only)
     const annualAccrual = optedIn ? pensionablePay / T.NHS_ACCRUAL_DENOM : 0;
-    const cpi = T.NHS_CPI_ASSUMPTION + T.NHS_CPI_ABOVE; // total revaluation rate for illustration
+    const cpi = T.NHS_CPI_ASSUMPTION + T.NHS_CPI_ABOVE;
     const proj10 = annualAccrual * ((Math.pow(1 + cpi, 10) - 1) / cpi);
     const proj20 = annualAccrual * ((Math.pow(1 + cpi, 20) - 1) / cpi);
     const proj30 = annualAccrual * ((Math.pow(1 + cpi, 30) - 1) / cpi);
@@ -130,7 +121,6 @@ CALCS['nhs-payroll'] = {
     const d = v => m ? fmt(v / 12) : fmt(v);
     const period = m ? '/ month' : '/ year';
 
-    // ── Tab 1: Take-Home Pay ──────────────────────────────
     const donutData = [
       { name: 'Net pay',      val: r.netAnnual,        color: '#16A34A' },
       { name: 'Income tax',   val: r.incomeTax,        color: '#C0392B' },
@@ -177,19 +167,11 @@ CALCS['nhs-payroll'] = {
           ${bkRow('Net take-home', '#16A34A', r.netAnnual, r.totalGross, false, true)}
         </div>
       </div>
-      ${r.regime === 'scotland' ? `<p style="font-size:11px;color:var(--t3);margin-top:8px">Scottish income tax rates applied (starter 19%, basic 20%, intermediate 21%, higher 42%, top 48%).</p>` : ''}
+      ${r.regime === 'scotland' ? `<p style="font-size:11px;color:var(--t3);margin-top:8px">Scottish income tax rates applied.</p>` : ''}
       ${actionsRow()}
     `;
 
-    // ── Tab 2: NHS Pension ────────────────────────────────
-    const tierLabels = [
-      'Up to £13,259',
-      '£13,260 – £28,854',
-      '£28,855 – £35,155',
-      '£35,156 – £52,778',
-      '£52,779 – £67,668',
-      '£67,669+',
-    ];
+    const tierLabels = ['Up to £13,259','£13,260 – £28,854','£28,855 – £35,155','£35,156 – £52,778','£52,779 – £67,668','£67,669+'];
     const tierRows = T.NHS_PENSION_TIERS.map((t, i) => {
       const isCurrent = i === r.tier.tierIndex;
       return `<tr style="${isCurrent ? 'background:var(--blue3,#EFF6FF);font-weight:600' : ''}">
@@ -201,14 +183,14 @@ CALCS['nhs-payroll'] = {
 
     const tab2 = r.optedIn ? `
       ${kpiRow([
-        kpi('Your contribution rate', (r.tier.rate * 100).toFixed(1) + '%', { color: 'primary', sub: 'Employee rate (2024/25 confirmed)' }),
+        kpi('Your contribution rate', (r.tier.rate * 100).toFixed(1) + '%', { color: 'primary', sub: 'Employee rate 2026/27' }),
         kpi('Your annual contribution', fmt(r.employeePension), { color: 'navy', sub: fmt(r.employeePension / 12) + ' / month' }),
-        kpi('Employer contribution', fmt(r.employerPension), { color: 'green', sub: '23.7% — paid by NHS, not deducted from your pay' }),
+        kpi('Employer contribution', fmt(r.employerPension), { color: 'green', sub: '23.7% — paid by NHS employer' }),
       ])}
       <div class="breakdown" style="margin-bottom:16px">
-        <div class="bk-header"><div class="bk-title">2015 CARE Scheme — contribution tiers</div></div>
+        <div class="bk-header"><div class="bk-title">2015 CARE Scheme — contribution tiers 2026/27</div></div>
         <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <thead><tr style="background:var(--bg2,#F8FAFC)">
+          <thead><tr style="background:var(--g50)">
             <th style="padding:6px 10px;text-align:left;font-weight:600">Pensionable pay</th>
             <th style="padding:6px 10px;text-align:center;font-weight:600">Rate</th>
             <th style="padding:6px 10px"></th>
@@ -219,100 +201,349 @@ CALCS['nhs-payroll'] = {
       <div class="breakdown" style="margin-bottom:16px">
         <div class="bk-header"><div class="bk-title">Pension accrual illustration</div></div>
         <div style="padding:12px 14px;font-size:13px;color:var(--t2)">
-          <div style="margin-bottom:8px"><strong>This year's accrual:</strong> ${fmt(r.annualAccrual)} / year added to your pension pot</div>
-          <div style="margin-bottom:4px;font-size:11px;color:var(--t3)">Based on 1/54th of pensionable pay. Revalued annually at CPI + 1.5%.</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px">
-            <div style="text-align:center;padding:10px;background:var(--bg2,#F8FAFC);border-radius:8px">
-              <div style="font-size:18px;font-weight:700;color:var(--blue1)">${fmt(r.proj10)}</div>
-              <div style="font-size:11px;color:var(--t3);margin-top:2px">After 10 years</div>
-            </div>
-            <div style="text-align:center;padding:10px;background:var(--bg2,#F8FAFC);border-radius:8px">
-              <div style="font-size:18px;font-weight:700;color:var(--blue1)">${fmt(r.proj20)}</div>
-              <div style="font-size:11px;color:var(--t3);margin-top:2px">After 20 years</div>
-            </div>
-            <div style="text-align:center;padding:10px;background:var(--bg2,#F8FAFC);border-radius:8px">
-              <div style="font-size:18px;font-weight:700;color:var(--blue1)">${fmt(r.proj30)}</div>
-              <div style="font-size:11px;color:var(--t3);margin-top:2px">After 30 years</div>
-            </div>
+          <div style="margin-bottom:8px"><strong>This year's accrual:</strong> ${fmt(r.annualAccrual)} / year added to your pension</div>
+          <div style="font-size:11px;color:var(--t3);margin-bottom:12px">Based on 1/54th of pensionable pay. Revalued annually at CPI + 1.5%.</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+            ${[['10 years', r.proj10],['20 years', r.proj20],['30 years', r.proj30]].map(([l,v]) => `
+            <div style="text-align:center;padding:10px;background:var(--g50);border-radius:8px">
+              <div style="font-size:18px;font-weight:700;color:var(--blue2)">${fmt(v)}</div>
+              <div style="font-size:11px;color:var(--t3);margin-top:2px">After ${l}</div>
+            </div>`).join('')}
           </div>
-          <p style="font-size:11px;color:var(--t3);margin-top:10px;line-height:1.5">Illustration only — assumes CPI of 2.5% + 1.5% revaluation = 4% compound. Actual pension depends on future salary, revaluation rates and scheme rules. Figures show cumulative accrued pension at current salary, not a single-year contribution.</p>
+          <p style="font-size:11px;color:var(--t3);margin-top:10px;line-height:1.5">Illustration only — assumes 4% compound revaluation (CPI 2.5% + 1.5%). Actual pension depends on future salary, revaluation and scheme rules.</p>
         </div>
       </div>
-      ${notesCard('NHS 2015 CARE Scheme', `
-        <strong>CARE</strong> (Career Average Revalued Earnings): you build 1/54th of your pensionable pay each year.
-        That slice is then revalued each April at CPI + 1.5% until you draw your pension.<br><br>
-        <strong>Employer contribution (23.7%)</strong> is paid by your NHS employer directly to NHS Pensions — it does not appear on your payslip and does not reduce your take-home pay. Rate shown is 2024/25 confirmed; 2026/27 revaluation pending SI.<br><br>
-        <strong>Tier thresholds</strong> are based on your full-time equivalent (WTE 1.0) pensionable pay. Part-time staff: open Advanced Options above to adjust your WTE.
-      `)}
+      ${notesCard('NHS 2015 CARE Scheme', `<strong>CARE</strong> (Career Average Revalued Earnings): you build 1/54th of pensionable pay each year, revalued at CPI + 1.5% until you draw.<br><br><strong>Employer contribution (23.7%)</strong> is paid directly to NHS Pensions — it does not reduce your take-home. Payroll employer contribution is 14.38%; NHSBSA covers the remaining 9.4% centrally.<br><br><strong>Tier thresholds</strong> are based on full-time equivalent (WTE 1.0) pensionable pay.`)}
       ${actionsRow()}
-    ` : `
-      <div style="padding:24px;text-align:center;color:var(--t2)">
-        <div style="font-size:32px;margin-bottom:12px">💭</div>
-        <div style="font-size:15px;font-weight:600;margin-bottom:8px">You are not currently contributing to the NHS Pension Scheme</div>
-        <p style="font-size:13px;color:var(--t3);max-width:400px;margin:0 auto 16px">Your NHS employer contributes 23.7% of your salary to the scheme on behalf of all members. By opting out, you forgo significant long-term pension accrual.</p>
-        <p style="font-size:13px;color:var(--t3);max-width:400px;margin:0 auto">Select <strong>Yes</strong> under <em>NHS pension member?</em> to model your pension contributions and accrual.</p>
-      </div>
-      ${actionsRow()}
-    `;
+    ` : `<div style="padding:24px;text-align:center;color:var(--t2)"><p style="font-size:13px">Select <strong>Yes</strong> under <em>NHS pension member?</em> to model contributions and accrual.</p></div>${actionsRow()}`;
 
-    // ── Tab 3: Annual Allowance Risk ──────────────────────
-    const aaColors = { green: '#16A34A', amber: '#D97706', red: '#DC2626' };
-    const aaLabels = {
-      green: 'Low Risk — No action needed',
-      amber: 'Review Recommended',
-      red:   'Professional Advice Recommended',
-    };
-    const aaIcons = { green: '✓', amber: '⚠', red: '✗' };
-    const aaDescriptions = {
-      green: `Your estimated pension input (${fmt(r.pensionInputProxy)}) is comfortably within your annual allowance of ${fmt(r.taperAA)}. You are unlikely to face an annual allowance charge based on your current salary.`,
-      amber: `Your estimated pension input (${fmt(r.pensionInputProxy)}) is approaching your annual allowance of ${fmt(r.taperAA)}. We recommend requesting a Pension Savings Statement from NHS Pensions and speaking with a tax adviser.`,
-      red:   `Your estimated pension input (${fmt(r.pensionInputProxy)}) may exceed your annual allowance of ${fmt(r.taperAA)}. An annual allowance tax charge may apply. Consider the Scheme Pays facility and seek professional advice before 31 July.`,
+    const aaColors = { green:'#16A34A', amber:'#D97706', red:'#DC2626' };
+    const aaLabels = { green:'Low Risk — No action needed', amber:'Review Recommended', red:'Professional Advice Recommended' };
+    const aaDescs  = {
+      green:  `Your estimated pension input (${fmt(r.pensionInputProxy)}) is within your annual allowance of ${fmt(r.taperAA)}.`,
+      amber:  `Your estimated pension input (${fmt(r.pensionInputProxy)}) is approaching your annual allowance of ${fmt(r.taperAA)}. Request a Pension Savings Statement and speak with a tax adviser.`,
+      red:    `Your estimated pension input (${fmt(r.pensionInputProxy)}) may exceed your annual allowance of ${fmt(r.taperAA)}. Consider Scheme Pays and seek professional advice before 31 July.`,
     };
 
     const tab3 = r.optedIn ? `
-      <div style="border:2px solid ${aaColors[r.aaStatus]};border-radius:12px;padding:20px 24px;margin-bottom:16px;background:${r.aaStatus === 'green' ? '#F0FDF4' : r.aaStatus === 'amber' ? '#FFFBEB' : '#FEF2F2'}">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-          <div style="font-size:24px;color:${aaColors[r.aaStatus]}">${aaIcons[r.aaStatus]}</div>
-          <div style="font-size:16px;font-weight:700;color:${aaColors[r.aaStatus]}">${aaLabels[r.aaStatus]}</div>
-        </div>
-        <p style="font-size:13px;color:var(--t2);margin:0">${aaDescriptions[r.aaStatus]}</p>
+      <div style="border:2px solid ${aaColors[r.aaStatus]};border-radius:12px;padding:20px 24px;margin-bottom:16px;background:${r.aaStatus==='green'?'#F0FDF4':r.aaStatus==='amber'?'#FFFBEB':'#FEF2F2'}">
+        <div style="font-size:16px;font-weight:700;color:${aaColors[r.aaStatus]};margin-bottom:8px">${r.aaStatus==='green'?'✓':r.aaStatus==='amber'?'⚠':'✗'} ${aaLabels[r.aaStatus]}</div>
+        <p style="font-size:13px;color:var(--t2);margin:0">${aaDescs[r.aaStatus]}</p>
       </div>
       <div class="breakdown" style="margin-bottom:16px">
         <div class="bk-header"><div class="bk-title">Annual Allowance summary</div></div>
-        <div style="padding:12px 14px;font-size:13px">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px">
-            <div style="color:var(--t3)">Estimated pension input (proxy)</div>
-            <div style="text-align:right;font-weight:600">${fmt(r.pensionInputProxy)}</div>
-            <div style="color:var(--t3)">Standard annual allowance</div>
-            <div style="text-align:right;font-weight:600">${fmt(T.AA_STANDARD)}</div>
-            ${r.taperAA < T.AA_STANDARD ? `
-            <div style="color:var(--t3)">Your tapered allowance</div>
-            <div style="text-align:right;font-weight:600;color:#D97706">${fmt(r.taperAA)}</div>` : ''}
-            <div style="color:var(--t3)">Estimated headroom</div>
-            <div style="text-align:right;font-weight:600;color:${r.aaStatus === 'green' ? '#16A34A' : '#DC2626'}">${fmt(Math.max(0, r.taperAA - r.pensionInputProxy))}</div>
-          </div>
+        <div style="padding:12px 14px;font-size:13px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px">
+          <span style="color:var(--t3)">Estimated pension input</span><span style="text-align:right;font-weight:600">${fmt(r.pensionInputProxy)}</span>
+          <span style="color:var(--t3)">Standard annual allowance</span><span style="text-align:right;font-weight:600">${fmt(T.AA_STANDARD)}</span>
+          ${r.taperAA < T.AA_STANDARD ? `<span style="color:var(--t3)">Tapered allowance</span><span style="text-align:right;font-weight:600;color:#D97706">${fmt(r.taperAA)}</span>` : ''}
+          <span style="color:var(--t3)">Headroom</span><span style="text-align:right;font-weight:600;color:${r.aaStatus==='green'?'#16A34A':'#DC2626'}">${fmt(Math.max(0, r.taperAA - r.pensionInputProxy))}</span>
         </div>
       </div>
-      ${notesCard('About this estimate', `
-        <strong>How pension input is estimated:</strong> This calculator uses a 1/54 × pensionable pay × 16 proxy. HMRC uses the actual opening and closing pension values from your NHS Pension record — this estimate may differ from your real figure.<br><br>
-        <strong>Taper applies</strong> when your threshold income exceeds £200,000 AND your adjusted income (including employer pension contributions) exceeds £260,000. Your allowance reduces by £1 for every £2 above the adjusted income threshold, down to a minimum of £10,000.<br><br>
-        <strong>Carry forward:</strong> Unused allowance from the previous 3 tax years may be added to this year's allowance. Open <em>Advanced pension options</em> to model this.<br><br>
-        <strong>Scheme Pays:</strong> If you have an AA charge, the NHS can pay it on your behalf in exchange for a reduced pension. You must elect Scheme Pays by 31 July following the relevant tax year.<br><br>
-        This is an estimate only. Obtain your <strong>Pension Savings Statement</strong> from NHS Pensions if your salary exceeds £120,000.
-      `)}
+      ${notesCard('About this estimate', `Pension input estimated using 1/54 × pensionable pay × 16 proxy — your actual figure comes from NHS Pensions. Taper applies when threshold income > £200,000 and adjusted income > £260,000. Carry forward of unused allowance from prior 3 years is not modelled here. Scheme Pays election deadline: 31 July following the tax year.`)}
       ${actionsRow(`<button class="btn btn-ghost btn-sm" onclick="navigate('contact')">Book a free AA review →</button>`)}
-    ` : `
-      <div style="padding:24px;text-align:center;color:var(--t2)">
-        <div style="font-size:13px;color:var(--t3);max-width:400px;margin:0 auto">Annual allowance risk only applies to NHS pension members. Select <strong>Yes</strong> under <em>NHS pension member?</em> to see your AA position.</div>
-      </div>
-    `;
+    ` : `<div style="padding:24px;text-align:center;color:var(--t3);font-size:13px">Select <strong>Yes</strong> under <em>NHS pension member?</em> to see your AA position.</div>`;
 
-    // Assumptions note (always shown at bottom of all tabs via wrapper)
-    const assumptionsNote = `<div style="font-size:11px;color:var(--t3);border-top:1px solid var(--border);padding-top:10px;margin-top:4px;line-height:1.6">
-      <strong>2026/27 assumptions:</strong> NHS pension tiers and employer rate (23.7%) are 2024/25 confirmed figures — no 2026/27 revaluation SI yet published. Income tax thresholds confirmed for 2026/27. All calculations are estimates only.
-    </div>`;
-
-    return nhsTabHTML(tab1, tab2, tab3) + assumptionsNote;
+    return nhsTabHTML(tab1, tab2, tab3)
+      + `<div style="font-size:11px;color:var(--t3);border-top:1px solid var(--br);padding-top:10px;margin-top:4px;line-height:1.6"><strong>2026/27:</strong> NHS pension tier thresholds confirmed (3.8% CPI uplift). Employer payroll rate 14.38% confirmed by NHSBSA. All calculations are estimates only.</div>`;
   },
-  related: ['paye', 'salary-sacrifice', 'self-assess', 'sal-vs-div'],
+  related: ['payslip', 'true-cost', 'self-assess', 'sal-vs-div'],
+};
+
+/* ─────────────────────────────────────────────────────────
+   NHS TRUE EMPLOYMENT COST CALCULATOR
+   Gross → Net or Net → Gross for NHS staff.
+   NHS pension occupational (pre-tax), employee tier rate,
+   employer 14.38%, employer NI at 15%.
+   ───────────────────────────────────────────────────────── */
+CALCS['nhs-true-cost'] = {
+  id: 'nhs-true-cost',
+  title: 'NHS True Employment Cost Calculator',
+  subtitle: 'Enter a gross NHS salary or desired take-home. See the employee\'s net pay, their NHS pension contribution tier, and the full employer cost including 14.38% pension and employer NI.',
+  metaBadges: ['NHS pension tiers', 'Gross → Net', 'Net → Gross'],
+
+  inputs: [
+    { id:'mode',      type:'toggle',  label:'Calculate from',             default:'gross', options:[{v:'gross',l:'Gross salary'},{v:'net',l:'Desired take-home'}] },
+    { id:'gross_in',  type:'currency',label:'Annual gross salary',        default:45000,   hint:'Full-time equivalent, before deductions' },
+    { id:'net_in',    type:'currency',label:'Desired net take-home (annual)', default:35000 },
+    { id:'regime',    type:'toggle',  label:'Tax regime',                 default:'england', options:[{v:'england',l:'England & Wales'},{v:'scotland',l:'Scotland'}] },
+    { id:'nhs_opt',   type:'toggle',  label:'NHS pension member?',        default:'yes',   options:[{v:'yes',l:'Yes'},{v:'no',l:'No'}] },
+    { type:'section',                 label:'Other deductions' },
+    { id:'plan',      type:'select',  label:'Student loan plan',          default:'0',     options:[{v:'0',l:'None'},{v:'1',l:'Plan 1'},{v:'2',l:'Plan 2'},{v:'4',l:'Plan 4'},{v:'5',l:'Plan 5'},{v:'PG',l:'Postgrad'}] },
+    { id:'allowance', type:'checkbox',label:'Employment Allowance (£10,500/yr)', default:false, hint:'Most NHS trusts are not eligible' },
+  ],
+
+  afterRecalc: function(s) {
+    if (s.mode === 'net') _hide('gross_in'); else _show('gross_in');
+    if (s.mode === 'gross') _hide('net_in'); else _show('net_in');
+  },
+
+  calculate: function(s) {
+    var T = window.TAX;
+    var gross;
+    if (s.mode === 'gross') {
+      gross = s.gross_in || 0;
+    } else {
+      var target = s.net_in || 0;
+      var lo = target * 0.5, hi = target * 3 + 200000;
+      gross = target;
+      for (var i = 0; i < 80; i++) {
+        var mid = (lo + hi) / 2;
+        var tryNet = this._calc(mid, s, T).netPay;
+        if (Math.abs(tryNet - target) < 0.05) { gross = mid; break; }
+        if (tryNet < target) lo = mid; else hi = mid;
+        gross = mid;
+      }
+    }
+    return this._calc(gross, s, T);
+  },
+
+  _calc: function(gross, s, T) {
+    var optedIn = s.nhs_opt === 'yes';
+    var tier = nhsPensionTier(gross);
+    var eePension  = optedIn ? gross * tier.rate : 0;
+    var erPension  = optedIn ? gross * 0.1438 : 0; // payroll employer rate
+    // NHS pension is occupational pre-tax — reduces taxable pay
+    var taxableGross = Math.max(0, gross - eePension);
+    var taxRes = s.regime === 'scotland' ? scottishIncomeTaxOn(taxableGross) : incomeTaxOn(taxableGross);
+    var incomeTax = taxRes.tax;
+    // NI is on total gross (NHS pension does NOT reduce NI base)
+    var empNI = employeeNI(gross);
+    var erNI  = employerNI(gross, s.allowance);
+    var sl = studentLoan(gross, s.plan);
+    var netPay = gross - eePension - incomeTax - empNI - sl;
+    var empCost = gross + erNI + erPension;
+    var effRate = gross > 0 ? (incomeTax + empNI + sl) / gross * 100 : 0;
+    var overheadPct = gross > 0 ? (empCost - gross) / gross * 100 : 0;
+    return {
+      gross, taxableGross, eePension, erPension,
+      incomeTax, empNI, erNI, sl, netPay, empCost,
+      tier, effRate, overheadPct,
+      optedIn, regime: s.regime, paUsed: taxRes.paUsed
+    };
+  },
+
+  render: function(r) {
+    var c = { net:'#16A34A', tax:'#C0392B', ni:'#C49A2E', pension:'#2563EB', erPension:'#0EA5E9', gross:'#6B748F', employer:'#0B1E3D' };
+
+    var donutData = [
+      { name:'Net pay',    val:r.netPay,    color:c.net },
+      { name:'Income tax', val:r.incomeTax, color:c.tax },
+      { name:'Empl. NI',   val:r.empNI,     color:c.ni  },
+    ];
+    if (r.eePension > 0) donutData.push({ name:'NHS pension (ee)', val:r.eePension, color:c.pension });
+    if (r.sl > 0) donutData.push({ name:'Student loan', val:r.sl, color:'#EA580C' });
+
+    var freqRow = function(lbl, d) {
+      var dp = d >= 260 ? 2 : 0;
+      return '<div class="ft-row">'
+        + '<span>' + lbl + '</span>'
+        + '<span>' + fmt(r.gross / d, dp) + '</span>'
+        + '<span>' + fmt(r.incomeTax / d, dp) + '</span>'
+        + '<span>' + fmt(r.empNI / d, dp) + '</span>'
+        + '<span style="color:var(--green);font-weight:700">' + fmt(r.netPay / d, dp) + '</span>'
+        + '<span style="color:var(--navy);font-weight:600">' + fmt(r.empCost / d, dp) + '</span>'
+        + '</div>';
+    };
+
+    return kpiRow([
+      kpi('Employee take-home',  fmt(r.netPay),   { color:'primary', sub: fmt(r.netPay / 12) + ' / month · ' + fmt(r.netPay / 52) + ' / week' }),
+      kpi('Total employer cost', fmt(r.empCost),  { color:'navy',    sub: fmt(r.empCost / 12) + ' / month · ' + r.overheadPct.toFixed(1) + '% above salary' }),
+      kpi('NHS pension tier',    (r.tier.rate * 100).toFixed(1) + '%', { color:'gold', sub: r.optedIn ? 'Employee contribution rate' : 'Not opted in' }),
+    ])
+    + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">'
+      + '<div class="chart-section"><div class="chart-title"><span>Employee breakdown</span><span style="font-size:11px;color:var(--t3)">Annual</span></div>'
+        + '<div class="donut-wrap">' + donutSVG(donutData, r.gross)
+        + '<div class="donut-legend">' + donutData.map(function(d) {
+          return '<div class="dl-item"><div class="dl-dot" style="background:' + d.color + '"></div>'
+            + '<span class="dl-name">' + d.name + '</span>'
+            + '<span class="dl-val">' + fmt(d.val) + '</span>'
+            + '<span class="dl-pct">' + (r.gross > 0 ? (d.val / r.gross * 100).toFixed(1) + '%' : '') + '</span></div>';
+        }).join('') + '</div></div></div>'
+      + '<div>'
+        + '<div class="breakdown"><div class="bk-header"><div class="bk-title">Employee — deductions</div></div>'
+          + bkRow('Gross salary', c.gross, r.gross, r.gross, true)
+          + (r.eePension > 0 ? bkRow('NHS pension (pre-tax)', c.pension, r.eePension, r.gross) : '')
+          + (r.eePension > 0 ? bkRow('Taxable pay', c.gross, r.taxableGross, r.gross) : '')
+          + bkRow('Income tax', c.tax, r.incomeTax, r.gross)
+          + bkRow('Employee NI', c.ni, r.empNI, r.gross)
+          + (r.sl > 0 ? bkRow('Student loan', '#EA580C', r.sl, r.gross) : '')
+          + bkRow('Net take-home', c.net, r.netPay, r.gross, false, true)
+        + '</div>'
+        + '<div class="breakdown" style="margin-top:12px"><div class="bk-header"><div class="bk-title">Employer — true cost</div></div>'
+          + bkRow('Gross salary', c.gross, r.gross, r.empCost)
+          + bkRow('Employer NI (15%)', c.ni, r.erNI, r.empCost)
+          + (r.erPension > 0 ? bkRow('NHS employer pension (14.38%)', c.erPension, r.erPension, r.empCost) : '')
+          + bkRow('Total employer cost', c.employer, r.empCost, r.empCost, false, true)
+        + '</div>'
+      + '</div>'
+    + '</div>'
+    + '<div class="chart-section" style="margin-top:14px"><div class="chart-title"><span>All-frequency summary</span></div>'
+      + '<div class="freq-table">'
+        + '<div class="ft-head"><span>Frequency</span><span>Gross</span><span>Income tax</span><span>Employee NI</span><span>Net pay</span><span>Employer cost</span></div>'
+        + freqRow('Annual', 1) + freqRow('Monthly', 12) + freqRow('Weekly', 52) + freqRow('Daily', 260)
+      + '</div>'
+    + '</div>'
+    + (r.mode === 'net' ? notesCard('Net-to-Gross solve', 'To achieve a take-home of <strong>' + fmt(r.netPay) + '</strong>, the gross salary required is <strong>' + fmt(r.gross) + '</strong>. Solved to within ±5p.') : '')
+    + notesCard('NHS pension — how it works', 'The NHS pension is an <strong>occupational scheme (pre-tax)</strong> — contributions are deducted from gross before income tax is calculated, saving the employee tax on the full amount. NI, however, is calculated on the <strong>full gross</strong> (not reduced by pension). Employer payroll contribution is <strong>14.38%</strong> — the remaining 9.4% of the 23.7% total is paid centrally by NHSBSA.')
+    + (r.paUsed < window.TAX.PA ? notesCard('Personal allowance tapered', 'Gross exceeds £100,000 — PA tapered to <strong>£' + fmtInt(r.paUsed) + '</strong>. 60% effective marginal rate in the taper band.') : '')
+    + actionsRow();
+  },
+  related: ['nhs-payslip', 'nhs-payroll', 'payslip', 'true-cost']
+};
+
+/* ─────────────────────────────────────────────────────────
+   NHS PAYSLIP GENERATOR
+   Monthly NHS payslip. Tier-based employee pension,
+   14.38% employer pension, full tax code & NI support.
+   ───────────────────────────────────────────────────────── */
+CALCS['nhs-payslip'] = {
+  id: 'nhs-payslip',
+  title: 'NHS Payslip Generator & Verifier',
+  subtitle: 'Generate or verify a monthly NHS payslip. Enter the tax code, NI category, annual pensionable pay and YTD figures — the correct NHS pension tier is applied automatically.',
+  metaBadges: ['NHS pension tiers', 'Monthly payslip', 'W1/M1 supported'],
+
+  inputs: [
+    { id:'pdNum',    type:'number',  label:'Month number (1 = April)',   default:1, min:1, max:12, hint:'Month 1 = April, Month 6 = September' },
+    { type:'section',                label:'Employee & tax details' },
+    { id:'taxCode',  type:'select',  label:'Tax code',                   default:'1257L', options:[
+      {v:'1257L',    l:'1257L — standard'},
+      {v:'1257L/W1', l:'1257L W1/M1 — non-cumulative'},
+      {v:'BR',       l:'BR — basic rate only'},
+      {v:'D0',       l:'D0 — higher rate (40%)'},
+      {v:'D1',       l:'D1 — additional rate (45%)'},
+      {v:'NT',       l:'NT — no tax'},
+      {v:'0T',       l:'0T — no personal allowance'},
+      {v:'K100',     l:'K100 — K code example'},
+    ]},
+    { id:'niCat',    type:'select',  label:'NI category',                default:'A', options:[
+      {v:'A', l:'A — Standard (8% / 15%)'},
+      {v:'B', l:'B — Married women reduced (3.85% / 15%)'},
+      {v:'C', l:'C — Over State Pension Age (0% / 15%)'},
+      {v:'H', l:'H/M — Under 21 (8% / 0% to UEL)'},
+      {v:'X', l:'X — Exempt'},
+    ]},
+    { id:'regime',   type:'toggle',  label:'Tax regime',                 default:'england', options:[{v:'england',l:'England & Wales'},{v:'scotland',l:'Scotland'}] },
+    { type:'section',                label:'Pay this month' },
+    { id:'grossPd',  type:'currency',label:'Gross pay this month',       default:3750 },
+    { type:'section',                label:'NHS pension' },
+    { id:'nhs_opt',  type:'toggle',  label:'NHS pension member?',        default:'yes', options:[{v:'yes',l:'Yes'},{v:'no',l:'No'}] },
+    { id:'nhsAnnual',type:'currency',label:'Annual pensionable pay',     default:45000, hint:'Used to determine your contribution tier' },
+    { type:'section',                label:'Year to date (before this month)' },
+    { id:'ytdGross', type:'currency',label:'YTD gross pay',              default:0 },
+    { id:'ytdTax',   type:'currency',label:'YTD income tax paid',        default:0 },
+    { id:'ytdEeNI',  type:'currency',label:'YTD employee NI paid',       default:0 },
+    { type:'section',                label:'Student loan' },
+    { id:'plan',     type:'select',  label:'Student loan plan',          default:'0', options:[{v:'0',l:'None'},{v:'1',l:'Plan 1'},{v:'2',l:'Plan 2'},{v:'4',l:'Plan 4'},{v:'5',l:'Plan 5'},{v:'PG',l:'Postgrad'}] },
+  ],
+
+  calculate: function(s) {
+    var T = window.TAX;
+    var pdpy = 12;
+    var pdNum = Math.max(1, s.pdNum || 1);
+    var tc = parseTaxCode(s.taxCode);
+    var grossPd = s.grossPd || 0;
+    var optedIn = s.nhs_opt === 'yes';
+
+    // NHS pension: pre-tax occupational
+    var nhsAnnual = s.nhsAnnual || (grossPd * 12);
+    var tier = nhsPensionTier(nhsAnnual);
+    var eePensionPd = optedIn ? grossPd * tier.rate : 0;
+    var erPensionPd = optedIn ? grossPd * 0.1438 : 0;
+
+    // Taxable gross = gross minus NHS pension contribution
+    var taxableGross = Math.max(0, grossPd - eePensionPd);
+
+    // PAYE — on taxable gross
+    var taxPd = periodPAYE(taxableGross, s.ytdGross || 0, s.ytdTax || 0, pdNum, pdpy, tc);
+
+    // NI — on full gross (NHS pension does not reduce NI base)
+    var eeNIPd = periodEeNI(grossPd, pdpy, s.niCat || 'A');
+    var erNIPd = periodErNI(grossPd, pdpy, s.niCat || 'A');
+
+    // Student loan — on full gross
+    var slPd = periodSL(grossPd, s.plan, pdpy);
+
+    // Net pay
+    var netPd = grossPd - eePensionPd - taxPd - eeNIPd - slPd;
+
+    // YTD updated
+    var ytdGrossNew = (s.ytdGross || 0) + grossPd;
+    var ytdTaxNew   = (s.ytdTax   || 0) + taxPd;
+    var ytdEeNINew  = (s.ytdEeNI  || 0) + eeNIPd;
+
+    return {
+      grossPd, taxableGross,
+      eePensionPd, erPensionPd,
+      taxPd, eeNIPd, erNIPd, slPd, netPd,
+      ytdGrossNew, ytdTaxNew, ytdEeNINew,
+      pdNum, tc, tier, nhsAnnual, optedIn,
+      niCat: s.niCat || 'A',
+      taxCode: s.taxCode || '1257L',
+      regime: s.regime, plan: s.plan
+    };
+  },
+
+  render: function(r) {
+    var totalDeductions = r.taxPd + r.eeNIPd + r.eePensionPd + r.slPd;
+    var tcDesc = { NT:'No tax deducted', BR:'Basic rate 20% on all pay', D0:'Higher rate 40% on all pay', D1:'Additional rate 45% on all pay', K:'K code — negative allowance', L:'Personal allowance £' + fmtInt(r.tc.pa) + '/yr (£' + fmt(r.tc.pa / 12, 0) + '/month)' }[r.tc.type] || '';
+    tcDesc += ' · <strong>' + (r.tc.basis === 'week1' ? 'W1/M1 non-cumulative' : 'Cumulative') + '</strong>';
+
+    var ps = '<div class="payslip-card">'
+      + '<div class="ps-header">'
+        + '<div>'
+          + '<div class="ps-header-title">NHS PAYSLIP</div>'
+          + '<div class="ps-header-meta">Monthly · Month ' + r.pdNum + ' of 12 · Tax year 2026/27</div>'
+        + '</div>'
+        + '<div class="ps-header-right">'
+          + '<div class="ps-header-badge">Tax code: ' + r.taxCode + '</div>'
+          + '<div class="ps-header-badge">NI: Cat ' + r.niCat + (r.regime === 'scotland' ? ' · Scottish' : '') + '</div>'
+        + '</div>'
+      + '</div>'
+      + '<div class="ps-body">'
+        + '<div class="ps-col">'
+          + '<div class="ps-section-label">Earnings</div>'
+          + '<div class="ps-line"><span>Basic monthly pay</span><span>' + fmt(r.grossPd) + '</span></div>'
+          + '<div class="ps-col-total"><span>Total earnings</span><span>' + fmt(r.grossPd) + '</span></div>'
+        + '</div>'
+        + '<div class="ps-col">'
+          + '<div class="ps-section-label">Deductions</div>'
+          + (r.eePensionPd > 0 ? '<div class="ps-line"><span>NHS pension (' + (r.tier.rate * 100).toFixed(1) + '% tier)</span><span>' + fmt(r.eePensionPd) + '</span></div>' : '')
+          + '<div class="ps-line"><span>Income tax (' + r.taxCode + ')</span><span>' + fmt(r.taxPd) + '</span></div>'
+          + '<div class="ps-line"><span>Employee NI (Cat ' + r.niCat + ')</span><span>' + fmt(r.eeNIPd) + '</span></div>'
+          + (r.slPd > 0 ? '<div class="ps-line"><span>Student loan (' + (r.plan || '') + ')</span><span>' + fmt(r.slPd) + '</span></div>' : '')
+          + '<div class="ps-col-total"><span>Total deductions</span><span>' + fmt(totalDeductions) + '</span></div>'
+        + '</div>'
+      + '</div>'
+      + '<div class="ps-net"><span class="ps-net-label">NET PAY</span><span class="ps-net-amount">' + fmt(r.netPd) + '</span></div>'
+      + '<div class="ps-ytd">'
+        + '<div class="ps-ytd-item"><div class="ps-ytd-val">' + fmt(r.ytdGrossNew, 0) + '</div><div class="ps-ytd-lbl">YTD Gross</div></div>'
+        + '<div class="ps-ytd-item"><div class="ps-ytd-val">' + fmt(r.ytdTaxNew, 0) + '</div><div class="ps-ytd-lbl">YTD Tax</div></div>'
+        + '<div class="ps-ytd-item"><div class="ps-ytd-val">' + fmt(r.ytdEeNINew, 0) + '</div><div class="ps-ytd-lbl">YTD Ee NI</div></div>'
+        + '<div class="ps-ytd-item"><div class="ps-ytd-val">' + fmt(r.erNIPd, 0) + '</div><div class="ps-ytd-lbl">Er NI (month)</div></div>'
+      + '</div>'
+      + '<div class="ps-employer-row">'
+        + 'Employer cost this month: gross <strong>' + fmt(r.grossPd) + '</strong>'
+        + ' + employer NI <strong>' + fmt(r.erNIPd) + '</strong>'
+        + (r.erPensionPd > 0 ? ' + NHS employer pension (14.38%) <strong>' + fmt(r.erPensionPd) + '</strong>' : '')
+        + ' = <strong>' + fmt(r.grossPd + r.erNIPd + r.erPensionPd) + '</strong>'
+      + '</div>'
+    + '</div>';
+
+    return ps
+      + kpiRow([
+        kpi('Monthly net pay',    fmt(r.netPd),       { color:'primary', sub:'After all deductions' }),
+        kpi('NHS pension tier',   (r.tier.rate * 100).toFixed(1) + '%', { color:'navy', sub:'Annual pensionable pay ' + fmt(r.nhsAnnual, 0) }),
+        kpi('Income tax',         fmt(r.taxPd),       { color:'red',     sub:'PAYE this month' }),
+      ])
+      + kpiRow([
+        kpi('Employee NI',        fmt(r.eeNIPd),      { color:'gold',    sub:'Category ' + r.niCat + ' — on full gross' }),
+        kpi('Employer NI',        fmt(r.erNIPd),      { color:'navy',    sub:'15% above £' + fmtInt(window.TAX.NI_ST / 12) + '/month' }),
+        kpi('Employer pension',   fmt(r.erPensionPd), { color:'green',   sub:'14.38% NHS employer contribution' }),
+      ])
+      + notesCard('Tax code — ' + r.taxCode, tcDesc)
+      + notesCard('NHS pension — key rules', 'Tier rate <strong>' + (r.tier.rate * 100).toFixed(1) + '%</strong> based on annual pensionable pay <strong>' + fmt(r.nhsAnnual, 0) + '</strong>. NHS pension is an <strong>occupational pre-tax deduction</strong> — it reduces taxable income but <strong>not the NI base</strong> (NI is charged on full gross). Employer payroll contribution is 14.38%; NHSBSA pays the remaining 9.4% centrally.')
+      + notesCard('How YTD fields work', 'Enter gross, tax and NI paid in all <em>earlier</em> months this tax year — leave at zero for month 1 (April). Cumulative tax codes use these to ensure the correct PAYE is deducted each month. W1/M1 codes treat each month independently.')
+      + actionsRow('<button class="btn btn-ghost btn-sm" onclick="printSummary()">⬇ Download payslip PDF</button>');
+  },
+  related: ['nhs-true-cost', 'nhs-payroll', 'true-cost', 'payslip']
 };

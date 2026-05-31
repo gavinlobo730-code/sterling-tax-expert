@@ -7,287 +7,163 @@
 // HOME
 // ─────────────────────────────────────────────────────────
 function mountHome(){
-  // Hero video — lazy-load sources to avoid blocking initial paint
-  const heroV = document.getElementById('pm-hero-video');
-  if (heroV) {
-    // Allow config override (external CDN/CMS video URL)
-    const cfgSrc = window.STERLING_CONFIG && window.STERLING_CONFIG.heroVideo;
-    if (cfgSrc) {
-      heroV.src = cfgSrc;
-    } else {
-      // Activate the <source data-src="..."> elements
-      heroV.querySelectorAll('source[data-src]').forEach(s => {
-        s.src = s.dataset.src;
-      });
-      heroV.load();
-    }
-    // Fade in once enough data is buffered
-    heroV.addEventListener('canplay', () => heroV.classList.add('loaded'), { once: true });
-    // If video fails (no file yet), keep gradient visible — no error shown
-    heroV.addEventListener('error', () => {}, { once: true });
-  }
 
-  // ── Section 1: Who We Are ────────────────────────────────
-  const about = document.getElementById('home-about');
-  if (about) about.innerHTML = `
-    <section class="px-edit">
-      <div class="px-edit-inner">
-        <div class="px-label px-anim">About the Platform</div>
-        <blockquote class="px-edit-statement px-anim" style="animation-delay:.1s">
-          Sterling Tax Expert combines modern technology with current UK legislation to provide
-          accurate, accessible and professional tax intelligence.
-        </blockquote>
-        <div class="px-edit-rule px-anim" style="animation-delay:.2s"></div>
-        <div class="px-edit-cols px-anim" style="animation-delay:.3s">
-          <p class="px-edit-col-p">
-            The platform is designed to simplify complex calculations while maintaining
-            professional-grade accuracy &mdash; covering every aspect of UK tax, from PAYE and
-            employer NI to corporation tax, VAT, statutory pay and NHS pension.
-          </p>
-          <p class="px-edit-col-p">
-            Every calculator reflects the current 2026/27 tax year from the moment it began on
-            6&nbsp;April 2026. No account is required. No data is stored. All calculations run
-            entirely within your browser.
-          </p>
+  // ── Section 1: Trust & Credibility ──────────────────────
+  const trust = document.getElementById('home-trust');
+  if (trust) trust.innerHTML = `
+    <section class="hp-trust">
+      <div class="hp-inner">
+        <div class="hp-trust-grid ta-stagger">
+          <div class="hp-trust-item ta-up">
+            <div class="hp-trust-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/></svg>
+            </div>
+            <div class="hp-trust-body">
+              <div class="hp-trust-heading">HMRC-Aligned Advice</div>
+              <p class="hp-trust-text">Every recommendation reflects current UK tax legislation and HMRC guidance, updated for the 2026/27 tax year.</p>
+            </div>
+          </div>
+          <div class="hp-trust-item ta-up">
+            <div class="hp-trust-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <div class="hp-trust-body">
+              <div class="hp-trust-heading">End-to-End Tax &amp; Payroll Support</div>
+              <p class="hp-trust-text">Payroll, self assessment, corporation tax, VAT, CIS and advisory services managed under one roof.</p>
+            </div>
+          </div>
+          <div class="hp-trust-item ta-up">
+            <div class="hp-trust-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
+            <div class="hp-trust-body">
+              <div class="hp-trust-heading">Personalised Service</div>
+              <p class="hp-trust-text">Your circumstances drive the advice, not a template. We take time to understand your situation before making any recommendation.</p>
+            </div>
+          </div>
+          <div class="hp-trust-item ta-up">
+            <div class="hp-trust-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2A19.8 19.8 0 0 1 3.08 5.18 2 2 0 0 1 5.07 3h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L9.91 10.9a16 16 0 0 0 6.16 6.16l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="hp-trust-body">
+              <div class="hp-trust-heading">Dedicated Point of Contact</div>
+              <p class="hp-trust-text">You speak to the same expert every time. No call centres, no rotating teams — just consistent, reliable professional support.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
   `;
 
-  // ── Section 2: Platform Coverage ────────────────────────
-  const coverage = document.getElementById('home-coverage');
-  if (coverage) coverage.innerHTML = `
-    <section class="px-cov">
-      <div class="px-cov-inner">
-        <div class="px-cov-header">
-          <div class="px-label px-label-light px-anim">Platform Coverage</div>
-          <h2 class="px-cov-h px-anim" style="animation-delay:.1s">Areas of expertise</h2>
-        </div>
-        <div class="px-cov-grid">
-          ${[
-            { n:'PAYE & Income Tax',       i:'01' },
-            { n:'National Insurance',       i:'02' },
-            { n:'Payroll Costs',            i:'03' },
-            { n:'Salary Sacrifice',         i:'04' },
-            { n:'Statutory Pay',            i:'05' },
-            { n:'Gross-to-Net',             i:'06' },
-            { n:'VAT & Compliance',         i:'07' },
-            { n:'Corporation Tax',          i:'08' },
-            { n:'Capital Gains & Dividends',i:'09' },
-            { n:'Self Assessment',          i:'10' },
-            { n:'NHS Pension',              i:'11' },
-            { n:'Tax Deadlines',            i:'12' },
-          ].map((c, idx) => `
-            <div class="px-cov-tile px-anim" style="animation-delay:${(idx * 0.05).toFixed(2)}s">
-              <div class="px-cov-tile-num">${c.i}</div>
-              <div class="px-cov-tile-name">${c.n}</div>
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    </section>
-  `;
-
-  // ── Section 3: 2026/27 Tax Year Data ────────────────────
-  const taxdata = document.getElementById('home-taxdata');
-  if (taxdata) {
-    const T = window.TAX || {};
-    const f = n => (n || 0).toLocaleString('en-GB');
-    const pct = n => ((n || 0) * 100).toFixed(0) + '%';
-    taxdata.innerHTML = `
-      <section class="px-tyr">
-        <div class="px-tyr-inner">
-          <div class="px-tyr-header">
-            <div class="px-label px-anim">Current Tax Year</div>
-            <h2 class="px-tyr-h px-anim" style="animation-delay:.1s">Built for 2026/27</h2>
-            <p class="px-tyr-p px-anim" style="animation-delay:.15s">All thresholds, rates and statutory figures reflect the UK tax year commencing 6 April 2026.</p>
+  // ── Section 3: Who We Help ───────────────────────────────
+  const audience = document.getElementById('home-audience');
+  if (audience) {
+    const groups = [
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`, label: 'Individuals' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>`, label: 'Sole Traders' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>`, label: 'Contractors' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`, label: 'SMEs' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`, label: 'Established Businesses' },
+      { icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="8" height="14" rx="1"/><rect x="9" y="3" width="6" height="18" rx="1"/><rect x="14" y="9" width="8" height="12" rx="1"/></svg>`, label: 'Complex Structures' },
+    ];
+    audience.innerHTML = `
+      <section class="hp-audience">
+        <div class="hp-inner">
+          <div class="hp-section-header" style="text-align:center">
+            <div class="hp-kicker ta-up">Who We Help</div>
+            <h2 class="hp-h2 hp-h2-center ta-up ta-d1">From sole traders to multi-entity businesses —<br>we understand the full range of UK tax complexity</h2>
           </div>
-          <div class="px-tyr-cols">
-            <div class="px-tyr-col px-anim" style="animation-delay:.1s">
-              <div class="px-tyr-col-label">Income Tax</div>
-              <div class="px-tyr-col-rule"></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Personal allowance</span><span class="px-tyr-row-v">&pound;${f(T.PA)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Basic rate (20%) ceiling</span><span class="px-tyr-row-v">&pound;${f(T.BR_LIMIT)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Higher rate (40%) ceiling</span><span class="px-tyr-row-v">&pound;${f(T.HR_LIMIT)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Additional rate</span><span class="px-tyr-row-v">45%</span></div>
-            </div>
-            <div class="px-tyr-col px-anim" style="animation-delay:.18s">
-              <div class="px-tyr-col-label">National Insurance</div>
-              <div class="px-tyr-col-rule"></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Primary threshold</span><span class="px-tyr-row-v">&pound;${f(T.NI_PT)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Upper earnings limit</span><span class="px-tyr-row-v">&pound;${f(T.NI_UEL)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Employee main rate</span><span class="px-tyr-row-v">${pct(T.NI_MAIN)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">Employer rate</span><span class="px-tyr-row-v">${pct(T.NI_ER)}</span></div>
-            </div>
-            <div class="px-tyr-col px-anim" style="animation-delay:.26s">
-              <div class="px-tyr-col-label">Statutory &amp; Other</div>
-              <div class="px-tyr-col-rule"></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">National Living Wage</span><span class="px-tyr-row-v">&pound;${(T.NLW_21||0).toFixed(2)}/hr</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">SSP weekly rate</span><span class="px-tyr-row-v">&pound;${(T.SSP_RATE||0).toFixed(2)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">VAT standard rate</span><span class="px-tyr-row-v">${pct(T.VAT_STD)}</span></div>
-              <div class="px-tyr-row"><span class="px-tyr-row-k">VAT registration</span><span class="px-tyr-row-v">&pound;${f(T.VAT_REG_THR)}</span></div>
-            </div>
-          </div>
-          <div class="px-tyr-note px-anim" style="animation-delay:.35s">
-            Updated 6 April 2026 &nbsp;&middot;&nbsp; All figures per HMRC guidance &nbsp;&middot;&nbsp;
-            <a onclick="navigate('tools')" style="color:var(--indigo3);cursor:pointer">Open a calculator &rarr;</a>
+          <div class="hp-audience-row ta-stagger">
+            ${groups.map((g, i) => `
+              <div class="hp-audience-tile ta-up">
+                <div class="hp-audience-icon">${g.icon}</div>
+                <div class="hp-audience-label">${g.label}</div>
+              </div>
+            `).join('')}
           </div>
         </div>
       </section>
     `;
   }
 
-  // ── Section 4: Principles ────────────────────────────────
-  const principles = document.getElementById('home-principles');
-  if (principles) principles.innerHTML = `
-    <section class="px-phil">
-      <div class="px-phil-inner">
-        <div class="px-label px-anim">How we work</div>
-        <div class="px-phil-items">
-          <div class="px-phil-item px-anim" style="animation-delay:.05s">
-            <div class="px-phil-rule"></div>
-            <div class="px-phil-row">
-              <div class="px-phil-num">01</div>
-              <div class="px-phil-body-wrap">
-                <div class="px-phil-title">Accuracy Before<br>Assumptions</div>
-                <p class="px-phil-body">Every calculation is derived from current HMRC legislation, not approximation or estimation. If something cannot be calculated precisely, we say so clearly.</p>
-              </div>
-            </div>
+  // ── Section 4: Why Sterling Tax Expert ──────────────────
+  const why = document.getElementById('home-why');
+  if (why) {
+    const reasons = [
+      { h: 'Personalised Service',         b: 'We take the time to understand your specific circumstances — your structure, your goals, your obligations — before offering any advice. You are not a case number.' },
+      { h: 'Responsive &amp; Reliable',        b: 'When you have a question, you get an answer promptly. Tax and payroll decisions are often time-critical — we treat them accordingly.' },
+      { h: 'Compliance Confidence',        b: 'We stay current with every HMRC update and legislative change — from routine returns to complex multi-entity obligations. Your exposure is managed, year-round.' },
+      { h: 'Long-term Relationships',      b: 'The same adviser stays with you as your business evolves — building genuine, deep knowledge of your affairs rather than starting from scratch each year.' },
+    ];
+    why.innerHTML = `
+      <section class="hp-why">
+        <div class="hp-inner">
+          <div class="hp-section-header">
+            <div class="hp-kicker hp-kicker-light ta-left">Why Choose Us</div>
+            <h2 class="hp-h2 hp-h2-light ta-left ta-d1">Why clients choose<br>Sterling Tax Expert</h2>
           </div>
-          <div class="px-phil-item px-anim" style="animation-delay:.12s">
-            <div class="px-phil-rule"></div>
-            <div class="px-phil-row">
-              <div class="px-phil-num">02</div>
-              <div class="px-phil-body-wrap">
-                <div class="px-phil-title">Legislation Before<br>Opinion</div>
-                <p class="px-phil-body">The platform presents what the law requires &mdash; not what is convenient, optimistic or simplified for presentation. The numbers are what they are.</p>
+          <div class="hp-why-grid ta-stagger">
+            ${reasons.map((r, i) => `
+              <div class="hp-why-item ta-up">
+                <div class="hp-why-heading">${r.h}</div>
+                <p class="hp-why-body">${r.b}</p>
               </div>
-            </div>
+            `).join('')}
           </div>
-          <div class="px-phil-item px-anim" style="animation-delay:.19s">
-            <div class="px-phil-rule"></div>
-            <div class="px-phil-row">
-              <div class="px-phil-num">03</div>
-              <div class="px-phil-body-wrap">
-                <div class="px-phil-title">Clarity Before<br>Complexity</div>
-                <p class="px-phil-body">Professional-grade calculations presented with the clarity that any professional &mdash; or individual &mdash; deserves. Complex tax matters explained without jargon.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  `;
-
-  // ── Section 5: Product Showcase ─────────────────────────
-  const showcase = document.getElementById('home-showcase');
-  if (showcase) showcase.innerHTML = `
-    <section class="px-product">
-      <div class="px-product-inner">
-        <div class="px-product-text">
-          <div class="px-label px-anim">The Platform</div>
-          <h2 class="px-product-h px-anim" style="animation-delay:.08s">25 calculators.<br>No account required.</h2>
-          <p class="px-product-p px-anim" style="animation-delay:.16s">
-            From PAYE and employer NI to corporation tax, NHS pension and annual allowance &mdash;
-            every calculator is aligned with the 2026/27 tax year, runs entirely in your browser,
-            and is free to use without registration.
-          </p>
-          <div class="px-product-acts px-anim" style="animation-delay:.22s">
-            <button class="px-btn-outline" onclick="navigate('tools')">Browse all calculators</button>
-            <button class="px-btn-ghost" onclick="navigate('deadlines')">View tax deadlines</button>
-          </div>
-        </div>
-        <div class="px-product-mock px-anim" style="animation-delay:.2s">
-          <div class="px-mock">
-            <div class="px-mock-chrome">
-              <div class="px-mock-dots"><span></span><span></span><span></span></div>
-              <div class="px-mock-title">PAYE Tax &amp; NI Calculator &mdash; 2026/27</div>
-              <div class="px-mock-live"><span class="px-mock-pulse"></span>Live</div>
-            </div>
-            <div class="px-mock-inputs">
-              <div class="px-mock-field">
-                <div class="px-mock-field-label">Annual salary</div>
-                <div class="px-mock-field-value">&pound;45,000</div>
-              </div>
-              <div class="px-mock-field">
-                <div class="px-mock-field-label">Tax regime</div>
-                <div class="px-mock-field-value">England &amp; Wales</div>
-              </div>
-              <div class="px-mock-field">
-                <div class="px-mock-field-label">Employee pension</div>
-                <div class="px-mock-field-value">5%</div>
-              </div>
-            </div>
-            <div class="px-mock-divider"></div>
-            <div class="px-mock-kpi-row">
-              <div class="px-mock-kpi px-mock-kpi-a">
-                <div class="px-mock-kpi-lbl">Net take-home</div>
-                <div class="px-mock-kpi-val">&pound;31,034</div>
-                <div class="px-mock-kpi-sub">&pound;2,586 / month</div>
-              </div>
-              <div class="px-mock-kpi px-mock-kpi-b">
-                <div class="px-mock-kpi-lbl">Total employer cost</div>
-                <div class="px-mock-kpi-val">&pound;51,222</div>
-                <div class="px-mock-kpi-sub">&pound;4,268 / month</div>
-              </div>
-            </div>
-            <div class="px-mock-bk-row">
-              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#C0392B"></span><span class="px-mock-bk-k">Income tax</span><span class="px-mock-bk-v">&pound;6,432</span></div>
-              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#C49A2E"></span><span class="px-mock-bk-k">Employee NI</span><span class="px-mock-bk-v">&pound;3,034</span></div>
-              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#7C3AED"></span><span class="px-mock-bk-k">Employee pension</span><span class="px-mock-bk-v">&pound;2,250</span></div>
-              <div class="px-mock-bk-item"><span class="px-mock-bk-dot" style="background:#EA580C"></span><span class="px-mock-bk-k">Employer NI</span><span class="px-mock-bk-v">&pound;4,222</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  `;
-
-  // ── Section 6: Insights ──────────────────────────────────
-  const blog = document.getElementById('home-blog');
-  if (blog) {
-    const featured = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).slice(0, 3);
-    blog.innerHTML = `
-      <section class="px-press">
-        <div class="px-press-inner">
-          <div class="px-press-header">
-            <div>
-              <div class="px-label px-anim">Insights &amp; Analysis</div>
-              <h2 class="px-press-h px-anim" style="animation-delay:.08s">UK Tax Intelligence</h2>
-            </div>
-            <button class="px-btn-ghost px-anim" onclick="navigate('insights')" style="animation-delay:.1s">All articles &rarr;</button>
-          </div>
-          <div class="bc-grid px-press-grid">${
-            featured.length
-              ? featured.map(a => blogCardHTML(a)).join('')
-              : '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--t3);font-size:13.5px">Articles loading…</div>'
-          }</div>
         </div>
       </section>
     `;
   }
 
-  // ── Scroll animations ────────────────────────────────────
-  try {
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach(en => {
-          if (!en.isIntersecting) return;
-          io.unobserve(en.target);
-          // Find all un-animated siblings within the same section, stagger them
-          const section = en.target.closest('[class*="px-"]') || en.target.parentElement;
-          const siblings = section ? Array.from(section.querySelectorAll('.px-anim:not(.px-in)')) : [];
-          const targets = siblings.length ? siblings : [en.target];
-          targets.forEach((el, i) => {
-            el.style.transitionDelay = (i * 75) + 'ms';
-            el.classList.add('px-in');
-            io.unobserve(el);
-          });
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-      document.querySelectorAll('#page-home .px-anim').forEach(el => io.observe(el));
-    }
-  } catch(e) {}
+  // ── Section 5: How We Work ───────────────────────────────
+  const process = document.getElementById('home-process');
+  if (process) {
+    const steps = [
+      { n: '01', h: 'Initial Consultation', b: 'We take time to understand your situation, goals and obligations — no charge, no obligation.' },
+      { n: '02', h: 'Tailored Solution',    b: 'We design an approach that fits your specific needs, timeline and circumstances.' },
+      { n: '03', h: 'Ongoing Support',      b: 'We remain your dedicated point of contact as your business and tax needs evolve.' },
+    ];
+    process.innerHTML = `
+      <section class="hp-process">
+        <div class="hp-inner">
+          <div class="hp-section-header" style="text-align:center">
+            <div class="hp-kicker ta-up">How We Work</div>
+            <h2 class="hp-h2 hp-h2-center ta-up ta-d1">A straightforward process</h2>
+          </div>
+          <div class="hp-process-steps ta-stagger">
+            ${steps.map((s, i) => `
+              <div class="hp-step ta-up">
+                <div class="hp-step-num">${s.n}</div>
+                <div class="hp-step-rule"></div>
+                <div class="hp-step-heading">${s.h}</div>
+                <p class="hp-step-body">${s.b}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>
+    `;
+  }
+
+  // ── Section 6: Final CTA ─────────────────────────────────
+  const cta = document.getElementById('home-cta');
+  if (cta) cta.innerHTML = `
+    <section class="hp-cta">
+      <div class="hp-inner hp-cta-inner">
+        <h2 class="hp-cta-h ta-up">Let&rsquo;s Discuss Your Tax and<br>Payroll Requirements</h2>
+        <p class="hp-cta-p ta-up" style="transition-delay:.12s">
+          Book a free 30-minute call with a senior UK tax expert. No commitment —
+          just a straight conversation about your situation and what good advice looks like for you.
+        </p>
+        <div class="hp-cta-acts ta-up" style="transition-delay:.24s">
+          <button class="btn btn-white" onclick="navigate('contact')">Book a Consultation</button>
+          <button class="hp-cta-ghost" onclick="navigate('contact')">Contact Us</button>
+        </div>
+      </div>
+    </section>
+  `;
+
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 
 
@@ -362,15 +238,15 @@ function mountServices(){
     <div class="crumbs"></div>
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
-        <div class="eyebrow ey-blue">Services</div>
-        <h1 style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Eight pillars of UK tax expertise</h1>
-        <p style="font-size:14.5px;color:var(--t2);max-width:560px;line-height:1.75">Full-service accounting for limited companies, sole traders and partnerships. Every engagement is fixed-fee, with a named senior accountant assigned from day one.</p>
+        <div class="eyebrow ey-blue ta-left">Services</div>
+        <h1 class="ta-left ta-d1" style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Eight pillars of UK tax expertise</h1>
+        <p class="ta-left ta-d2" style="font-size:14.5px;color:var(--t2);max-width:560px;line-height:1.75">Full-service accounting for limited companies, sole traders and partnerships. Every engagement is fixed-fee, with a named senior accountant assigned from day one.</p>
       </div>
     </div>
     <div class="sec"><div class="sec-inner">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px" class="ta-stagger">
         ${(window.SVCS || []).map(s => `
-          <div style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:24px;transition:border-color .15s,box-shadow .15s,transform .15s;cursor:pointer" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='var(--shadow)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'" onclick="navigate('contact')">
+          <div class="ta-up" style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:24px;transition:border-color .15s,box-shadow .15s,transform .15s;cursor:pointer" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='var(--shadow)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'" onclick="navigate('contact')">
             <div style="width:42px;height:42px;background:var(--bluel);border-radius:10px;display:grid;place-items:center;font-size:19px;margin-bottom:14px">${s.icon}</div>
             <div style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px">${s.t}</div>
             <div style="font-size:12.5px;color:var(--t3);line-height:1.65;margin-bottom:14px">${s.d}</div>
@@ -383,6 +259,7 @@ function mountServices(){
     ${renderFooter()}
   `;
   updateBreadcrumbs('services');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 
 // ─────────────────────────────────────────────────────────
@@ -398,9 +275,9 @@ function mountTools(){
       <div class="th-bg"></div><div class="th-glow"></div>
       <div class="th-inner">
         <div>
-          <div class="th-kicker">⚡ ${window.TAX_YEAR_LABEL}</div>
-          <h1 class="th-h">UK payroll &amp; tax tools — <em>built on HMRC rates</em></h1>
-          <p class="th-p">${window.TOOLS.length} fully-functional calculators for payroll, statutory pay, compliance and tax — every one updated for the 2026/27 UK tax year.</p>
+          <div class="th-kicker ta-up">⚡ ${window.TAX_YEAR_LABEL}</div>
+          <h1 class="th-h ta-up ta-d1">UK payroll &amp; tax tools — <em>built on HMRC rates</em></h1>
+          <p class="th-p ta-up ta-d2">${window.TOOLS.length} fully-functional calculators for payroll, statutory pay, compliance and tax — every one updated for the 2026/27 UK tax year.</p>
           <div class="th-acts">
             <button class="btn btn-blue" style="padding:11px 18px;font-size:13px" onclick="navigate('calc','paye')">Try the PAYE calculator</button>
             <button class="btn btn-white" style="padding:11px 18px;font-size:13px" onclick="navigate('deadlines')">View deadlines hub →</button>
@@ -452,6 +329,7 @@ function mountTools(){
   `;
   renderToolsGrid();
   updateBreadcrumbs('tools');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 function setToolCat(c){
   CURRENT_TOOL_CAT = c;
@@ -909,10 +787,10 @@ function mountAbout(){
     <div class="about-hero">
       <div class="about-hero-bg"></div>
       <div class="about-hero-inner">
-        <div class="eyebrow ey-indigo-light">About Sterling Tax Expert</div>
-        <h1 class="about-hero-h">Built to make UK tax <em>easier to understand</em></h1>
-        <p class="about-hero-p">UK tax rules are precise, frequently updated, and spread across a landscape of HMRC guidance, statutory instruments and Finance Acts. Businesses and individuals deserve clear, accurate, free access to that information — not locked behind paywalls or buried in jargon.</p>
-        <p class="about-hero-p" style="margin-top:12px">Sterling Tax Expert exists to provide that access: practical tools, plain-English insights, and professional services — all built on the same foundation of accuracy and transparency.</p>
+        <div class="eyebrow ey-indigo-light ta-up">About Sterling Tax Expert</div>
+        <h1 class="about-hero-h ta-up ta-d1">Built to make UK tax <em>easier to understand</em></h1>
+        <p class="about-hero-p ta-up ta-d2">UK tax rules are precise, frequently updated, and spread across a landscape of HMRC guidance, statutory instruments and Finance Acts. Businesses and individuals deserve clear, accurate, free access to that information — not locked behind paywalls or buried in jargon.</p>
+        <p class="about-hero-p ta-up ta-d3" style="margin-top:12px">Sterling Tax Expert exists to provide that access: practical tools, plain-English insights, and professional services — all built on the same foundation of accuracy and transparency.</p>
       </div>
     </div>
 
@@ -949,9 +827,9 @@ function mountAbout(){
     <div class="sec"><div class="sec-inner">
       <div class="about-split">
         <div class="about-split-main">
-          <div class="eyebrow ey-blue">Why it exists</div>
-          <div class="sec-h">Accurate tax information should not be a privilege</div>
-          <p class="about-body-p">Tax rules in the UK change every April. Rates shift, thresholds move, statutory amounts are updated by statutory instrument. Keeping up requires constant attention to HMRC guidance, GOV.UK publications, and the Finance Acts that underpin them.</p>
+          <div class="eyebrow ey-blue ta-left">Why it exists</div>
+          <div class="sec-h ta-left ta-d1">Accurate tax information should not be a privilege</div>
+          <p class="about-body-p ta-left ta-d2">Tax rules in the UK change every April. Rates shift, thresholds move, statutory amounts are updated by statutory instrument. Keeping up requires constant attention to HMRC guidance, GOV.UK publications, and the Finance Acts that underpin them.</p>
           <p class="about-body-p">Most free tools on the internet lag behind by months, apply approximate formulae, or hide the key edge cases — the personal allowance taper above £100,000, the Class 2 NI reform that took effect in April 2024, the day-one SSP entitlement introduced by the Employment Rights Act 2025. These details matter. Getting them wrong costs money.</p>
           <p class="about-body-p">Sterling Tax Expert is built on the principle that clarity and precision are not luxuries. Every calculator documents its source. Every rate is cited. Every known limitation is disclosed. The goal is tools you can actually rely on — and insights that help you understand <em>why</em> the numbers are what they are, not just what they are.</p>
         </div>
@@ -975,9 +853,9 @@ function mountAbout(){
     <div class="sec" style="background:var(--g50);border-top:1px solid var(--br);border-bottom:1px solid var(--br)">
       <div class="sec-inner">
         <div style="text-align:center;margin-bottom:40px">
-          <div class="eyebrow ey-blue">Who it is for</div>
-          <div class="sec-h">Practical tools for anyone navigating UK tax</div>
-          <p class="sec-p" style="margin:0 auto;text-align:center;max-width:520px">Whether you run a business, file your own tax return, or are trying to understand what you actually take home — the platform is built for you.</p>
+          <div class="eyebrow ey-blue ta-up">Who it is for</div>
+          <div class="sec-h ta-up ta-d1">Practical tools for anyone navigating UK tax</div>
+          <p class="sec-p ta-up ta-d2" style="margin:0 auto;text-align:center;max-width:520px">Whether you run a business, file your own tax return, or are trying to understand what you actually take home — the platform is built for you.</p>
         </div>
         <div class="about-audience-grid">
           ${audiences.map(a => `
@@ -1028,6 +906,7 @@ function mountAbout(){
     ${renderFooter()}
   `;
   updateBreadcrumbs('about');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 
 // ─────────────────────────────────────────────────────────
@@ -1040,14 +919,14 @@ function mountContact(){
     <div class="crumbs"></div>
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
-        <div class="eyebrow ey-blue">Get in touch</div>
-        <h1 style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Book your free consultation</h1>
-        <p style="font-size:14px;color:var(--t2);max-width:520px;line-height:1.8">A free, no-obligation 30-minute call with a senior UK tax expert. We'll assess your situation and recommend the right approach.</p>
+        <div class="eyebrow ey-blue ta-left">Get in touch</div>
+        <h1 class="ta-left ta-d1" style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Book your free consultation</h1>
+        <p class="ta-left ta-d2" style="font-size:14px;color:var(--t2);max-width:520px;line-height:1.8">A free, no-obligation 30-minute call with a senior UK tax expert. We'll assess your situation and recommend the right approach.</p>
       </div>
     </div>
     <div class="sec"><div class="sec-inner">
       <div style="display:grid;grid-template-columns:1fr 340px;gap:36px;align-items:start" class="contact-grid">
-        <div style="background:var(--w);border:1px solid var(--br);border-radius:13px;padding:28px">
+        <div class="ta-left ta-d1" style="background:var(--w);border:1px solid var(--br);border-radius:13px;padding:28px">
           <div style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px">Your details</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
             <div class="fg"><div class="fl">First name *</div><input class="fi" id="cf-fn" type="text" placeholder="Sarah"></div>
@@ -1067,7 +946,7 @@ function mountContact(){
           <button class="btn btn-navy" id="cf-submit" style="width:100%;padding:12px" onclick="submitContact()">Send enquiry →</button>
           <div class="succ" id="cf-suc">✓ Enquiry sent — we'll be in touch within 48 hours.</div>
         </div>
-        <aside>
+        <aside class="ta-right ta-d2">
           <div style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:22px;margin-bottom:14px">
             <div class="eyebrow ey-blue">Quick contact</div>
             <div style="font-family:var(--sans);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:14px">Direct contact</div>
@@ -1087,6 +966,7 @@ function mountContact(){
     ${renderFooter()}
   `;
   updateBreadcrumbs('contact');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
 
 // ─────────────────────────────────────────────────────────

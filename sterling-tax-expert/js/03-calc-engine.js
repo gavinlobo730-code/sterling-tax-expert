@@ -94,8 +94,8 @@ function recalc(){
   const wrap = document.getElementById('calc-results');
   if (!wrap) return;
   wrap.innerHTML = calc.render(results, state);
-  // store for print
   window._lastCalc = { calc, state, results };
+  if (calc.afterRecalc) calc.afterRecalc(state);
 }
 
 function resetCalc(){

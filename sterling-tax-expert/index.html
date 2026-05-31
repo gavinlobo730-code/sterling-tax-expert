@@ -30,7 +30,7 @@
 <!-- Fonts: Inter (primary) + JetBrains Mono (code/figures) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 
 <!-- Stylesheet -->
 <link rel="stylesheet" href="css/styles.css">
@@ -144,19 +144,21 @@
     </div>
     <div class="pm-hero-content" id="pm-hero-content">
       <div class="pm-hero-kicker">Sterling Tax Expert</div>
-      <h1 class="pm-hero-h1">UK Tax Intelligence<br>for a <em>Changing Economy.</em></h1>
-      <p class="pm-hero-sub">Professional tax, payroll and compliance tools built around current UK legislation and designed for businesses, accountants and individuals.</p>
-      <div class="pm-hero-rule"></div>
+      <h1 class="pm-hero-h1">Expert Tax and Payroll<br>Services, <em>Done Properly.</em></h1>
+      <p class="pm-hero-sub">Professional UK tax, payroll and compliance services for individuals, contractors, SMEs and complex business structures. Practical advice, personal service and dependable support — whatever your scale.</p>
+      <div class="pm-hero-acts">
+        <button class="btn btn-indigo" onclick="navigate('contact')">Book a Consultation</button>
+        <button class="pm-hero-ghost" onclick="navigate('contact')">Contact Us</button>
+      </div>
     </div>
   </div>
 
-  <!-- JS-RENDERED PREMIUM SECTIONS -->
-  <div id="home-about"></div>
-  <div id="home-coverage"></div>
-  <div id="home-taxdata"></div>
-  <div id="home-principles"></div>
-  <div id="home-showcase"></div>
-  <div id="home-blog"></div>
+  <!-- JS-RENDERED HOMEPAGE SECTIONS -->
+  <div id="home-trust"></div>
+  <div id="home-audience"></div>
+  <div id="home-why"></div>
+  <div id="home-process"></div>
+  <div id="home-cta"></div>
   <div id="home-footer"></div>
 </div>
 
@@ -180,11 +182,11 @@
 <script src="js/02-shell.js"></script>
 <script src="js/03-calc-engine.js"></script>
 <script src="js/04-calc-payroll.js"></script>
+<script src="js/04b-calc-payroll-master.js"></script>
 <script src="js/05-calc-compliance.js"></script>
 <script src="js/06-calc-extra.js"></script>
 <script src="js/06b-calc-healthcare.js"></script>
 <script src="js/07-admin-cms.js"></script>
-<script src="js/07b-admin-tax-config.js"></script>
 <script src="js/08-pages.js"></script>
 <script src="js/09-hero-anim.js"></script>
 <script src="js/10-insights.js"></script>
@@ -207,15 +209,63 @@
       }
     } catch (e) { console.warn('EmailJS init skipped:', e); }
 
-    // Reveal-on-scroll for cards/sections
-    try {
-      if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-        }, { threshold: 0.08 });
-        document.querySelectorAll('.sec, .hmrc-wrap, .sbar').forEach(function (el) { el.classList.add('reveal'); io.observe(el); });
+    // Scroll-reveal
+    (function() {
+      var done = new WeakSet();
+      var SEL = '.ta-up,.ta-left,.ta-right';
+
+      function reveal(el, delay) {
+        if (done.has(el)) return;
+        done.add(el);
+        var isLeft  = el.classList.contains('ta-left');
+        var isRight = el.classList.contains('ta-right');
+        var from = isLeft ? 'translateX(-48px)' : isRight ? 'translateX(48px)' : 'translateY(44px)';
+        setTimeout(function() {
+          el.style.willChange = 'opacity, transform';
+          el.style.opacity    = '0';
+          el.style.transform  = from;
+          // Double rAF guarantees the browser commits the start state before transitioning
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              el.style.transition = 'opacity 0.72s cubic-bezier(0.22,1,0.36,1), transform 0.72s cubic-bezier(0.22,1,0.36,1)';
+              el.style.opacity    = '1';
+              el.style.transform  = 'none';
+              setTimeout(function() { el.style.willChange = 'auto'; }, 800);
+            });
+          });
+        }, delay || 0);
       }
-    } catch (e) { /* no-op */ }
+
+      function scan() {
+        var vh = window.innerHeight;
+        // Assign stagger delays to children of .ta-stagger containers
+        document.querySelectorAll('.ta-stagger').forEach(function(parent) {
+          var kids = parent.querySelectorAll(SEL);
+          kids.forEach(function(el, i) {
+            if (!done.has(el) && el._taDelay === undefined) el._taDelay = i * 85;
+          });
+        });
+        document.querySelectorAll(SEL).forEach(function(el) {
+          if (done.has(el)) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < vh - 30 && r.bottom > 0) {
+            var d = el._taDelay !== undefined ? el._taDelay : 0;
+            reveal(el, d);
+          }
+        });
+      }
+
+      window.initReveal = function() { setTimeout(scan, 60); };
+      window.addEventListener('scroll', scan, { passive: true });
+
+      // Poll for 5 seconds to handle dynamically mounted pages
+      var elapsed = 0;
+      var iv = setInterval(function() {
+        scan();
+        elapsed += 150;
+        if (elapsed >= 5000) clearInterval(iv);
+      }, 150);
+    })();
   });
 </script>
 </body>
