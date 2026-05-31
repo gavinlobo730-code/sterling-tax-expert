@@ -4,59 +4,97 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
 <meta name="description" content="UK payroll, tax and compliance platform — 25 free HMRC-aligned calculators for the 2026/27 tax year, the full statutory deadlines hub with calendar exports, and plain-English insights.">
-<meta name="theme-color" content="#123458">
+<meta name="theme-color" content="#0B1E3D">
 <title>Sterling Tax Expert — UK Payroll, Tax &amp; Compliance Platform</title>
 
-<!-- Favicon / app icon (inline SVG — the Sterling mark) -->
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23123458'/%3E%3Cpath d='M14 12 Q22 11 26 16 Q28 19.5 24 22 L18 24 Q14 25.5 16 28.5 Q19 31.5 27 30' stroke='%23FBFAF7' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3Crect x='8' y='33' width='24' height='1.6' rx='0.8' fill='%2314B8A6'/%3E%3C/svg%3E">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='9' fill='%23123458'/%3E%3Cpath d='M14 12 Q22 11 26 16 Q28 19.5 24 22 L18 24 Q14 25.5 16 28.5 Q19 31.5 27 30' stroke='%23FBFAF7' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3Crect x='8' y='33' width='24' height='1.6' rx='0.8' fill='%2314B8A6'/%3E%3C/svg%3E">
+<!-- Open Graph / Social sharing (homepage defaults; article pages override these dynamically) -->
+<meta property="og:type"        content="website">
+<meta property="og:site_name"   content="Sterling Tax Expert">
+<meta property="og:url"         content="https://sterling-tax.co.uk/">
+<meta property="og:title"       content="Sterling Tax Expert — UK Payroll, Tax &amp; Compliance Platform">
+<meta property="og:description" content="UK payroll, tax and compliance platform — 25 free HMRC-aligned calculators for the 2026/27 tax year, the full statutory deadlines hub with calendar exports, and plain-English insights.">
+<meta property="og:image"       content="https://sterling-tax.co.uk/og-image.png">
+<meta property="og:image:width"  content="1200">
+<meta property="og:image:height" content="630">
+<!-- Twitter Cards -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Sterling Tax Expert — UK Payroll, Tax &amp; Compliance Platform">
+<meta name="twitter:description" content="UK payroll, tax and compliance platform — 25 free HMRC-aligned calculators for the 2026/27 tax year, the full statutory deadlines hub with calendar exports, and plain-English insights.">
+<meta name="twitter:image"       content="https://sterling-tax.co.uk/og-image.png">
 
-<!-- Fonts: Fraunces (serif display) + Inter (sans) -->
+<!-- Favicon: The Pillar mark — three columns, entablature, indigo rule -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='11' fill='%230B1E3D'/><rect x='5' y='7' width='38' height='3.5' rx='1.5' fill='white'/><rect x='8' y='12' width='7' height='24' rx='1.5' fill='white'/><rect x='20.5' y='12' width='7' height='24' rx='1.5' fill='white'/><rect x='33' y='12' width='7' height='24' rx='1.5' fill='white'/><rect x='5' y='37.5' width='38' height='3.5' rx='1.5' fill='white'/><rect x='5' y='10.5' width='38' height='1.5' rx='0.75' fill='%23818CF8'/></svg>">
+<!-- Apple touch icon: The Pillar — same mark, 180×180 -->
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230B1E3D'/><rect x='18' y='26' width='144' height='13' rx='5' fill='white'/><rect x='28' y='45' width='28' height='90' rx='5' fill='white'/><rect x='76' y='45' width='28' height='90' rx='5' fill='white'/><rect x='124' y='45' width='28' height='90' rx='5' fill='white'/><rect x='18' y='142' width='144' height='13' rx='5' fill='white'/><rect x='18' y='39' width='144' height='6' rx='3' fill='%23818CF8'/></svg>">
+
+<!-- Fonts: Inter (primary) + JetBrains Mono (code/figures) -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
 
 <!-- Stylesheet -->
 <link rel="stylesheet" href="css/styles.css">
 
 <!-- EmailJS (real contact-form email delivery, no backend) -->
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
 </head>
 <body>
 <!-- LOADER + TOAST + READING BAR -->
-<div class="loader" id="loader"><div style="display:flex;flex-direction:column;align-items:center"><div class="lring"></div><div class="ltxt">Loading…</div></div></div>
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <svg class="loader-mark" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
+      <rect x="5" y="7" width="38" height="3.5" rx="1.5" fill="white"/>
+      <rect x="5" y="10.5" width="38" height="1.5" rx="0.75" fill="#6366F1"/>
+      <rect x="8" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="20.5" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="33" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="5" y="37" width="38" height="3.5" rx="1.5" fill="white"/>
+    </svg>
+    <div class="loader-name">Sterling <span>Tax Expert</span></div>
+    <div class="loader-bar-track"><div class="loader-bar-fill" id="loader-bar"></div></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 <div class="rbar" id="rbar"></div>
 
-<!-- ANNOUNCEMENT BAR -->
-<div class="ann"><strong>Live for 2026/27 ·</strong> All thresholds, NI rates and statutory pay updated for the UK tax year that began 6 April 2026. <a onclick="navigate('tools')">Browse calculators →</a></div>
 
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-inner">
     <div class="logo" onclick="navigate('home')" aria-label="Sterling Tax Expert home">
-      <svg class="lm" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <rect width="40" height="40" rx="9" fill="#123458"></rect>
-        <path d="M14 12 Q22 11 26 16 Q28 19.5 24 22 L18 24 Q14 25.5 16 28.5 Q19 31.5 27 30" stroke="#FBFAF7" stroke-width="2.4" stroke-linecap="round" fill="none"></path>
-        <rect x="8" y="33" width="24" height="1.6" rx="0.8" fill="#14B8A6"></rect>
+      <!-- The Pillar: three columns, entablature, indigo accent rule -->
+      <svg class="lm" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
+        <!-- Entablature -->
+        <rect x="5" y="7" width="38" height="3.5" rx="1.5" fill="white"/>
+        <!-- Indigo accent rule beneath entablature -->
+        <rect x="5" y="10.5" width="38" height="1.5" rx="0.75" fill="#6366F1"/>
+        <!-- Left column -->
+        <rect x="8" y="14" width="7" height="22" rx="1.5" fill="white"/>
+        <!-- Centre column -->
+        <rect x="20.5" y="14" width="7" height="22" rx="1.5" fill="white"/>
+        <!-- Right column -->
+        <rect x="33" y="14" width="7" height="22" rx="1.5" fill="white"/>
+        <!-- Stylobate (base) -->
+        <rect x="5" y="37" width="38" height="3.5" rx="1.5" fill="white"/>
       </svg>
       <div>
         <div class="ln">Sterling <span>Tax Expert</span></div>
-        <div class="ls">UK Payroll Intelligence</div>
+        <div class="ls">UK Tax Intelligence</div>
       </div>
     </div>
     <div class="nav-links">
-      <a class="nl nl-home" onclick="navigate('home')">Home</a>
-      <a class="nl nl-services" onclick="navigate('services')">Services</a>
-      <a class="nl nl-tools-link nl-tools" onclick="navigate('tools')">⚡ Free tools</a>
-      <a class="nl nl-deadlines" onclick="navigate('deadlines')">Deadlines</a>
-      <a class="nl nl-insights" onclick="navigate('insights')">Insights</a>
-      <a class="nl nl-about" onclick="navigate('about')">About</a>
-      <a class="nl nl-contact" onclick="navigate('contact')">Contact</a>
+      <a class="nl nl-home" data-page="home" onclick="navigate('home')">Home</a>
+      <a class="nl nl-services" data-page="services" onclick="navigate('services')">Services</a>
+      <a class="nl nl-tools-link nl-tools" data-page="tools" onclick="navigate('tools')">Free tools</a>
+      <a class="nl nl-deadlines" data-page="deadlines" onclick="navigate('deadlines')">Deadlines</a>
+      <a class="nl nl-insights" data-page="insights" onclick="navigate('insights')">Insights</a>
+      <a class="nl nl-about" data-page="about" onclick="navigate('about')">About</a>
+      <a class="nl nl-contact" data-page="contact" onclick="navigate('contact')">Contact</a>
     </div>
     <div class="nr">
-      <span class="ntel">✉ sterlingtaxexpert@gmail.com</span>
-      <button class="btn btn-navy btn-sm" onclick="navigate('contact')">Book free call</button>
+      <button class="btn btn-indigo btn-sm" onclick="navigate('contact')">Book free call</button>
       <button class="ham" id="ham" onclick="toggleMobileMenu()" aria-label="Open menu">
         <span></span><span></span><span></span>
       </button>
@@ -64,15 +102,30 @@
   </div>
 </nav>
 <div class="mob" id="mob">
+  <div class="mob-brand">
+    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect width="48" height="48" rx="11" fill="#0B1E3D"/>
+      <rect x="5" y="7" width="38" height="3.5" rx="1.5" fill="white"/>
+      <rect x="5" y="10.5" width="38" height="1.5" rx="0.75" fill="#6366F1"/>
+      <rect x="8" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="20.5" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="33" y="14" width="7" height="22" rx="1.5" fill="white"/>
+      <rect x="5" y="37" width="38" height="3.5" rx="1.5" fill="white"/>
+    </svg>
+    <div>
+      <div class="mob-brand-name">Sterling <span>Tax Expert</span></div>
+      <div class="mob-brand-sub">UK Tax Intelligence</div>
+    </div>
+  </div>
   <a class="nl-home" onclick="navigate('home')">Home</a>
   <a class="nl-services" onclick="navigate('services')">Services</a>
-  <a class="nl-tools-link" onclick="navigate('tools')">⚡ Free tools</a>
+  <a class="nl-tools-link" onclick="navigate('tools')">Free tools</a>
   <a class="nl-deadlines" onclick="navigate('deadlines')">Deadlines</a>
   <a class="nl-insights" onclick="navigate('insights')">Insights</a>
   <a class="nl-about" onclick="navigate('about')">About</a>
   <a class="nl-contact" onclick="navigate('contact')">Contact</a>
   <div class="mob-cta">
-    <button class="btn btn-navy" onclick="navigate('contact')">✉ Contact us</button>
+    <button class="btn btn-indigo" style="width:100%;justify-content:center;padding:12px" onclick="navigate('contact')">Book free call</button>
   </div>
 </div>
 
@@ -81,159 +134,30 @@
 ══════════════════════════════ -->
 <div class="page active" id="page-home">
   <div class="crumbs" style="display:none"></div>
-  <div class="hero hero-has-video" id="hero">
-    <video class="hero-video" id="hero-video" autoplay muted loop playsinline preload="none" aria-hidden="true"></video>
-    <div class="hero-video-overlay"></div>
-    <div class="hero-grid-bg"></div><div class="hero-radial"></div>
-    <div class="hero-inner">
-      <div>
-        <div class="hero-kicker">⚡ Updated for 2026/27 UK tax rules · Refreshed 6 Apr 2026</div>
-        <h1>Your UK payroll &amp; tax<br><em>command centre</em></h1>
-        <p class="hero-sub">25 free HMRC-aligned calculators, every statutory deadline, and the latest HMRC updates — in one place. No signup, no fluff. Built for accountants, bookkeepers and business owners.</p>
-        <div class="hero-acts">
-          <button class="btn btn-blue" style="padding:11px 22px;font-size:13.5px" onclick="navigate('tools')">⚡ Browse free tools</button>
-          <button class="btn btn-navy" style="padding:11px 22px;font-size:13.5px" onclick="navigate('deadlines')">View deadlines hub</button>
-          <button class="btn btn-ghost" style="padding:11px 18px;font-size:13.5px" onclick="navigate('insights')">Read insights</button>
-        </div>
-        <div class="hero-proof">
-          <div class="hp"><div class="hpd">✓</div>All 2026/27 thresholds applied</div>
-          <div class="hp"><div class="hpd">✓</div>HMRC-aligned formulae</div>
-          <div class="hp"><div class="hpd">✓</div>Free — no account needed</div>
-          <div class="hp"><div class="hpd">✓</div>Mobile-first, print-ready</div>
-        </div>
-      </div>
-      <div class="dpanel">
-        <div class="dp-chrome">
-          <div class="dp-dots"><div class="dd dd1"></div><div class="dd dd2"></div><div class="dd dd3"></div></div>
-          <span class="dp-lbl">command.centre / 2026-27</span>
-          <span class="dp-live"><span class="dp-ldot"></span>live</span>
-        </div>
-        <div class="dp-body">
-          <div class="dp-mets">
-            <div class="dp-m"><div class="dp-mn"><em>15</em>%</div><div class="dp-ml">Employer NI rate</div></div>
-            <div class="dp-m"><div class="dp-mn">£<em>5</em>k</div><div class="dp-ml">NI secondary threshold</div></div>
-            <div class="dp-m"><div class="dp-mn">£<em>10.5</em>k</div><div class="dp-ml">Employment Allowance</div></div>
-          </div>
-          <div class="dp-tasks">
-            <div class="dp-task"><div class="dp-ds" style="background:var(--green)"></div><div class="dp-tt">P60s — issue to employees</div><span class="dp-tag dtg">31 May</span></div>
-            <div class="dp-task"><div class="dp-ds" style="background:var(--goldd)"></div><div class="dp-tt">P11D filing</div><span class="dp-tag dta">6 Jul</span></div>
-            <div class="dp-task"><div class="dp-ds" style="background:var(--teal)"></div><div class="dp-tt">VAT return Q1 (Mar y/e)</div><span class="dp-tag dtb">7 May</span></div>
-          </div>
-        </div>
+
+  <!-- CINEMATIC HERO -->
+  <div class="pm-hero" id="pm-hero">
+    <div class="pm-hero-bg">
+      <canvas class="pm-hero-canvas" id="hero-canvas"></canvas>
+      <div class="pm-hero-grain"></div>
+      <div class="pm-hero-overlay"></div>
+    </div>
+    <div class="pm-hero-content" id="pm-hero-content">
+      <div class="pm-hero-kicker">Sterling Tax Expert</div>
+      <h1 class="pm-hero-h1">Expert Tax and Payroll<br>Services, <em>Done Properly.</em></h1>
+      <p class="pm-hero-sub">Professional UK tax, payroll and compliance services for individuals, contractors, SMEs and complex business structures. Practical advice, personal service and dependable support — whatever your scale.</p>
+      <div class="pm-hero-acts">
+        <button class="btn btn-indigo" onclick="navigate('contact')">Book a Consultation</button>
+        <button class="pm-hero-ghost" onclick="navigate('contact')">Contact Us</button>
       </div>
     </div>
   </div>
 
-  <!-- Operational trust strip (no fake authority signals) -->
-  <div class="ts">
-    <div class="ts-in">
-      <div class="ts-b"><div class="ts-ic">🔄</div><div><div class="ts-n">Last updated</div><div class="ts-s">6 April 2026</div></div></div>
-      <div class="ts-sep"></div>
-      <div class="ts-b"><div class="ts-ic">📘</div><div><div class="ts-n">Open methodology</div><div class="ts-s">Every formula documented</div></div></div>
-      <div class="ts-sep"></div>
-      <div class="ts-b"><div class="ts-ic">⚡</div><div><div class="ts-n">No signup required</div><div class="ts-s">All tools free</div></div></div>
-      <div class="ts-sep"></div>
-      <div class="ts-b"><div class="ts-ic">📱</div><div><div class="ts-n">Mobile optimised</div><div class="ts-s">Use on any device</div></div></div>
-      <div class="ts-sep"></div>
-      <div class="ts-b"><div class="ts-ic">📄</div><div><div class="ts-n">Print-ready outputs</div><div class="ts-s">PDF summaries on every tool</div></div></div>
-    </div>
-  </div>
-
-  <!-- Platform metrics (factual only, no fake numbers) -->
-  <div class="sbar">
-    <div class="sc"><div class="sc-n"><em>25</em></div><div class="sc-l">Free calculators</div><div class="sc-d">Live now</div></div>
-    <div class="sc"><div class="sc-n"><em>20</em></div><div class="sc-l">Statutory deadlines tracked</div><div class="sc-d">2026/27 calendar</div></div>
-    <div class="sc"><div class="sc-n">2026/<em>27</em></div><div class="sc-l">UK tax year covered</div><div class="sc-d">All formulae current</div></div>
-    <div class="sc"><div class="sc-n"><em>£</em>0</div><div class="sc-l">Cost to use every tool</div><div class="sc-d">No signup, no caps</div></div>
-  </div>
-
-  <!-- HMRC feed + deadlines -->
-  <div class="hmrc-wrap">
-    <div class="hmrc-lay">
-      <div class="hmrc-sb">
-        <div class="hmrc-sb-t">HMRC intelligence</div>
-        <div class="hmrc-sb-s">Operational updates from HMRC and the Treasury, summarised for UK businesses. Curated by qualified accountants.</div>
-        <span class="hmrc-urgent">● 5 active updates this month</span>
-      </div>
-      <div class="hmrc-feed" id="hmrc-feed"></div>
-    </div>
-  </div>
-
-  <div class="sec"><div class="sec-inner">
-    <div class="row-hdr">
-      <div>
-        <div class="eyebrow ey-blue">Compliance calendar</div>
-        <div class="sec-h" style="margin-bottom:0">Upcoming UK tax deadlines</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="navigate('deadlines')">Full deadlines hub →</button>
-    </div>
-    <div class="dl-grid" id="home-deadlines"></div>
-  </div></div>
-
-  <!-- Free tools teaser -->
-  <div class="sec bg-g25"><div class="sec-inner">
-    <div class="row-hdr">
-      <div>
-        <div class="eyebrow ey-blue">Free professional tools</div>
-        <div class="sec-h" style="margin-bottom:0">HMRC-aligned calculators</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="navigate('tools')">View all 25 tools →</button>
-    </div>
-    <div class="tools-grid" id="home-tools-grid"></div>
-  </div></div>
-
-  <!-- Insights teaser -->
-  <div class="sec"><div class="sec-inner">
-    <div class="row-hdr">
-      <div>
-        <div class="eyebrow ey-blue">Insights</div>
-        <div class="sec-h" style="margin-bottom:0">Latest from the publication</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="navigate('insights')">All articles →</button>
-    </div>
-    <div class="bc-grid" id="home-blog-grid"></div>
-  </div></div>
-
-  <!-- How this platform stays accurate (replaces fake testimonials) -->
-  <div class="nl-wrap" style="padding:64px 28px">
-    <div class="nl-bg"></div>
-    <div style="max-width:1280px;margin:0 auto;position:relative;z-index:1">
-      <div class="row-hdr">
-        <div>
-          <div class="eyebrow ey-light">Methodology</div>
-          <div class="sec-h light" style="margin-bottom:0">How this platform stays accurate</div>
-        </div>
-      </div>
-      <div class="tc-grid">
-        <div class="tc">
-          <div style="font-size:24px;margin-bottom:14px">📘</div>
-          <div style="font-size:14.5px;font-weight:700;color:#fff;margin-bottom:8px;font-family:var(--serif)">Every formula is documented</div>
-          <div style="font-size:12.5px;color:rgba(255,255,255,.65);line-height:1.7">Each calculator shows the exact HMRC thresholds, rates and bands it applies. Open the notes panel on any tool to see the working — nothing hidden behind a black box.</div>
-        </div>
-        <div class="tc">
-          <div style="font-size:24px;margin-bottom:14px">🔄</div>
-          <div style="font-size:14.5px;font-weight:700;color:#fff;margin-bottom:8px;font-family:var(--serif)">Updated each tax year</div>
-          <div style="font-size:12.5px;color:rgba(255,255,255,.65);line-height:1.7">All rates, thresholds and statutory amounts are refreshed annually on 6 April — and on any in-year HMRC announcement. Tax-year coverage is always shown in the badge.</div>
-        </div>
-        <div class="tc">
-          <div style="font-size:24px;margin-bottom:14px">🔎</div>
-          <div style="font-size:14.5px;font-weight:700;color:#fff;margin-bottom:8px;font-family:var(--serif)">Edge cases handled</div>
-          <div style="font-size:12.5px;color:rgba(255,255,255,.65);line-height:1.7">Personal allowance taper, associated companies, marginal relief, irregular-hours holiday pay, Class 4 NI bands — the awkward bits other calculators skip are surfaced explicitly with notes.</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FAQ -->
-  <div class="sec"><div class="sec-inner sec-narrow">
-    <div class="row-hdr" style="margin-bottom:24px;justify-content:center;text-align:center;flex-direction:column;align-items:center">
-      <div class="eyebrow ey-blue">FAQ</div>
-      <div class="sec-h" style="margin-bottom:0">Common questions</div>
-    </div>
-    <div class="faq-wrap" id="faq-set"></div>
-  </div></div>
-
-  <!-- CTA + footer placeholders (rendered by JS for re-use) -->
+  <!-- JS-RENDERED HOMEPAGE SECTIONS -->
+  <div id="home-trust"></div>
+  <div id="home-audience"></div>
+  <div id="home-why"></div>
+  <div id="home-process"></div>
   <div id="home-cta"></div>
   <div id="home-footer"></div>
 </div>
@@ -244,6 +168,7 @@
 <div class="page" id="page-calc"></div>
 <div class="page" id="page-insights"></div>
 <div class="page" id="page-post"></div>
+<div class="page" id="page-article"></div>
 <div class="page" id="page-deadlines"></div>
 <div class="page" id="page-about"></div>
 <div class="page" id="page-contact"></div>
@@ -257,20 +182,24 @@
 <script src="js/02-shell.js"></script>
 <script src="js/03-calc-engine.js"></script>
 <script src="js/04-calc-payroll.js"></script>
+<script src="js/04b-calc-payroll-master.js"></script>
 <script src="js/05-calc-compliance.js"></script>
 <script src="js/06-calc-extra.js"></script>
+<script src="js/06b-calc-healthcare.js"></script>
 <script src="js/07-admin-cms.js"></script>
-<script src="js/07b-admin-tax-config.js"></script>
 <script src="js/08-pages.js"></script>
+<script src="js/09-hero-anim.js"></script>
+<script src="js/10-insights.js"></script>
 
 <!-- ═══ Boot: footer/CTA, EmailJS init, hero video, reveal motion ═══ -->
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // Home CTA + footer (rendered by JS so they're reused everywhere)
-    var ctaEl = document.getElementById('home-cta');
-    var ftEl  = document.getElementById('home-footer');
-    if (ctaEl && typeof renderCTABand === 'function') ctaEl.innerHTML = renderCTABand();
-    if (ftEl  && typeof renderFooter  === 'function') ftEl.innerHTML  = renderFooter();
+    // Mount premium home sections (about, principles, showcase, blog)
+    if (typeof mountHome === 'function') mountHome();
+
+    // Footer (rendered by JS so it's reused everywhere)
+    var ftEl = document.getElementById('home-footer');
+    if (ftEl && typeof renderFooter === 'function') ftEl.innerHTML = renderFooter();
 
     // EmailJS init (only if a real public key is configured)
     try {
@@ -280,28 +209,63 @@
       }
     } catch (e) { console.warn('EmailJS init skipped:', e); }
 
-    // Hero video: lazy-load + fade in. Respects reduced-motion (CSS hides it).
-    try {
-      var cfg2 = window.STERLING_CONFIG || {};
-      var v = document.getElementById('hero-video');
-      var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (v && cfg2.heroVideo && !reduce) {
-        v.src = cfg2.heroVideo;
-        v.addEventListener('loadeddata', function () { v.classList.add('ready'); });
-        var p = v.play(); if (p && p.catch) p.catch(function(){});
-      }
-      // If no video configured, the premium gradient stands in — nothing to do.
-    } catch (e) { /* gradient fallback */ }
+    // Scroll-reveal
+    (function() {
+      var done = new WeakSet();
+      var SEL = '.ta-up,.ta-left,.ta-right';
 
-    // Reveal-on-scroll for cards/sections
-    try {
-      if ('IntersectionObserver' in window) {
-        var io = new IntersectionObserver(function (entries) {
-          entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-        }, { threshold: 0.08 });
-        document.querySelectorAll('.sec, .hmrc-wrap, .sbar').forEach(function (el) { el.classList.add('reveal'); io.observe(el); });
+      function reveal(el, delay) {
+        if (done.has(el)) return;
+        done.add(el);
+        var isLeft  = el.classList.contains('ta-left');
+        var isRight = el.classList.contains('ta-right');
+        var from = isLeft ? 'translateX(-48px)' : isRight ? 'translateX(48px)' : 'translateY(44px)';
+        setTimeout(function() {
+          el.style.willChange = 'opacity, transform';
+          el.style.opacity    = '0';
+          el.style.transform  = from;
+          // Double rAF guarantees the browser commits the start state before transitioning
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              el.style.transition = 'opacity 0.72s cubic-bezier(0.22,1,0.36,1), transform 0.72s cubic-bezier(0.22,1,0.36,1)';
+              el.style.opacity    = '1';
+              el.style.transform  = 'none';
+              setTimeout(function() { el.style.willChange = 'auto'; }, 800);
+            });
+          });
+        }, delay || 0);
       }
-    } catch (e) { /* no-op */ }
+
+      function scan() {
+        var vh = window.innerHeight;
+        // Assign stagger delays to children of .ta-stagger containers
+        document.querySelectorAll('.ta-stagger').forEach(function(parent) {
+          var kids = parent.querySelectorAll(SEL);
+          kids.forEach(function(el, i) {
+            if (!done.has(el) && el._taDelay === undefined) el._taDelay = i * 85;
+          });
+        });
+        document.querySelectorAll(SEL).forEach(function(el) {
+          if (done.has(el)) return;
+          var r = el.getBoundingClientRect();
+          if (r.top < vh - 30 && r.bottom > 0) {
+            var d = el._taDelay !== undefined ? el._taDelay : 0;
+            reveal(el, d);
+          }
+        });
+      }
+
+      window.initReveal = function() { setTimeout(scan, 60); };
+      window.addEventListener('scroll', scan, { passive: true });
+
+      // Poll for 5 seconds to handle dynamically mounted pages
+      var elapsed = 0;
+      var iv = setInterval(function() {
+        scan();
+        elapsed += 150;
+        if (elapsed >= 5000) clearInterval(iv);
+      }, 150);
+    })();
   });
 </script>
 </body>
