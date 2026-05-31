@@ -234,27 +234,118 @@ function iconBg(cat){
 function mountServices(){
   const wrap = document.getElementById('page-services');
   if (!wrap) return;
+
+  const serviceDetails = [
+    {
+      who: 'Businesses of any size with employees',
+      includes: ['Monthly payroll processing', 'RTI submissions to HMRC', 'P60, P45 and P11D preparation', 'Auto-enrolment management', 'HMRC correspondence handling'],
+      from: 'From £85/month'
+    },
+    {
+      who: 'VAT-registered businesses',
+      includes: ['MTD-compliant VAT returns', 'Quarterly submissions', 'VAT registration and deregistration', 'Flat rate scheme review', 'HMRC enquiry support'],
+      from: 'From £120/quarter'
+    },
+    {
+      who: 'Sole traders, directors and landlords',
+      includes: ['Personal tax return preparation', 'Income and expense analysis', 'HMRC submission and confirmation', 'MTD ITSA preparation', 'Tax payment planning'],
+      from: 'From £350/year'
+    },
+    {
+      who: 'UK limited companies',
+      includes: ['CT600 preparation and filing', 'Deductions and allowances review', 'Marginal relief modelling', 'R&D tax credit assessment', 'HMRC liaison and enquiry support'],
+      from: 'From £650/year'
+    },
+    {
+      who: 'Contractors and subcontractors',
+      includes: ['Monthly CIS300 returns', 'Subcontractor verification', 'Deduction statements', 'Year-end reconciliation', 'HMRC compliance reviews'],
+      from: 'From £95/month'
+    },
+    {
+      who: 'Businesses under HMRC review',
+      includes: ['Compliance health check', 'HMRC enquiry and investigation support', 'Risk area identification', 'Correspondence handling', 'Penalty mitigation'],
+      from: 'Bespoke — contact us'
+    },
+    {
+      who: 'Small to medium businesses',
+      includes: ['Monthly bank reconciliation', 'Management accounts', 'Cloud bookkeeping setup (Xero/QuickBooks)', 'Expense categorisation', 'Supplier and debtor reporting'],
+      from: 'From £150/month'
+    },
+    {
+      who: 'Growing businesses and directors',
+      includes: ['Cash flow forecasting', 'Financial modelling', 'Salary vs dividend optimisation', 'Growth and exit planning', 'KPI dashboard reporting'],
+      from: 'From £200/month'
+    },
+  ];
+
   wrap.innerHTML = `
     <div class="crumbs"></div>
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
-      <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
+      <div style="max-width:1280px;margin:0 auto;padding:56px 28px">
         <div class="eyebrow ey-blue ta-left">Services</div>
         <h1 class="ta-left ta-d1" style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Eight pillars of UK tax expertise</h1>
-        <p class="ta-left ta-d2" style="font-size:14.5px;color:var(--t2);max-width:560px;line-height:1.75">Full-service accounting for limited companies, sole traders and partnerships. Every engagement is fixed-fee, with a named senior accountant assigned from day one.</p>
+        <p class="ta-left ta-d2" style="font-size:14.5px;color:var(--t2);max-width:580px;line-height:1.75">Full-service accounting for limited companies, sole traders and partnerships. Every engagement is fixed-fee — no surprises, no hidden costs — with a named senior accountant from day one.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2)"><span style="width:8px;height:8px;background:#16A34A;border-radius:50%;display:inline-block"></span>Fixed-fee pricing</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2)"><span style="width:8px;height:8px;background:#16A34A;border-radius:50%;display:inline-block"></span>Named senior accountant</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2)"><span style="width:8px;height:8px;background:#16A34A;border-radius:50%;display:inline-block"></span>HMRC-aligned advice</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2)"><span style="width:8px;height:8px;background:#16A34A;border-radius:50%;display:inline-block"></span>Free initial consultation</div>
+        </div>
       </div>
     </div>
+
     <div class="sec"><div class="sec-inner">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px" class="ta-stagger">
-        ${(window.SVCS || []).map(s => `
-          <div class="ta-up" style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:24px;transition:border-color .15s,box-shadow .15s,transform .15s;cursor:pointer" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='var(--shadow)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'" onclick="navigate('contact')">
-            <div style="width:42px;height:42px;background:var(--bluel);border-radius:10px;display:grid;place-items:center;font-size:19px;margin-bottom:14px">${s.icon}</div>
-            <div style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px">${s.t}</div>
-            <div style="font-size:12.5px;color:var(--t3);line-height:1.65;margin-bottom:14px">${s.d}</div>
-            <div style="display:flex;flex-wrap:wrap;gap:5px">${s.tags.map(tag => `<span class="ttag">${tag}</span>`).join('')}</div>
-          </div>
-        `).join('')}
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px" class="ta-stagger">
+        ${(window.SVCS || []).map((s, i) => {
+          const det = serviceDetails[i] || {};
+          return `
+          <div class="ta-up" style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;transition:border-color .15s,box-shadow .15s,transform .15s" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='0 8px 32px rgba(11,30,61,.10)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'">
+            <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
+              <div style="width:44px;height:44px;background:var(--bluel);border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0">${s.icon}</div>
+              <div>
+                <div style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:3px">${s.t}</div>
+                ${det.who ? `<div style="font-size:11.5px;color:var(--blue2);font-weight:600">${det.who}</div>` : ''}
+              </div>
+            </div>
+            <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">${s.d}</div>
+            ${det.includes ? `
+            <div style="margin-bottom:16px">
+              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">What's included</div>
+              <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px">
+                ${det.includes.map(item => `<li style="font-size:12.5px;color:var(--t2);display:flex;align-items:flex-start;gap:7px"><span style="color:#16A34A;font-size:13px;flex-shrink:0;margin-top:1px">✓</span>${item}</li>`).join('')}
+              </ul>
+            </div>` : ''}
+            <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--br)">
+              <div>
+                ${det.from ? `<div style="font-size:12px;color:var(--t3);margin-bottom:2px">Pricing guide</div><div style="font-size:13.5px;font-weight:700;color:var(--navy)">${det.from}</div>` : ''}
+              </div>
+              <button class="btn btn-indigo btn-sm" onclick="navigate('contact')" style="flex-shrink:0">Enquire →</button>
+            </div>
+          </div>`;
+        }).join('')}
       </div>
     </div></div>
+
+    <div style="background:var(--g25);border-top:1px solid var(--br);border-bottom:1px solid var(--br)">
+      <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
+        <div style="text-align:center;margin-bottom:32px">
+          <div class="eyebrow ey-blue">Common questions</div>
+          <h2 style="font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-0.8px;margin-top:6px">Frequently asked questions</h2>
+        </div>
+        <div style="max-width:720px;margin:0 auto">
+          ${(window.FAQS || []).map((f, i) => `
+            <div style="border:1px solid var(--br);border-radius:var(--r);margin-bottom:8px;background:var(--w);overflow:hidden">
+              <button onclick="toggleFAQ(${i})" id="fq${i}" class="faq-q">
+                ${f.q}
+                <svg class="faq-ch" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div id="fa${i}" class="faq-a">${f.a}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
     ${renderCTABand()}
     ${renderFooter()}
   `;
@@ -1244,6 +1335,119 @@ function mountContact(){
 }
 
 // ─────────────────────────────────────────────────────────
+// PRIVACY POLICY
+// ─────────────────────────────────────────────────────────
+function mountPrivacy(){
+  const wrap = document.getElementById('page-privacy');
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <div class="crumbs"></div>
+    <div style="background:var(--g50);border-bottom:1px solid var(--br)">
+      <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
+        <div class="eyebrow ey-blue">Legal</div>
+        <h1 style="font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-1px;margin:8px 0 10px">Privacy Policy</h1>
+        <p style="font-size:13.5px;color:var(--t3)">Last updated: 31 May 2026</p>
+      </div>
+    </div>
+    <div class="sec"><div class="sec-inner" style="max-width:780px">
+      <div style="font-size:14px;color:var(--t2);line-height:1.9">
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">1. Who we are</h2>
+        <p>Sterling Tax Expert ("we", "us", "our") is a UK-based tax and payroll advisory service. Our website is <strong>sterlingtaxexpert.co.uk</strong>. For data-related queries, contact us at <a href="mailto:sterlingtaxexpert@gmail.com" style="color:var(--blue2)">sterlingtaxexpert@gmail.com</a>.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">2. What data we collect</h2>
+        <p><strong>Contact form:</strong> When you submit an enquiry, we collect your name, email address, phone number (optional), and the message you provide. This data is used solely to respond to your enquiry.</p>
+        <p style="margin-top:10px"><strong>Calculators and tools:</strong> All calculator inputs are processed entirely in your browser. We do not transmit, store or log any figures you enter into our free tools.</p>
+        <p style="margin-top:10px"><strong>Analytics:</strong> We may use anonymised, aggregated analytics (such as page view counts) to understand how the site is used. No personally identifiable information is collected for this purpose.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">3. How we use your data</h2>
+        <p>We use contact form data only to respond to your enquiry and, where relevant, to provide the services you have requested. We do not sell, rent or share your personal data with third parties for marketing purposes.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">4. Data retention</h2>
+        <p>Enquiry data is retained for up to 24 months to allow us to maintain an accurate record of client communications, after which it is securely deleted. You may request deletion at any time by contacting us.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">5. Your rights</h2>
+        <p>Under UK GDPR, you have the right to: access the personal data we hold about you; request correction or deletion; object to processing; and lodge a complaint with the Information Commissioner's Office (ICO) at <strong>ico.org.uk</strong>.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">6. Cookies</h2>
+        <p>This website does not use tracking cookies. We do not use advertising cookies or third-party retargeting. Essential browser storage (such as session data for the admin area) is used only where strictly necessary to operate the site.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">7. Third-party services</h2>
+        <p>We use <strong>EmailJS</strong> to deliver contact form submissions. Your form data is transmitted to EmailJS servers solely for delivery to our inbox. Please refer to the <a href="https://www.emailjs.com/legal/privacy-policy/" target="_blank" rel="noopener noreferrer" style="color:var(--blue2)">EmailJS Privacy Policy</a> for further detail.</p>
+        <p style="margin-top:10px">Companies House data displayed in our Scout feature is fetched via the official Companies House public API. No personal data is transmitted in these requests beyond the company name or number you enter.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">8. Contact</h2>
+        <p>For any questions about this policy or your data, please email <a href="mailto:sterlingtaxexpert@gmail.com" style="color:var(--blue2)">sterlingtaxexpert@gmail.com</a>.</p>
+
+      </div>
+      <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--br)">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Back to home</button>
+      </div>
+    </div></div>
+    ${renderFooter()}
+  `;
+  updateBreadcrumbs('privacy');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
+}
+
+// ─────────────────────────────────────────────────────────
+// TERMS OF USE
+// ─────────────────────────────────────────────────────────
+function mountTerms(){
+  const wrap = document.getElementById('page-terms');
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <div class="crumbs"></div>
+    <div style="background:var(--g50);border-bottom:1px solid var(--br)">
+      <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
+        <div class="eyebrow ey-blue">Legal</div>
+        <h1 style="font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-1px;margin:8px 0 10px">Terms of Use</h1>
+        <p style="font-size:13.5px;color:var(--t3)">Last updated: 31 May 2026</p>
+      </div>
+    </div>
+    <div class="sec"><div class="sec-inner" style="max-width:780px">
+      <div style="font-size:14px;color:var(--t2);line-height:1.9">
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">1. Acceptance</h2>
+        <p>By accessing or using sterlingtaxexpert.co.uk ("the Site"), you agree to these Terms of Use. If you do not agree, please do not use the Site.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">2. Calculator outputs — important disclaimer</h2>
+        <p>All calculators and tools on this Site provide <strong>estimates only</strong>. They are built on current HMRC rates and statutory figures, but their outputs are indicative and do not constitute tax advice, legal advice or professional guidance of any kind.</p>
+        <p style="margin-top:10px">You should not make financial, tax or payroll decisions based solely on calculator outputs. Always consult a qualified tax professional for advice specific to your circumstances. Sterling Tax Expert accepts no liability for any loss arising from reliance on calculator results.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">3. Intellectual property</h2>
+        <p>All content on this Site — including text, code, tool logic, design and graphics — is the property of Sterling Tax Expert and is protected by UK copyright law. You may not reproduce, distribute or modify any part of the Site without prior written consent.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">4. Accuracy of information</h2>
+        <p>We take care to ensure all rates, thresholds and statutory figures are current and correct for the 2026/27 UK tax year. However, tax law changes frequently and we cannot guarantee that all information is complete, accurate or up to date at all times. We accept no liability for errors or omissions.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">5. Third-party content</h2>
+        <p>Where we link to or retrieve data from third-party sources (including Companies House), we are not responsible for the accuracy, completeness or availability of that content.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">6. Limitation of liability</h2>
+        <p>To the fullest extent permitted by law, Sterling Tax Expert shall not be liable for any direct, indirect or consequential loss arising from your use of the Site or reliance on its content.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">7. Governing law</h2>
+        <p>These terms are governed by the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">8. Changes to these terms</h2>
+        <p>We may update these terms from time to time. Continued use of the Site after any changes constitutes acceptance of the revised terms.</p>
+
+        <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">9. Contact</h2>
+        <p>Questions about these terms? Email us at <a href="mailto:sterlingtaxexpert@gmail.com" style="color:var(--blue2)">sterlingtaxexpert@gmail.com</a>.</p>
+
+      </div>
+      <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--br)">
+        <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Back to home</button>
+      </div>
+    </div></div>
+    ${renderFooter()}
+  `;
+  updateBreadcrumbs('terms');
+  if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
+}
+
+// ─────────────────────────────────────────────────────────
 // Shared bands
 // ─────────────────────────────────────────────────────────
 function renderCTABand(){
@@ -1282,6 +1486,14 @@ function renderFooter(){
         <div style="display:flex;align-items:center;gap:7px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:6px;padding:6px 11px;font-size:11px;color:#a5b4fc;width:fit-content">
           <span style="width:6px;height:6px;border-radius:50%;background:#6366F1;box-shadow:0 0 6px rgba(99,102,241,.6)"></span> Live for 2026/27 · refreshed 6 Apr 2026
         </div>
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <a href="https://www.linkedin.com/company/sterling-tax-expert" target="_blank" rel="noopener noreferrer" aria-label="Sterling Tax Expert on LinkedIn" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);transition:background .15s" onmouseover="this.style.background='rgba(99,102,241,.3)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </a>
+          <a href="https://x.com/sterlingtaxexp" target="_blank" rel="noopener noreferrer" aria-label="Sterling Tax Expert on X" style="display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);transition:background .15s" onmouseover="this.style.background='rgba(99,102,241,.3)'" onmouseout="this.style.background='rgba(255,255,255,.08)'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </div>
       </div>
       <div class="f-col"><h4>Free tools</h4>
         ${window.TOOLS.slice(0,6).map(t => `<a onclick="navigate('calc','${t.id}')">${t.title.replace(/Calculator|Checker/,'').trim()}</a>`).join('')}
@@ -1304,7 +1516,7 @@ function renderFooter(){
     <div class="f-bot">
       <span class="f-bl">© 2026 Sterling Tax Expert</span>
       <div class="f-bls">
-        <a onclick="navigate('contact')">Contact</a><a>Privacy</a><a>Terms</a>
+        <a onclick="navigate('contact')">Contact</a><a onclick="navigate('privacy')" style="cursor:pointer">Privacy</a><a onclick="navigate('terms')" style="cursor:pointer">Terms</a>
       </div>
     </div>
     <div class="f-rule"></div>

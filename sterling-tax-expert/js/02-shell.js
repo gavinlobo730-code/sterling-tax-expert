@@ -70,6 +70,8 @@ function navigate(page, param = null, opts = {}){
     if (page === 'calc')    mountCalc(param);
     if (page === 'article') mountArticle(param);
     if (page === 'admin')   mountAdmin();
+    if (page === 'privacy') mountPrivacy();
+    if (page === 'terms')   mountTerms();
 
     // Reading bar
     const rb = document.getElementById('rbar');
@@ -121,6 +123,8 @@ function updateBreadcrumbs(page, param){
     about: [{ l:'Home', p:'home' }, { l:'About', h:1 }],
     contact: [{ l:'Home', p:'home' }, { l:'Contact', h:1 }],
     admin:   null,
+    privacy: [{ l:'Home', p:'home' }, { l:'Privacy Policy', h:1 }],
+    terms:   [{ l:'Home', p:'home' }, { l:'Terms of Use', h:1 }],
     article: param ? [
       { l:'Home', p:'home' },
       { l:'Insights', p:'insights' },

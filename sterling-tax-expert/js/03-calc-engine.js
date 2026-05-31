@@ -93,7 +93,7 @@ function recalc(){
   const results = calc.calculate(state);
   const wrap = document.getElementById('calc-results');
   if (!wrap) return;
-  wrap.innerHTML = calc.render(results, state);
+  wrap.innerHTML = calc.render(results, state) + `<div style="margin-top:18px;padding:12px 16px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;font-size:12px;color:#92400E;line-height:1.6"><strong>Estimate only.</strong> These figures are indicative and based on the inputs provided. They do not constitute tax advice. Always consult a qualified tax professional before making financial decisions. Rates are for the 2026/27 UK tax year.</div>`;
   window._lastCalc = { calc, state, results };
   if (calc.afterRecalc) calc.afterRecalc(state);
   _animateResults(wrap);
