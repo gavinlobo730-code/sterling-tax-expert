@@ -159,11 +159,8 @@ window.TAX = {
    ────────────────────────────────────────────────────────── */
 window.TOOLS = [
   // Payroll
-  { id:'paye',          cat:'Payroll',     icon:'💷', title:'PAYE Tax & NI Calculator',           desc:'Income tax, employee NI, net take-home pay and full employer cost — for any UK salary.',                        tags:['Income tax','NI','Pension','Student loan'], badge:'tb-pop', badgeText:'Most used', color:'tc-blue',   iconBg:'ti-blue'   },
-  { id:'employer-ni',   cat:'Payroll',     icon:'🏛', title:'Employer NI Calculator',              desc:'Class 1 secondary contributions at 15% above £5,000, with Employment Allowance applied where eligible.',         tags:['Class 1','£5k threshold','£10.5k allowance'], badge:'tb-upd', badgeText:'2026/27', color:'tc-gold',   iconBg:'ti-gold'   },
-  { id:'net-to-gross',  cat:'Payroll',     icon:'⇄',  title:'Net-to-Gross Salary Calculator',      desc:'Work backwards from take-home pay to the gross salary you need to offer — with NI and tax solved.',              tags:['Reverse','Take-home','Offers'], badge:'tb-new', badgeText:'New', color:'tc-green',  iconBg:'ti-green'  },
-  { id:'payroll-cost',  cat:'Payroll',     icon:'📊', title:'True Payroll Cost Calculator',        desc:'The full annual cost of hiring: salary + employer NI + pension + apprenticeship levy where applicable.',           tags:['Total cost','Hiring','Budgeting'], badge:'tb-new', badgeText:'New', color:'tc-purple', iconBg:'ti-purple' },
-  { id:'salary-sacrifice', cat:'Payroll',  icon:'🔁', title:'Salary Sacrifice Calculator',         desc:'Compare gross-pay vs salary-sacrifice pension contributions and the NI saving for employee and employer.',        tags:['Pensions','NI saving','Director'], badge:'tb-new', badgeText:'New', color:'tc-blue',   iconBg:'ti-blue'   },
+  { id:'true-cost', cat:'Payroll', icon:'💷', title:'True Employment Cost Calculator', desc:'Gross → net or net → gross. Employee take-home, employer NI, pension, student loan, apprenticeship levy — every number in one place.', tags:['Gross→Net','Net→Gross','Employer cost','Pension'], badge:'tb-pop', badgeText:'Most used', color:'tc-blue', iconBg:'ti-blue' },
+  { id:'payslip',   cat:'Payroll', icon:'🧾', title:'Payslip Generator & Verifier',    desc:'Verify or generate a payslip for any pay period. Full tax code support, NI categories, YTD figures, auto-enrolment and NHS pension — weekly to monthly.', tags:['Payslip','Tax code','PAYE','NHS pension'], badge:'tb-new', badgeText:'New', color:'tc-purple', iconBg:'ti-purple' },
 
   // Statutory pay
   { id:'ssp',           cat:'Statutory',   icon:'🏥', title:'SSP Calculator',                       desc:'Statutory Sick Pay from day one at £123.25/week (or 80% of AWE if lower) for up to 28 weeks — 2026/27 rules, no waiting days.',                       tags:['Sickness','Qualifying days','PIWs'], badge:'tb-upd', badgeText:'2026/27', color:'tc-gold',   iconBg:'ti-gold'   },
@@ -185,18 +182,14 @@ window.TOOLS = [
   { id:'sal-vs-div',    cat:'Tax',         icon:'⚖️', title:'Salary vs Dividend Calculator',         desc:'For directors of limited companies: the optimal split between salary and dividends for 2026/27.',                 tags:['Director','Optimal split','Take-home'], badge:'tb-pop', badgeText:'Popular', color:'tc-blue',   iconBg:'ti-blue'   },
   { id:'self-assess',   cat:'Tax',         icon:'📋', title:'Self Assessment Calculator',            desc:'Sole-trader income tax, Class 2 & 4 NI and payments on account — for the 2026/27 return.',                         tags:['Sole trader','Class 2/4','POA'], badge:'tb-upd', badgeText:'2026/27', color:'tc-green',  iconBg:'ti-green'  },
 
-  // v4 additions — Gross-to-Net, Marginal Relief, SPP, SAP, ShPP (employee-ni retired; CALCS entry preserved for URL compatibility)
-  { id:'gross-to-net',  cat:'Payroll',     icon:'➡',  title:'Gross-to-Net Salary Calculator',        desc:'Calculate take-home pay across annual, monthly, weekly, daily and hourly frequencies.',                            tags:['Frequency table','Hourly','Daily'],     badge:'tb-new', badgeText:'New',      color:'tc-blue',   iconBg:'ti-blue'   },
   { id:'spp',           cat:'Statutory',   icon:'👨', title:'SPP Calculator',                         desc:'Statutory Paternity Pay — up to 2 weeks at £194.32 or 90% AWE (whichever lower).',                                          tags:['Paternity','2 weeks','AWE'],            badge:'tb-new', badgeText:'New',      color:'tc-blue',   iconBg:'ti-blue'   },
   { id:'sap',           cat:'Statutory',   icon:'🏡', title:'SAP Calculator',                         desc:'Statutory Adoption Pay — SMP structure for adoptive parents (39 weeks total).',                                       tags:['Adoption','39 weeks','AWE'],            badge:'tb-new', badgeText:'New',      color:'tc-green',  iconBg:'ti-green'  },
   { id:'shpp',          cat:'Statutory',   icon:'👪', title:'Shared Parental Pay Calculator',         desc:'Up to 37 weeks of shared parental pay divisible between parents at £194.32 or 90% AWE.',                             tags:['Shared parental','37 weeks','Split'],   badge:'tb-new', badgeText:'New',      color:'tc-purple', iconBg:'ti-purple' },
   { id:'marginal',      cat:'Tax',         icon:'📐', title:'Marginal Relief Calculator',             desc:'Standalone marginal-relief explorer for profits between £50,000 and £250,000 — the CT band.',                         tags:['MR fraction','£50k–£250k','26.5% eff'], badge:'tb-new', badgeText:'New',      color:'tc-purple', iconBg:'ti-purple' },
 
-  // Healthcare
-  { id:'nhs-payroll',   cat:'Healthcare',  icon:'🏥', title:'NHS Payroll & Pension Calculator',        desc:'Take-home pay, NHS pension contribution tier and annual allowance risk for NHS doctors, consultants, salaried GPs, nurses and AHPs — 2026/27.',  tags:['NHS pension','CARE scheme','Annual allowance'], badge:'tb-new', badgeText:'New', color:'tc-blue', iconBg:'ti-blue' },
 ];
 
-window.TOOL_CATS = ['All','Payroll','Statutory','Compliance','Tax','Healthcare'];
+window.TOOL_CATS = ['All','Payroll','Statutory','Compliance','Tax'];
 
 /* ── HMRC headline rates (for tools hub widget) ─────────── */
 window.RATES_HEADLINE = [
