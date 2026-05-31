@@ -152,15 +152,8 @@ function mountCalc(id){
     </div>
   `;
   updateBreadcrumbs('calc', id);
-  // wire live recalc
-  setTimeout(() => {
-    const body = document.getElementById('ci-body');
-    if (body) {
-      body.addEventListener('input', () => recalc());
-      body.addEventListener('change', () => recalc());
-    }
-    recalc();
-  }, 50);
+  // Initial render only — results update on Recalculate button click, not on every input
+  setTimeout(() => { recalc(); }, 50);
 }
 
 function renderInputs(calc){
