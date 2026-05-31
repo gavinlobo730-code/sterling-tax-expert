@@ -562,14 +562,16 @@ function mountScout() {
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:42px 28px 32px">
         <div class="eyebrow ey-blue">Scout</div>
-        <h1 style="font-family:var(--sans);font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-1px;margin-bottom:11px">Company &amp; VAT intelligence</h1>
-        <p style="font-size:14px;color:var(--t2);max-width:600px;line-height:1.75">Live data from Companies House and HMRC. Look up filing deadlines for any UK company and verify VAT numbers before you trade.</p>
+        <h1 style="font-family:var(--sans);font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-1px;margin-bottom:11px">Company lookup &amp; deadline creator</h1>
+        <p style="font-size:14px;color:var(--t2);max-width:600px;line-height:1.75">Look up live filing deadlines for any UK company — or create a custom deadline and download it straight to your calendar.</p>
       </div>
     </div>
 
     <div class="sec sec-sm">
       <div class="sec-inner">
-        <div style="max-width:620px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:56px;max-width:1100px">
+
+          <div>
             <div class="eyebrow ey-blue" style="margin-bottom:10px">Companies House</div>
             <h2 style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin-bottom:8px">Company filing deadlines</h2>
             <p style="font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:18px">Search by company name or number to see live filing deadlines — confirmation statement, accounts due and more. Export straight to your calendar.</p>
@@ -578,6 +580,44 @@ function mountScout() {
               <button class="btn btn-indigo" onclick="chSearch()" style="white-space:nowrap">🔍 Search</button>
             </div>
             <div id="ch-results"></div>
+          </div>
+
+          <div>
+            <div class="eyebrow ey-blue" style="margin-bottom:10px">Deadline Creator</div>
+            <h2 style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin-bottom:8px">Create a custom deadline</h2>
+            <p style="font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:18px">Enter a deadline name and due date — choose your reminders and download an .ics file ready for Google Calendar, Outlook or Apple Calendar.</p>
+            <div class="dl-creator">
+              <div class="ci-group">
+                <div class="ci-label">Deadline name</div>
+                <div class="ci-input-wrap">
+                  <input class="ci-input no-prefix" id="dlc-name" type="text" placeholder="e.g. VAT return Q2, Corp tax payment">
+                </div>
+              </div>
+              <div class="ci-group">
+                <div class="ci-label">Due date</div>
+                <div class="ci-input-wrap">
+                  <input class="ci-input no-prefix" id="dlc-date" type="date">
+                </div>
+              </div>
+              <div class="ci-group">
+                <div class="ci-label">Reminders</div>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+                  <label class="ci-checkbox"><input type="checkbox" id="dlc-r7" checked><span class="ci-checkbox-lbl">7 days before</span></label>
+                  <label class="ci-checkbox"><input type="checkbox" id="dlc-r14" checked><span class="ci-checkbox-lbl">14 days before</span></label>
+                  <label class="ci-checkbox"><input type="checkbox" id="dlc-r30"><span class="ci-checkbox-lbl">30 days before</span></label>
+                </div>
+              </div>
+              <div class="ci-group">
+                <div class="ci-label">Notes <span class="ci-hint">optional</span></div>
+                <div class="ci-input-wrap">
+                  <input class="ci-input no-prefix" id="dlc-notes" type="text" placeholder="Any extra detail for the calendar entry">
+                </div>
+              </div>
+              <button class="btn btn-navy" style="width:100%;justify-content:center;margin-top:4px" onclick="dlcCreate()">⬇ Download .ics</button>
+              <div id="dlc-msg" style="margin-top:10px;font-size:13px"></div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -585,10 +625,62 @@ function mountScout() {
     ${renderFooter()}
   `;
   updateBreadcrumbs('scout');
+  // Set default date to tomorrow
   setTimeout(() => {
     const q = document.getElementById('ch-query');
     if (q) q.addEventListener('keydown', e => { if (e.key === 'Enter') chSearch(); });
+    const dateEl = document.getElementById('dlc-date');
+    if (dateEl) {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      dateEl.value = tomorrow.toISOString().split('T')[0];
+    }
   }, 100);
+}
+
+function dlcCreate() {
+  const name  = (document.getElementById('dlc-name')  || {}).value || '';
+  const date  = (document.getElementById('dlc-date')  || {}).value || '';
+  const notes = (document.getElementById('dlc-notes') || {}).value || '';
+  const r7    = (document.getElementById('dlc-r7')    || {}).checked;
+  const r14   = (document.getElementById('dlc-r14')   || {}).checked;
+  const r30   = (document.getElementById('dlc-r30')   || {}).checked;
+  const msg   = document.getElementById('dlc-msg');
+
+  if (!name.trim()) { if (msg) msg.innerHTML = '<span style="color:var(--red)">Please enter a deadline name.</span>'; return; }
+  if (!date)        { if (msg) msg.innerHTML = '<span style="color:var(--red)">Please select a due date.</span>'; return; }
+
+  const dt = date.replace(/-/g, '');
+  const uid = 'dlc-' + dt + '-' + name.trim().replace(/\s+/g,'-').toLowerCase().replace(/[^a-z0-9-]/g,'') + '@sterling-tax-expert';
+  const desc = notes.trim() ? notes.trim() + ' — via Sterling Tax Expert' : 'via Sterling Tax Expert';
+
+  const alarms = [];
+  if (r30) alarms.push(['TRIGGER:-P30D', 'DESCRIPTION:30-day reminder: ' + name.trim()]);
+  if (r14) alarms.push(['TRIGGER:-P14D', 'DESCRIPTION:14-day reminder: ' + name.trim()]);
+  if (r7)  alarms.push(['TRIGGER:-P7D',  'DESCRIPTION:7-day reminder: '  + name.trim()]);
+
+  const alarmLines = alarms.flatMap(([t, d]) => ['BEGIN:VALARM','ACTION:DISPLAY', t, d, 'END:VALARM']);
+
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Sterling Tax Expert//Deadline Creator//EN',
+    'X-WR-CALNAME:' + name.trim(),
+    'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    'UID:' + uid,
+    'DTSTART;VALUE=DATE:' + dt,
+    'DTEND;VALUE=DATE:' + dt,
+    'SUMMARY:' + name.trim(),
+    'DESCRIPTION:' + desc,
+    ...alarmLines,
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ];
+
+  const filename = name.trim().replace(/[^a-z0-9]/gi,'-').toLowerCase() + '-deadline.ics';
+  triggerDownload(lines.join('\r\n'), filename, 'text/calendar');
+  if (msg) msg.innerHTML = '<span style="color:#16A34A">✓ Downloaded — open the file to add to your calendar.</span>';
 }
 function setDLView(v){ CURRENT_DL_VIEW = v; mountDeadlines(); }
 function setDLCat(c){ CURRENT_DL_CAT = c; renderDLContent(); }
