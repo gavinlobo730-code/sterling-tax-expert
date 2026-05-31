@@ -357,7 +357,7 @@ async function cmsDelete(id){
 function renderEditor(){
   const posts = cmsLoadPosts();
   const editing = EDITING_POST ? posts.find(p => p.id == EDITING_POST) : null;
-  const post = editing || { id:null, t:'', cat:'Payroll', st:'Draft', tags:[], excerpt:'', seoTitle:'', seoDesc:'', slug:'', author:'Sarah Mitchell', d: new Date().toISOString().split('T')[0], scheduledFor:'', bodyHTML:'', e:'📝' };
+  const post = editing || { id:null, t:'', cat:'Payroll', st:'Draft', tags:[], excerpt:'', seoTitle:'', seoDesc:'', slug:'', author:'Sterling Tax Expert Editorial Team', d: new Date().toISOString().split('T')[0], scheduledFor:'', bodyHTML:'', e:'📝' };
   EDITING_POST = null;
   return `
     <div class="adm-bar">
@@ -520,7 +520,7 @@ function readEditorState(){
     seoDesc: document.getElementById('ep-seo-desc')?.value || '',
     bodyHTML: document.getElementById('ep-body')?.innerHTML || '',
     slug: document.getElementById('ep-slug')?.textContent || '',
-    author: 'Sarah Mitchell',
+    author: 'Sterling Tax Expert Editorial Team',
   };
 }
 
@@ -784,7 +784,7 @@ function renderAccountTab(){
         <div class="ed-card-h">Profile</div>
         <div class="ed-card-b">
           <div class="fg"><div class="fl">Username</div><input class="fi" type="text" value="admin" disabled></div>
-          <div class="fg"><div class="fl">Display name</div><input class="fi" type="text" value="Sarah Mitchell"></div>
+          <div class="fg"><div class="fl">Display name</div><input class="fi" type="text" value="Sterling Tax Expert Editorial Team"></div>
           <div class="fg"><div class="fl">Email</div><input class="fi" type="email" value="sarah@sterlingtaxexpert.co.uk"></div>
           <button class="btn btn-navy btn-sm" onclick="showToast('Saved')">Save profile</button>
         </div>

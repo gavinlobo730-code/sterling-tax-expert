@@ -566,7 +566,7 @@ function renderFeaturedArticle(p){
       <h2 class="fa-h">${p.t}</h2>
       <p class="fa-p">${(p.excerpt || stripHTML(p.bodyHTML || '').slice(0, 200) + '…')}</p>
       <div class="fa-meta">
-        <span>By <strong style="color:var(--navy)">${p.author || 'Sarah Mitchell'}</strong></span>
+        <span>By <strong style="color:var(--navy)">${p.author || 'Sterling Tax Expert Editorial Team'}</strong></span>
         <span>·</span>
         <span>${formatDate(p.d)}</span>
         <span>·</span>
@@ -634,7 +634,7 @@ function mountPost(id){
         </div>
         <h1 class="post-h1">${post.t}</h1>
         <div class="post-meta">
-          <span>By <strong>${post.author || 'Sarah Mitchell'}</strong></span>
+          <span>By <strong>${post.author || 'Sterling Tax Expert Editorial Team'}</strong></span>
           <span>·</span>
           <span>${formatDate(post.d)}</span>
           <span>·</span>
