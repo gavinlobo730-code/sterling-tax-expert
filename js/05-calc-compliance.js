@@ -2,56 +2,6 @@
    Sterling Tax Expert — Calculators (Compliance + Tax)
    ─────────────────────────────────────────────────────────── */
 
-// ─────────────────────────────────────────────────────────
-// AUTO-ENROLMENT PENSION CALCULATOR
-// ─────────────────────────────────────────────────────────
-CALCS['auto-enrol'] = {
-  id: 'auto-enrol',
-  title: 'Auto-Enrolment Pension Calculator',
-  subtitle: 'Workplace pension on qualifying earnings (£6,240–£50,270) at the statutory minimum of 8% (5% employee + 3% employer).',
-  inputs: [
-    { id:'salary',     type:'currency', label:'Annual salary',           default:30000 },
-    { id:'empRate',    type:'number',   label:'Employee contribution',   default:5, suffix:'%', step:0.5, min:0, max:30 },
-    { id:'erRate',     type:'number',   label:'Employer contribution',   default:3, suffix:'%', step:0.5, min:0, max:30 },
-    { id:'basis',      type:'toggle',   label:'Contribution basis',      default:'qe', options:[{v:'qe',l:'Qualifying earnings'},{v:'full',l:'Full salary'}] },
-  ],
-  calculate(s){
-    const T = window.TAX;
-    const qe = Math.max(0, Math.min(s.salary, T.AE_UPPER) - T.AE_LOWER);
-    const base = s.basis === 'qe' ? qe : s.salary;
-    const empContrib = base * (s.empRate / 100);
-    const erContrib = base * (s.erRate / 100);
-    const total = empContrib + erContrib;
-    const minOK = (s.empRate + s.erRate) >= 8 && s.erRate >= 3;
-    return { qe, base, empContrib, erContrib, total, minOK, lower:T.AE_LOWER, upper:T.AE_UPPER };
-  },
-  render(r){
-    return `
-      ${kpiRow([
-        kpi('Total annual contribution', fmt(r.total),      { color:'primary', monthly: fmt(r.total/12) + ' / month' }),
-        kpi('Employee contribution',     fmt(r.empContrib), { color:'gold',    monthly: fmt(r.empContrib/12) + ' / month' }),
-        kpi('Employer contribution',     fmt(r.erContrib),  { color:'green',   monthly: fmt(r.erContrib/12) + ' / month' }),
-      ])}
-      <div class="breakdown">
-        <div class="bk-header"><div class="bk-title">Qualifying earnings band (2026/27)</div></div>
-        ${bkRow('Salary',                       '#6B748F', window._lastCalc?.state.salary || 0, window._lastCalc?.state.salary || 0)}
-        ${bkRow(`Lower limit £${r.lower}`,      '#9BA3BD', r.lower, window._lastCalc?.state.salary || 0)}
-        ${bkRow(`Upper limit £${r.upper}`,      '#9BA3BD', r.upper, window._lastCalc?.state.salary || 0)}
-        ${bkRow('Qualifying earnings',          '#1A55CC', r.qe, window._lastCalc?.state.salary || 0, true)}
-      </div>
-      ${r.minOK
-        ? notesCard('Compliant', `Your scheme meets the statutory minimum of <strong>8% total</strong>, with at least <strong>3% from the employer</strong>. ✓`)
-        : `<div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:12px;padding:18px"><div style="font-size:13px;font-weight:700;color:#991B1B;margin-bottom:4px">Below statutory minimum</div><div style="font-size:12.5px;color:var(--t2);line-height:1.7">Statutory minimum is 8% total contribution with at least 3% from the employer. Adjust your rates above.</div></div>`
-      }
-      ${actionsRow()}
-    `;
-  },
-  related: ['paye','salary-sacrifice','employer-ni']
-};
-
-// ─────────────────────────────────────────────────────────
-// MINIMUM WAGE CHECKER
-// ─────────────────────────────────────────────────────────
 CALCS['min-wage'] = {
   id: 'min-wage',
   title: 'Minimum Wage Checker',
