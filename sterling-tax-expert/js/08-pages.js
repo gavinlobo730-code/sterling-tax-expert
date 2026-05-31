@@ -546,14 +546,179 @@ function mountDeadlines(){
       </div>
       <div id="dl-content"></div>
     </div></div>
+    <div class="sec sec-sm" style="background:var(--g50);border-top:1px solid var(--br)">
+      <div class="sec-inner">
+        <div class="eyebrow ey-blue" style="margin-bottom:10px">Companies House</div>
+        <h2 style="font-family:var(--sans);font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-0.5px;margin-bottom:8px">Company filing deadline lookup</h2>
+        <p style="font-size:14px;color:var(--t2);max-width:560px;line-height:1.75;margin-bottom:20px">Search by company name or number to see live filing deadlines direct from Companies House — then export them straight to your calendar.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:620px">
+          <input id="ch-query" class="ci-input no-prefix" type="text" placeholder="Company name or number (e.g. 12345678)" style="flex:1;min-width:220px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;outline:none">
+          <button class="btn btn-indigo" onclick="chSearch()" style="white-space:nowrap">🔍 Search</button>
+        </div>
+        <div id="ch-results" style="margin-top:22px"></div>
+      </div>
+    </div>
     ${renderCTABand()}
     ${renderFooter()}
   `;
   renderDLContent();
   updateBreadcrumbs('deadlines');
+  // Allow Enter key to trigger search
+  setTimeout(() => {
+    const q = document.getElementById('ch-query');
+    if (q) q.addEventListener('keydown', e => { if (e.key === 'Enter') chSearch(); });
+  }, 100);
 }
 function setDLView(v){ CURRENT_DL_VIEW = v; mountDeadlines(); }
 function setDLCat(c){ CURRENT_DL_CAT = c; renderDLContent(); }
+
+// ── Companies House deadline lookup ───────────────────────
+const CH_KEY = 'c8ff731a-37ac-44fe-98a8-d4a3e5141la7';
+const CH_BASE = 'https://api.company-information.service.gov.uk';
+
+async function chFetch(path) {
+  const res = await fetch(CH_BASE + path, {
+    headers: { 'Authorization': 'Basic ' + btoa(CH_KEY + ':') }
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+async function chSearch() {
+  const raw = (document.getElementById('ch-query') || {}).value || '';
+  const q = raw.trim();
+  if (!q) return;
+  const out = document.getElementById('ch-results');
+  if (!out) return;
+  out.innerHTML = '<div style="color:var(--t2);font-size:14px">Searching…</div>';
+
+  try {
+    // If it looks like a company number (8 digits, possibly with leading zeros) go direct
+    const isNum = /^[0-9A-Za-z]{8}$/.test(q.replace(/\s/g,''));
+    if (isNum) {
+      await chLoadCompany(q.replace(/\s/g,'').toUpperCase(), out);
+    } else {
+      const data = await chFetch('/search/companies?q=' + encodeURIComponent(q) + '&items_per_page=8');
+      const items = (data.items || []);
+      if (!items.length) { out.innerHTML = '<div style="color:var(--t2);font-size:14px">No companies found. Try the company number instead.</div>'; return; }
+      out.innerHTML = '<div style="font-size:13px;font-weight:600;color:var(--t2);margin-bottom:10px">Select a company</div>'
+        + items.map(c => `
+          <div class="ch-result-row" onclick="chLoadCompany('${escapeAttr(c.company_number)}', document.getElementById('ch-results'))">
+            <div class="ch-res-name">${escapeHtml(c.title)}</div>
+            <div class="ch-res-meta">${escapeHtml(c.company_number)} · ${escapeHtml(c.company_status || '')} · ${escapeHtml((c.address_snippet||'').split(',')[0] || '')}</div>
+          </div>`).join('');
+    }
+  } catch(e) {
+    out.innerHTML = '<div style="color:var(--red);font-size:14px">Error: ' + escapeHtml(e.message) + '. Please try again.</div>';
+  }
+}
+
+async function chLoadCompany(number, out) {
+  out.innerHTML = '<div style="color:var(--t2);font-size:14px">Loading company details…</div>';
+  try {
+    const [profile, filing] = await Promise.all([
+      chFetch('/company/' + number),
+      chFetch('/company/' + number + '/filing-history?items_per_page=5')
+    ]);
+
+    const name = profile.company_name || number;
+    const status = profile.company_status || '';
+    const type = profile.type || '';
+    const inc = profile.date_of_creation || '';
+    const addr = profile.registered_office_address || {};
+    const addrStr = [addr.address_line_1, addr.address_line_2, addr.locality, addr.postal_code].filter(Boolean).join(', ');
+
+    // Deadlines
+    const deadlines = [];
+    const ar = profile.annual_return || {};
+    const acc = profile.accounts || {};
+    const conf = profile.confirmation_statement || {};
+
+    if (conf.next_due) deadlines.push({ label: 'Confirmation statement due', date: conf.next_due, overdue: conf.overdue, icon: '📋' });
+    if (conf.next_made_up_to) deadlines.push({ label: 'Confirmation statement made up to', date: conf.next_made_up_to, overdue: false, icon: '📅', note: true });
+    if (acc.next_due) deadlines.push({ label: 'Accounts due', date: acc.next_due, overdue: acc.overdue, icon: '📊' });
+    if (acc.next_accounts && acc.next_accounts.due_on) deadlines.push({ label: 'Accounts due', date: acc.next_accounts.due_on, overdue: acc.next_accounts.overdue, icon: '📊' });
+    if (acc.next_accounts && acc.next_accounts.period_end_on) deadlines.push({ label: 'Accounts period end', date: acc.next_accounts.period_end_on, overdue: false, icon: '📅', note: true });
+
+    // Remove duplicates by label
+    const seen = new Set();
+    const unique = deadlines.filter(d => { if (seen.has(d.label)) return false; seen.add(d.label); return true; });
+
+    const dlRows = unique.length ? unique.map(d => {
+      const dObj = new Date(d.date);
+      const diff = Math.ceil((dObj - new Date()) / 86400000);
+      const badge = d.overdue
+        ? '<span style="background:#FEE2E2;color:#DC2626;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:8px">OVERDUE</span>'
+        : diff <= 30
+          ? '<span style="background:#FEF3C7;color:#D97706;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:8px">Due soon</span>'
+          : '<span style="background:#DCFCE7;color:#16A34A;font-size:11px;font-weight:700;padding:2px 7px;border-radius:4px;margin-left:8px">On track</span>';
+      return `<div class="ch-dl-row">
+        <span class="ch-dl-icon">${d.icon}</span>
+        <div class="ch-dl-info">
+          <div class="ch-dl-label">${escapeHtml(d.label)}${d.note ? '' : badge}</div>
+          <div class="ch-dl-date">${dObj.toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'})}${!d.note && diff >= 0 ? ' <span style="color:var(--t3)">(' + diff + ' days)</span>' : ''}</div>
+        </div>
+      </div>`;
+    }).join('') : '<div style="color:var(--t2);font-size:14px;padding:12px 0">No upcoming deadline data available for this company.</div>';
+
+    // Build .ics for this company's deadlines
+    const exportable = unique.filter(d => !d.note && d.date);
+
+    out.innerHTML = `
+      <div class="ch-card">
+        <div class="ch-card-header">
+          <div>
+            <div class="ch-card-name">${escapeHtml(name)}</div>
+            <div class="ch-card-meta">
+              ${escapeHtml(number)} · ${escapeHtml(type)} · <span style="color:${status==='active'?'#16A34A':'#DC2626'};font-weight:600;text-transform:capitalize">${escapeHtml(status)}</span>
+              ${inc ? ' · Incorporated ' + new Date(inc).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : ''}
+            </div>
+            ${addrStr ? `<div class="ch-card-addr">${escapeHtml(addrStr)}</div>` : ''}
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="chSearch()" style="white-space:nowrap;margin-top:4px">← Back</button>
+        </div>
+        <div class="ch-dl-list">${dlRows}</div>
+        ${exportable.length ? `
+        <div class="ch-card-actions">
+          <button class="btn btn-navy btn-sm" onclick="chExportIcs(${JSON.stringify(exportable)}, ${JSON.stringify(name)})">⬇ Download .ics (Google / Outlook / Apple)</button>
+          <a class="btn btn-ghost btn-sm" href="https://find-and-update.company-information.service.gov.uk/company/${encodeURIComponent(number)}" target="_blank" rel="noopener">View on Companies House ↗</a>
+        </div>` : ''}
+      </div>`;
+  } catch(e) {
+    out.innerHTML = '<div style="color:var(--red);font-size:14px">Could not load company. Check the number and try again. (' + escapeHtml(e.message) + ')</div>';
+  }
+}
+
+function chExportIcs(deadlines, companyName) {
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Sterling Tax Expert//Companies House Deadlines//EN',
+    'X-WR-CALNAME:' + companyName + ' — Companies House deadlines',
+    'X-WR-TIMEZONE:Europe/London',
+    'CALSCALE:GREGORIAN'
+  ];
+  deadlines.forEach(d => {
+    const dt = d.date.replace(/-/g,'');
+    const uid = 'ch-' + dt + '-' + d.label.replace(/\s+/g,'-').toLowerCase() + '@sterling-tax-expert';
+    lines.push('BEGIN:VEVENT',
+      'UID:' + uid,
+      'DTSTART;VALUE=DATE:' + dt,
+      'DTEND;VALUE=DATE:' + dt,
+      'SUMMARY:' + companyName + ' — ' + d.label,
+      'DESCRIPTION:Filing deadline for ' + companyName + ' (' + d.label + '). Via Sterling Tax Expert.',
+      'BEGIN:VALARM','TRIGGER:-P14D','ACTION:DISPLAY','DESCRIPTION:14-day reminder: ' + d.label,'END:VALARM',
+      'BEGIN:VALARM','TRIGGER:-P7D','ACTION:DISPLAY','DESCRIPTION:7-day reminder: ' + d.label,'END:VALARM',
+      'END:VEVENT');
+  });
+  lines.push('END:VCALENDAR');
+  triggerDownload(lines.join('\r\n'), companyName.replace(/[^a-z0-9]/gi,'-').toLowerCase() + '-deadlines.ics', 'text/calendar');
+  showToast('Calendar file downloaded');
+}
+
+function escapeHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 function filteredDLs(){
   return window.DEADLINES.filter(d => CURRENT_DL_CAT === 'All' || d.cat === CURRENT_DL_CAT)

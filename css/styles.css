@@ -2279,3 +2279,25 @@ code, pre, kbd {
   .ft-head{display:none}
   .ft-row{grid-template-columns:1fr 1fr;gap:4px}
 }
+
+/* ── Companies House lookup ──────────────────────────────── */
+.ch-result-row{padding:10px 14px;border:1.5px solid var(--br);border-radius:8px;cursor:pointer;margin-bottom:8px;transition:border-color .15s,background .15s}
+.ch-result-row:hover{border-color:var(--blue2);background:#F0F4FF}
+.ch-res-name{font-size:14px;font-weight:700;color:var(--navy)}
+.ch-res-meta{font-size:12px;color:var(--t2);margin-top:2px}
+.ch-card{background:#fff;border:1.5px solid var(--br);border-radius:12px;overflow:hidden}
+.ch-card-header{display:flex;justify-content:space-between;align-items:flex-start;padding:18px 22px;border-bottom:1px solid var(--br);background:var(--g50);gap:12px}
+.ch-card-name{font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-.3px}
+.ch-card-meta{font-size:12px;color:var(--t2);margin-top:4px}
+.ch-card-addr{font-size:12px;color:var(--t3);margin-top:3px}
+.ch-dl-list{padding:16px 22px;display:flex;flex-direction:column;gap:12px}
+.ch-dl-row{display:flex;align-items:flex-start;gap:12px}
+.ch-dl-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.ch-dl-info{flex:1}
+.ch-dl-label{font-size:14px;font-weight:700;color:var(--navy)}
+.ch-dl-date{font-size:13px;color:var(--t2);margin-top:2px}
+.ch-card-actions{padding:14px 22px;border-top:1px solid var(--br);background:var(--g50);display:flex;gap:8px;flex-wrap:wrap}
+@media(max-width:600px){
+  .ch-card-header{flex-direction:column}
+  .ch-card-actions{flex-direction:column}
+}
