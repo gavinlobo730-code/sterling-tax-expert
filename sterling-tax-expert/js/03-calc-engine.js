@@ -96,6 +96,53 @@ function recalc(){
   wrap.innerHTML = calc.render(results, state);
   window._lastCalc = { calc, state, results };
   if (calc.afterRecalc) calc.afterRecalc(state);
+  _animateResults(wrap);
+}
+
+function _animateResults(wrap){
+  // 1. Row-by-row stagger: each direct child slides up and fades in
+  const children = Array.from(wrap.children);
+  children.forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(28px)';
+    el.style.transition = 'none';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        el.style.transition = 'opacity 0.48s cubic-bezier(0.22,1,0.36,1) ' + (i * 70) + 'ms, transform 0.48s cubic-bezier(0.22,1,0.36,1) ' + (i * 70) + 'ms';
+        el.style.opacity = '1';
+        el.style.transform = 'none';
+      });
+    });
+  });
+
+  // 2. Number roll: count up £ figures inside .kpi-value elements
+  wrap.querySelectorAll('.kpi-value').forEach((el, idx) => {
+    const raw = el.textContent.trim();
+    // Match values like £12,345.67 or £1,234 or −£567
+    const match = raw.match(/^(−?)£([\d,]+\.?\d*)(%?)$/);
+    if (!match) return;
+    const negative = match[1] === '−';
+    const target = parseFloat(match[2].replace(/,/g, ''));
+    const suffix = match[3];
+    if (!isFinite(target) || target === 0) return;
+    const decimals = match[2].includes('.') ? match[2].split('.')[1].length : 0;
+    const duration = 650;
+    const delay = idx * 55;
+    const start = performance.now() + delay;
+    const original = el.textContent; // fallback
+
+    function tick(now){
+      if (now < start) { requestAnimationFrame(tick); return; }
+      const elapsed = Math.min(now - start, duration);
+      // ease-out cubic
+      const t = 1 - Math.pow(1 - elapsed / duration, 3);
+      const current = target * t;
+      el.textContent = (negative ? '−' : '') + '£' + current.toLocaleString('en-GB', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
+      if (elapsed < duration) requestAnimationFrame(tick);
+      else el.textContent = original; // snap to exact original string
+    }
+    requestAnimationFrame(tick);
+  });
 }
 
 function resetCalc(){
