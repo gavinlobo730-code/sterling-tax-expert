@@ -187,9 +187,11 @@ window.TOOLS = [
   { id:'shpp',          cat:'Statutory',   icon:'👪', title:'Shared Parental Pay Calculator',         desc:'Up to 37 weeks of shared parental pay divisible between parents at £194.32 or 90% AWE.',                             tags:['Shared parental','37 weeks','Split'],   badge:'tb-new', badgeText:'New',      color:'tc-purple', iconBg:'ti-purple' },
   { id:'marginal',      cat:'Tax',         icon:'📐', title:'Marginal Relief Calculator',             desc:'Standalone marginal-relief explorer for profits between £50,000 and £250,000 — the CT band.',                         tags:['MR fraction','£50k–£250k','26.5% eff'], badge:'tb-new', badgeText:'New',      color:'tc-purple', iconBg:'ti-purple' },
 
+  // Healthcare
+  { id:'nhs-payroll', cat:'Healthcare', icon:'🏥', title:'NHS Payroll & Pension Calculator', desc:'Take-home pay, NHS pension contribution tier, CARE accrual projections and annual allowance risk — for doctors, consultants, GPs, nurses and AHPs.', tags:['NHS pension','CARE scheme','Annual allowance','AA risk'], badge:'tb-upd', badgeText:'2026/27', color:'tc-blue', iconBg:'ti-blue' },
 ];
 
-window.TOOL_CATS = ['All','Payroll','Statutory','Compliance','Tax'];
+window.TOOL_CATS = ['All','Payroll','Statutory','Compliance','Tax','Healthcare'];
 
 /* ── HMRC headline rates (for tools hub widget) ─────────── */
 window.RATES_HEADLINE = [
