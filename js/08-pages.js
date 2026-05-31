@@ -573,13 +573,8 @@ function setDLView(v){ CURRENT_DL_VIEW = v; mountDeadlines(); }
 function setDLCat(c){ CURRENT_DL_CAT = c; renderDLContent(); }
 
 // ── Companies House deadline lookup ───────────────────────
-const CH_KEY = 'c8ff731a-37ac-44fe-98a8-d4a3e5141la7';
-const CH_BASE = 'https://api.company-information.service.gov.uk';
-
 async function chFetch(path) {
-  const res = await fetch(CH_BASE + path, {
-    headers: { 'Authorization': 'Basic ' + btoa(CH_KEY + ':') }
-  });
+  const res = await fetch('/api/ch?path=' + encodeURIComponent(path));
   if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
