@@ -546,35 +546,60 @@ function mountDeadlines(){
       </div>
       <div id="dl-content"></div>
     </div></div>
-    <div class="sec sec-sm" style="background:var(--g50);border-top:1px solid var(--br)">
-      <div class="sec-inner">
-        <div class="eyebrow ey-blue" style="margin-bottom:10px">Companies House</div>
-        <h2 style="font-family:var(--sans);font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-0.5px;margin-bottom:8px">Company filing deadline lookup</h2>
-        <p style="font-size:14px;color:var(--t2);max-width:560px;line-height:1.75;margin-bottom:20px">Search by company name or number to see live filing deadlines direct from Companies House — then export them straight to your calendar.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:620px">
-          <input id="ch-query" class="ci-input no-prefix" type="text" placeholder="Company name or number (e.g. 12345678)" style="flex:1;min-width:220px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;outline:none">
-          <button class="btn btn-indigo" onclick="chSearch()" style="white-space:nowrap">🔍 Search</button>
-        </div>
-        <div id="ch-results" style="margin-top:22px"></div>
-      </div>
-    </div>
-    <div class="sec sec-sm" style="border-top:1px solid var(--br)">
-      <div class="sec-inner">
-        <div class="eyebrow ey-blue" style="margin-bottom:10px">HMRC VAT</div>
-        <h2 style="font-family:var(--sans);font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-0.5px;margin-bottom:8px">VAT number lookup</h2>
-        <p style="font-size:14px;color:var(--t2);max-width:560px;line-height:1.75;margin-bottom:20px">Verify any UK VAT number instantly using HMRC's live API — checks registration status, business name and address. Useful before reclaiming input tax from a supplier.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;max-width:620px">
-          <input id="vat-query" class="ci-input no-prefix" type="text" placeholder="VAT number (e.g. GB123456789 or 123456789)" style="flex:1;min-width:220px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;outline:none">
-          <button class="btn btn-indigo" onclick="vatLookup()" style="white-space:nowrap">🔍 Verify</button>
-        </div>
-        <div id="vat-results" style="margin-top:22px"></div>
-      </div>
-    </div>
     ${renderCTABand()}
     ${renderFooter()}
   `;
   renderDLContent();
   updateBreadcrumbs('deadlines');
+}
+
+// ── Scout page ─────────────────────────────────────────────
+function mountScout() {
+  const wrap = document.getElementById('page-scout');
+  if (!wrap) return;
+  wrap.innerHTML = `
+    <div class="crumbs"></div>
+    <div style="background:var(--g50);border-bottom:1px solid var(--br)">
+      <div style="max-width:1280px;margin:0 auto;padding:42px 28px 32px">
+        <div class="eyebrow ey-blue">Scout</div>
+        <h1 style="font-family:var(--sans);font-size:32px;font-weight:800;color:var(--navy);letter-spacing:-1px;margin-bottom:11px">Company &amp; VAT intelligence</h1>
+        <p style="font-size:14px;color:var(--t2);max-width:600px;line-height:1.75">Live data from Companies House and HMRC. Look up filing deadlines for any UK company and verify VAT numbers before you trade.</p>
+      </div>
+    </div>
+
+    <div class="sec sec-sm">
+      <div class="sec-inner">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;max-width:1100px">
+
+          <div>
+            <div class="eyebrow ey-blue" style="margin-bottom:10px">Companies House</div>
+            <h2 style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin-bottom:8px">Company filing deadlines</h2>
+            <p style="font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:18px">Search by company name or number to see live filing deadlines — confirmation statement, accounts due and more. Export straight to your calendar.</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+              <input id="ch-query" class="ci-input no-prefix" type="text" placeholder="Company name or number" style="flex:1;min-width:180px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;outline:none">
+              <button class="btn btn-indigo" onclick="chSearch()" style="white-space:nowrap">🔍 Search</button>
+            </div>
+            <div id="ch-results"></div>
+          </div>
+
+          <div>
+            <div class="eyebrow ey-blue" style="margin-bottom:10px">HMRC VAT</div>
+            <h2 style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin-bottom:8px">VAT number verification</h2>
+            <p style="font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:18px">Enter a UK VAT number to instantly verify it against HMRC's live register. Returns business name, address and registration date.</p>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+              <input id="vat-query" class="ci-input no-prefix" type="text" placeholder="VAT number (e.g. GB123456789)" style="flex:1;min-width:180px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;outline:none">
+              <button class="btn btn-indigo" onclick="vatLookup()" style="white-space:nowrap">🔍 Verify</button>
+            </div>
+            <div id="vat-results"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    ${renderCTABand()}
+    ${renderFooter()}
+  `;
+  updateBreadcrumbs('scout');
   setTimeout(() => {
     const q = document.getElementById('ch-query');
     if (q) q.addEventListener('keydown', e => { if (e.key === 'Enter') chSearch(); });
@@ -1236,6 +1261,7 @@ function renderFooter(){
       <div class="f-col"><h4>Resources</h4>
         <a onclick="navigate('insights')">Insights</a>
         <a onclick="navigate('deadlines')">Tax deadlines</a>
+        <a onclick="navigate('scout')">Scout</a>
         <a onclick="navigate('insights');setTimeout(()=>setCatFilter('Payroll'),300)">Payroll guides</a>
         <a onclick="navigate('insights');setTimeout(()=>setCatFilter('VAT'),300)">VAT guides</a>
         <a onclick="navigate('insights');setTimeout(()=>setCatFilter('Corporation tax'),300)">Corp tax guides</a>

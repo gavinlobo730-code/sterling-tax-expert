@@ -64,6 +64,7 @@ function navigate(page, param = null, opts = {}){
     if (page === 'insights') mountInsights();
     if (page === 'post') mountPost(param);
     if (page === 'deadlines') mountDeadlines();
+    if (page === 'scout')    mountScout();
     if (page === 'about') mountAbout();
     if (page === 'contact') mountContact();
     if (page === 'calc')    mountCalc(param);
@@ -92,7 +93,7 @@ function updateNavActive(page){
   const map = {
     home:'nl-home', services:'nl-services', tools:'nl-tools-link', calc:'nl-tools-link',
     insights:'nl-insights', post:'nl-insights', article:'nl-insights', deadlines:'nl-deadlines',
-    about:'nl-about', contact:'nl-contact'
+    scout:'nl-scout', about:'nl-about', contact:'nl-contact'
   };
   const cls = map[page];
   if (cls) document.querySelectorAll('.' + cls).forEach(x => x.classList.add('on'));
@@ -116,6 +117,7 @@ function updateBreadcrumbs(page, param){
       { l: postTitle(param), h:1 }
     ] : null,
     deadlines: [{ l:'Home', p:'home' }, { l:'Deadlines', h:1 }],
+    scout:    [{ l:'Home', p:'home' }, { l:'Scout', h:1 }],
     about: [{ l:'Home', p:'home' }, { l:'About', h:1 }],
     contact: [{ l:'Home', p:'home' }, { l:'Contact', h:1 }],
     admin:   null,
