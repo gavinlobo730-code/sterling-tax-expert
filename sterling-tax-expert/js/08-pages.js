@@ -569,9 +569,7 @@ function mountScout() {
 
     <div class="sec sec-sm">
       <div class="sec-inner">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;max-width:1100px">
-
-          <div>
+        <div style="max-width:620px">
             <div class="eyebrow ey-blue" style="margin-bottom:10px">Companies House</div>
             <h2 style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin-bottom:8px">Company filing deadlines</h2>
             <p style="font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:18px">Search by company name or number to see live filing deadlines — confirmation statement, accounts due and more. Export straight to your calendar.</p>
@@ -580,19 +578,6 @@ function mountScout() {
               <button class="btn btn-indigo" onclick="chSearch()" style="white-space:nowrap">🔍 Search</button>
             </div>
             <div id="ch-results"></div>
-          </div>
-
-          <div>
-            <div class="eyebrow ey-blue" style="margin-bottom:10px">HMRC VAT</div>
-            <h2 style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin-bottom:8px">VAT number verification</h2>
-            <p style="font-size:13.5px;color:var(--t2);line-height:1.75;margin-bottom:18px">Enter a UK VAT number to instantly verify it against HMRC's live register. Returns business name, address and registration date.</p>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
-              <input id="vat-query" class="ci-input no-prefix" type="text" placeholder="VAT number (e.g. GB123456789)" style="flex:1;min-width:180px;padding:10px 14px;border-radius:8px;border:1.5px solid var(--br);font-size:14px;outline:none">
-              <button class="btn btn-indigo" onclick="vatLookup()" style="white-space:nowrap">🔍 Verify</button>
-            </div>
-            <div id="vat-results"></div>
-          </div>
-
         </div>
       </div>
     </div>
@@ -603,8 +588,6 @@ function mountScout() {
   setTimeout(() => {
     const q = document.getElementById('ch-query');
     if (q) q.addEventListener('keydown', e => { if (e.key === 'Enter') chSearch(); });
-    const v = document.getElementById('vat-query');
-    if (v) v.addEventListener('keydown', e => { if (e.key === 'Enter') vatLookup(); });
   }, 100);
 }
 function setDLView(v){ CURRENT_DL_VIEW = v; mountDeadlines(); }
@@ -753,52 +736,6 @@ function escapeHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ── HMRC VAT number lookup ────────────────────────────────
-async function vatLookup() {
-  const raw = (document.getElementById('vat-query') || {}).value || '';
-  // Strip GB prefix and spaces/dashes
-  const num = raw.trim().replace(/^GB/i,'').replace(/[\s\-]/g,'');
-  const out = document.getElementById('vat-results');
-  if (!out) return;
-
-  if (!/^\d{9}(\d{3})?$/.test(num)) {
-    out.innerHTML = '<div style="color:var(--red);font-size:14px">Enter a valid UK VAT number — 9 digits, optionally preceded by GB (e.g. GB123456789).</div>';
-    return;
-  }
-
-  out.innerHTML = '<div style="color:var(--t2);font-size:14px">Verifying with HMRC…</div>';
-
-  try {
-    const res = await fetch('/api/vat?number=' + encodeURIComponent(num));
-    const data = await res.json();
-    if (res.status === 404 || (res.status === 200 && !data.target)) {
-      out.innerHTML = '<div class="vat-card vat-invalid"><div class="vat-status-row"><span class="vat-badge vat-badge-invalid">✗ Not found in public register</span></div><div class="vat-msg">VAT number <strong>GB' + escapeHtml(num) + '</strong> was not found in HMRC\'s public VAT register. The number may be valid but opted out of public lookup, or may not be registered.</div></div>';
-      return;
-    }
-    if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + JSON.stringify(data));
-    const t = data.target || {};
-    const addr = t.address || {};
-    const addrParts = [addr.line1, addr.line2, addr.line3, addr.line4, addr.line5, addr.postcode].filter(Boolean);
-    const regDate = t.vatRegistrationDate ? new Date(t.vatRegistrationDate).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}) : null;
-
-    out.innerHTML = `
-      <div class="vat-card vat-valid">
-        <div class="vat-status-row">
-          <span class="vat-badge vat-badge-valid">✓ Valid VAT number</span>
-          <span style="font-size:12px;color:var(--t2)">Source: HMRC live API</span>
-        </div>
-        <div class="vat-grid">
-          <div class="vat-field"><div class="vat-field-label">VAT number</div><div class="vat-field-value">GB${escapeHtml(num)}</div></div>
-          <div class="vat-field"><div class="vat-field-label">Business name</div><div class="vat-field-value">${escapeHtml(t.name || '—')}</div></div>
-          ${regDate ? `<div class="vat-field"><div class="vat-field-label">VAT registration date</div><div class="vat-field-value">${regDate}</div></div>` : ''}
-          ${addrParts.length ? `<div class="vat-field"><div class="vat-field-label">Registered address</div><div class="vat-field-value">${addrParts.map(escapeHtml).join(', ')}</div></div>` : ''}
-        </div>
-        <div class="vat-disclaimer">This result is from HMRC's live VAT registration API. Always verify supplier VAT numbers before reclaiming input tax.</div>
-      </div>`;
-  } catch(e) {
-    out.innerHTML = '<div style="color:var(--red);font-size:14px">Could not verify — HMRC API may be temporarily unavailable. Try again shortly. (' + escapeHtml(e.message) + ')</div>';
-  }
-}
 
 function filteredDLs(){
   return window.DEADLINES.filter(d => CURRENT_DL_CAT === 'All' || d.cat === CURRENT_DL_CAT)
