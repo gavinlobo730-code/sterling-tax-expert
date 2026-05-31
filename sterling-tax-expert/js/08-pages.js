@@ -231,52 +231,60 @@ function iconBg(cat){
 // ─────────────────────────────────────────────────────────
 // SERVICES
 // ─────────────────────────────────────────────────────────
+const SERVICE_DETAILS = [
+  {
+    who: 'Businesses of any size with employees',
+    long: 'We handle every aspect of your payroll cycle — from setting up your PAYE scheme to submitting Real Time Information (RTI) each pay period. Whether you run weekly, fortnightly or monthly payroll for 1 employee or 100, we take complete ownership so you can focus on running your business.',
+    includes: ['Monthly or weekly payroll processing', 'RTI submissions to HMRC every pay period', 'P60, P45 and P11D preparation', 'Auto-enrolment and pension contributions management', 'Payslip distribution and record-keeping', 'HMRC correspondence and query handling'],
+    why: 'Payroll errors are costly — late RTI submissions attract automatic penalties and incorrect deductions can trigger HMRC investigations. We eliminate that risk entirely.'
+  },
+  {
+    who: 'VAT-registered businesses',
+    long: 'We manage your VAT obligations end to end — registration, quarterly returns, scheme selection and MTD compliance. Whether you are on standard, flat rate or cash accounting, we ensure your returns are accurate and submitted on time.',
+    includes: ['MTD-compliant VAT return preparation and submission', 'Quarterly and annual filing', 'VAT registration and deregistration', 'Flat rate scheme review and optimisation', 'Partial exemption calculations where applicable', 'HMRC VAT enquiry support'],
+    why: 'VAT is one of the most error-prone areas for SMEs. Miscalculations, late submissions and incorrect scheme selection all carry penalties. We keep you compliant and often identify reclaims clients miss.'
+  },
+  {
+    who: 'Sole traders, directors and landlords',
+    long: 'We prepare and file your personal Self Assessment tax return accurately, ensuring every allowable expense is claimed and your tax liability is as low as it should legally be. We also handle payment on account planning and MTD ITSA preparation for those moving into quarterly reporting.',
+    includes: ['Personal tax return preparation and HMRC submission', 'Income and allowable expense analysis', 'Capital gains calculations where required', 'Payment on account planning and cash flow advice', 'MTD ITSA setup and quarterly update management', 'HMRC correspondence handling'],
+    why: 'The 31 January deadline is unforgiving, and penalties escalate quickly. More importantly, most self-employed individuals overpay tax because expenses are missed. We fix both problems.'
+  },
+  {
+    who: 'UK limited companies',
+    long: 'We prepare your CT600 corporation tax return, model all available deductions and reliefs — including marginal relief for profits between £50,000 and £250,000 — and manage your HMRC relationship. We also assess R&D credit eligibility where relevant.',
+    includes: ['CT600 preparation and Companies House filing coordination', 'Full deductions and capital allowances review', 'Marginal relief modelling (£50k–£250k profit range)', 'R&D tax credit eligibility assessment', 'Annual accounts preparation support', 'HMRC enquiry and investigation handling'],
+    why: 'The corporation tax rate structure introduced in 2023 means many companies are paying more than necessary without specialist modelling. We ensure you are in the right position and file on time.'
+  },
+  {
+    who: 'Contractors and subcontractors in the construction industry',
+    long: 'CIS carries strict monthly deadlines and verification requirements. We manage the full cycle — verifying subcontractors, calculating the correct deductions, and filing monthly CIS300 returns — keeping you compliant and avoiding the costly penalties that come with late or incorrect submissions.',
+    includes: ['Monthly CIS300 return preparation and submission', 'Subcontractor verification with HMRC', 'Deduction statements issued to subcontractors', 'Gross status application where eligible', 'Year-end CIS reconciliation', 'HMRC compliance reviews and query handling'],
+    why: 'HMRC actively monitors CIS compliance. Missed monthly returns, unverified subcontractors and incorrect deduction rates all carry penalties. We take the process off your hands entirely.'
+  },
+  {
+    who: 'Businesses under HMRC review or at compliance risk',
+    long: 'Whether you have received an HMRC enquiry letter, are concerned about a specific compliance area, or simply want assurance that your records and processes are sound, we provide structured compliance reviews and expert representation if things escalate.',
+    includes: ['Full compliance health check across all tax heads', 'HMRC enquiry and investigation representation', 'Risk area identification and remediation plan', 'Penalty mitigation negotiations', 'Process improvement recommendations', 'Ongoing compliance monitoring support'],
+    why: 'HMRC enquiries are stressful and time-consuming. Having a professional handle correspondence, understand the legal position and negotiate on your behalf can make a significant difference to both the outcome and the experience.'
+  },
+  {
+    who: 'Small and medium-sized businesses',
+    long: 'Accurate books are the foundation of every good business decision. We provide ongoing monthly bookkeeping — bank reconciliation, expense categorisation, supplier management — and produce clear management accounts so you always know where you stand.',
+    includes: ['Monthly bank and credit card reconciliation', 'Management accounts (P&L, balance sheet)', 'Cloud bookkeeping setup and migration (Xero / QuickBooks)', 'Expense categorisation and coding', 'Debtor and creditor reporting', 'VAT-ready transaction records'],
+    why: 'Poor bookkeeping leads to missed deductions, incorrect VAT returns and an incomplete picture of business performance. Clean books also make year-end accounts faster and cheaper to produce.'
+  },
+  {
+    who: 'Growing businesses and company directors',
+    long: 'Beyond compliance, we provide strategic financial input — cash flow forecasting, salary and dividend optimisation for directors, and financial modelling to support key decisions. We work as your finance partner, not just your accountant.',
+    includes: ['Cash flow forecasting (monthly and annual)', 'Director salary vs dividend optimisation', 'Financial modelling for growth decisions', 'KPI dashboard design and reporting', 'Exit planning and business valuation support', 'New business structure and incorporation advice'],
+    why: 'Most accountants deal with the past. We help you understand where your business is going — and how to structure it so you keep more of what you earn.'
+  },
+];
+
 function mountServices(){
   const wrap = document.getElementById('page-services');
   if (!wrap) return;
-
-  const serviceDetails = [
-    {
-      who: 'Businesses of any size with employees',
-      includes: ['Monthly payroll processing', 'RTI submissions to HMRC', 'P60, P45 and P11D preparation', 'Auto-enrolment management', 'HMRC correspondence handling'],
-      from: 'From £85/month'
-    },
-    {
-      who: 'VAT-registered businesses',
-      includes: ['MTD-compliant VAT returns', 'Quarterly submissions', 'VAT registration and deregistration', 'Flat rate scheme review', 'HMRC enquiry support'],
-      from: 'From £120/quarter'
-    },
-    {
-      who: 'Sole traders, directors and landlords',
-      includes: ['Personal tax return preparation', 'Income and expense analysis', 'HMRC submission and confirmation', 'MTD ITSA preparation', 'Tax payment planning'],
-      from: 'From £350/year'
-    },
-    {
-      who: 'UK limited companies',
-      includes: ['CT600 preparation and filing', 'Deductions and allowances review', 'Marginal relief modelling', 'R&D tax credit assessment', 'HMRC liaison and enquiry support'],
-      from: 'From £650/year'
-    },
-    {
-      who: 'Contractors and subcontractors',
-      includes: ['Monthly CIS300 returns', 'Subcontractor verification', 'Deduction statements', 'Year-end reconciliation', 'HMRC compliance reviews'],
-      from: 'From £95/month'
-    },
-    {
-      who: 'Businesses under HMRC review',
-      includes: ['Compliance health check', 'HMRC enquiry and investigation support', 'Risk area identification', 'Correspondence handling', 'Penalty mitigation'],
-      from: 'Bespoke — contact us'
-    },
-    {
-      who: 'Small to medium businesses',
-      includes: ['Monthly bank reconciliation', 'Management accounts', 'Cloud bookkeeping setup (Xero/QuickBooks)', 'Expense categorisation', 'Supplier and debtor reporting'],
-      from: 'From £150/month'
-    },
-    {
-      who: 'Growing businesses and directors',
-      includes: ['Cash flow forecasting', 'Financial modelling', 'Salary vs dividend optimisation', 'Growth and exit planning', 'KPI dashboard reporting'],
-      from: 'From £200/month'
-    },
-  ];
 
   wrap.innerHTML = `
     <div class="crumbs"></div>
@@ -285,44 +293,26 @@ function mountServices(){
         <div class="eyebrow ey-blue ta-left">Services</div>
         <h1 class="ta-left ta-d1" style="font-family:var(--sans);font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-1.2px;margin-bottom:11px">Eight pillars of UK tax expertise</h1>
         <p class="ta-left ta-d2" style="font-size:14.5px;color:var(--t2);max-width:580px;line-height:1.75">Full-service accounting for limited companies, sole traders and partnerships. Every engagement is fixed-fee — no surprises, no hidden costs — with a named senior accountant from day one.</p>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:22px">
-          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2)"><span style="width:8px;height:8px;background:#16A34A;border-radius:50%;display:inline-block"></span>Fixed-fee pricing</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2)"><span style="width:8px;height:8px;background:#16A34A;border-radius:50%;display:inline-block"></span>Named senior accountant</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2)"><span style="width:8px;height:8px;background:#16A34A;border-radius:50%;display:inline-block"></span>HMRC-aligned advice</div>
-          <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--t2)"><span style="width:8px;height:8px;background:#16A34A;border-radius:50%;display:inline-block"></span>Free initial consultation</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:22px">
+          ${['Fixed-fee pricing','Named senior accountant','HMRC-aligned advice','Free initial consultation'].map(l => `
+            <div style="display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--t2)"><span style="width:7px;height:7px;background:#16A34A;border-radius:50%;display:inline-block;flex-shrink:0"></span>${l}</div>
+          `).join('')}
         </div>
       </div>
     </div>
 
     <div class="sec"><div class="sec-inner">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px" class="ta-stagger">
-        ${(window.SVCS || []).map((s, i) => {
-          const det = serviceDetails[i] || {};
-          return `
-          <div class="ta-up" style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:28px;display:flex;flex-direction:column;transition:border-color .15s,box-shadow .15s,transform .15s" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='0 8px 32px rgba(11,30,61,.10)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'">
-            <div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:14px">
-              <div style="width:44px;height:44px;background:var(--bluel);border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0">${s.icon}</div>
-              <div>
-                <div style="font-family:var(--sans);font-size:16px;font-weight:700;color:var(--navy);margin-bottom:3px">${s.t}</div>
-                ${det.who ? `<div style="font-size:11.5px;color:var(--blue2);font-weight:600">${det.who}</div>` : ''}
-              </div>
-            </div>
-            <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:14px">${s.d}</div>
-            ${det.includes ? `
-            <div style="margin-bottom:16px">
-              <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">What's included</div>
-              <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px">
-                ${det.includes.map(item => `<li style="font-size:12.5px;color:var(--t2);display:flex;align-items:flex-start;gap:7px"><span style="color:#16A34A;font-size:13px;flex-shrink:0;margin-top:1px">✓</span>${item}</li>`).join('')}
-              </ul>
-            </div>` : ''}
-            <div style="margin-top:auto;display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--br)">
-              <div>
-                ${det.from ? `<div style="font-size:12px;color:var(--t3);margin-bottom:2px">Pricing guide</div><div style="font-size:13.5px;font-weight:700;color:var(--navy)">${det.from}</div>` : ''}
-              </div>
-              <button class="btn btn-indigo btn-sm" onclick="navigate('contact')" style="flex-shrink:0">Enquire →</button>
-            </div>
-          </div>`;
-        }).join('')}
+      <p style="font-size:13px;color:var(--t3);margin-bottom:20px">Click any service to see full details.</p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px" class="ta-stagger">
+        ${(window.SVCS || []).map((s, i) => `
+          <div class="ta-up svc-card" onclick="openServiceDetail(${i})" style="background:var(--w);border:1px solid var(--br);border-radius:var(--r);padding:24px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s" onmouseover="this.style.borderColor='var(--blue2)';this.style.boxShadow='0 8px 32px rgba(11,30,61,.10)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--br)';this.style.boxShadow='none';this.style.transform='translateY(0)'">
+            <div style="width:44px;height:44px;background:var(--bluel);border-radius:10px;display:grid;place-items:center;font-size:20px;margin-bottom:13px">${s.icon}</div>
+            <div style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px">${s.t}</div>
+            <div style="font-size:12.5px;color:var(--t2);line-height:1.65;margin-bottom:14px">${s.d}</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px">${s.tags.map(tag => `<span class="ttag">${tag}</span>`).join('')}</div>
+            <div style="font-size:12px;color:var(--blue2);font-weight:600">View full details →</div>
+          </div>
+        `).join('')}
       </div>
     </div></div>
 
@@ -348,9 +338,92 @@ function mountServices(){
 
     ${renderCTABand()}
     ${renderFooter()}
+
+    <!-- Service detail modal -->
+    <div id="svc-modal-overlay" onclick="closeServiceDetail()" style="display:none;position:fixed;inset:0;background:rgba(11,30,61,.55);z-index:900;backdrop-filter:blur(3px)"></div>
+    <div id="svc-modal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(680px,95vw);max-height:88vh;overflow-y:auto;background:var(--w);border-radius:16px;box-shadow:0 24px 80px rgba(11,30,61,.22);z-index:901;padding:36px"></div>
   `;
   updateBreadcrumbs('services');
   if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
+}
+
+function openServiceDetail(i){
+  const s = (window.SVCS || [])[i];
+  const det = SERVICE_DETAILS[i] || {};
+  if (!s) return;
+  const modal = document.getElementById('svc-modal');
+  const overlay = document.getElementById('svc-modal-overlay');
+  if (!modal || !overlay) return;
+
+  modal.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:24px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="width:52px;height:52px;background:var(--bluel);border-radius:12px;display:grid;place-items:center;font-size:24px;flex-shrink:0">${s.icon}</div>
+        <div>
+          <div style="font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-.5px">${s.t}</div>
+          ${det.who ? `<div style="font-size:12px;color:var(--blue2);font-weight:600;margin-top:2px">For: ${det.who}</div>` : ''}
+        </div>
+      </div>
+      <button onclick="closeServiceDetail()" aria-label="Close" style="background:var(--g100);border:none;border-radius:8px;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;flex-shrink:0;font-size:18px;color:var(--t2)">×</button>
+    </div>
+
+    ${det.long ? `<p style="font-size:13.5px;color:var(--t2);line-height:1.8;margin-bottom:22px">${det.long}</p>` : ''}
+
+    ${det.includes ? `
+    <div style="margin-bottom:22px">
+      <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">What's included</div>
+      <ul style="list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px">
+        ${det.includes.map(item => `
+          <li style="font-size:13px;color:var(--t1);display:flex;align-items:flex-start;gap:9px">
+            <span style="width:18px;height:18px;background:#DCFCE7;border-radius:50%;display:grid;place-items:center;flex-shrink:0;margin-top:1px">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </span>
+            ${item}
+          </li>
+        `).join('')}
+      </ul>
+    </div>` : ''}
+
+    ${det.why ? `
+    <div style="background:var(--bluel);border:1px solid var(--bluel2);border-radius:10px;padding:16px 18px;margin-bottom:24px">
+      <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Why it matters</div>
+      <p style="font-size:13px;color:var(--t2);line-height:1.75;margin:0">${det.why}</p>
+    </div>` : ''}
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-indigo" onclick="closeServiceDetail();navigate('contact')" style="padding:11px 22px">Book a free consultation →</button>
+      <button class="btn btn-ghost" onclick="closeServiceDetail()" style="padding:11px 18px">Back to services</button>
+    </div>
+  `;
+
+  overlay.style.display = 'block';
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden';
+
+  // Animate in
+  modal.style.opacity = '0';
+  modal.style.transform = 'translate(-50%,-50%) scale(0.96)';
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      modal.style.transition = 'opacity .22s ease, transform .22s ease';
+      modal.style.opacity = '1';
+      modal.style.transform = 'translate(-50%,-50%) scale(1)';
+    });
+  });
+}
+
+function closeServiceDetail(){
+  const modal = document.getElementById('svc-modal');
+  const overlay = document.getElementById('svc-modal-overlay');
+  if (!modal || !overlay) return;
+  modal.style.opacity = '0';
+  modal.style.transform = 'translate(-50%,-50%) scale(0.96)';
+  setTimeout(() => {
+    modal.style.display = 'none';
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+    modal.style.transition = '';
+  }, 200);
 }
 
 // ─────────────────────────────────────────────────────────
