@@ -188,7 +188,9 @@ window.TOOLS = [
   { id:'marginal',      cat:'Tax',         icon:'📐', title:'Marginal Relief Calculator',             desc:'Standalone marginal-relief explorer for profits between £50,000 and £250,000 — the CT band.',                         tags:['MR fraction','£50k–£250k','26.5% eff'], badge:'tb-new', badgeText:'New',      color:'tc-purple', iconBg:'ti-purple' },
 
   // Healthcare
-  { id:'nhs-payroll', cat:'Healthcare', icon:'🏥', title:'NHS Payroll & Pension Calculator', desc:'Take-home pay, NHS pension contribution tier, CARE accrual projections and annual allowance risk — for doctors, consultants, GPs, nurses and AHPs.', tags:['NHS pension','CARE scheme','Annual allowance','AA risk'], badge:'tb-upd', badgeText:'2026/27', color:'tc-blue', iconBg:'ti-blue' },
+  { id:'nhs-payroll',    cat:'Healthcare', icon:'🏥', title:'NHS Payroll & Pension Calculator',        desc:'Take-home pay, NHS pension contribution tier, CARE accrual projections and annual allowance risk — for doctors, consultants, GPs, nurses and AHPs.', tags:['NHS pension','CARE scheme','Annual allowance','AA risk'], badge:'tb-upd', badgeText:'2026/27', color:'tc-blue',   iconBg:'ti-blue'   },
+  { id:'nhs-true-cost',  cat:'Healthcare', icon:'💷', title:'NHS True Employment Cost Calculator',     desc:'Gross → net or net → gross for NHS staff. Employee take-home, NHS pension at your contribution tier, 14.38% employer pension and employer NI — full cost breakdown.',             tags:['NHS pension','Gross→Net','Net→Gross','14.38%'],             badge:'tb-new', badgeText:'New',     color:'tc-green',  iconBg:'ti-green'  },
+  { id:'nhs-payslip',    cat:'Healthcare', icon:'🧾', title:'NHS Payslip Generator & Verifier',        desc:'Generate or verify a monthly NHS payslip. Annual pensionable pay sets your pension tier automatically. Full tax code, NI category and YTD support.',                             tags:['NHS payslip','Pension tier','Monthly','PAYE'],               badge:'tb-new', badgeText:'New',     color:'tc-purple', iconBg:'ti-purple' },
 ];
 
 window.TOOL_CATS = ['All','Payroll','Statutory','Compliance','Tax','Healthcare'];
