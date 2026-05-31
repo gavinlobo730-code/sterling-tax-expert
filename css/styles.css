@@ -2301,3 +2301,18 @@ code, pre, kbd {
   .ch-card-header{flex-direction:column}
   .ch-card-actions{flex-direction:column}
 }
+
+/* ── VAT lookup ──────────────────────────────────────────── */
+.vat-card{border:1.5px solid var(--br);border-radius:12px;padding:18px 22px;max-width:620px}
+.vat-valid{border-color:#16A34A;background:#F0FDF4}
+.vat-invalid{border-color:#DC2626;background:#FEF2F2}
+.vat-status-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.vat-badge{font-size:12px;font-weight:700;padding:4px 10px;border-radius:6px}
+.vat-badge-valid{background:#DCFCE7;color:#15803D}
+.vat-badge-invalid{background:#FEE2E2;color:#DC2626}
+.vat-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.vat-field-label{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--t3);margin-bottom:3px}
+.vat-field-value{font-size:14px;font-weight:600;color:var(--navy)}
+.vat-msg{font-size:14px;color:var(--t1)}
+.vat-disclaimer{font-size:11px;color:var(--t3);border-top:1px solid #BBF7D0;padding-top:10px;line-height:1.6}
+@media(max-width:600px){.vat-grid{grid-template-columns:1fr}}
