@@ -769,7 +769,7 @@ async function vatLookup() {
   out.innerHTML = '<div style="color:var(--t2);font-size:14px">Verifying with HMRC…</div>';
 
   try {
-    const res = await fetch('https://api.service.hmrc.gov.uk/organisations/vat/check-vat-number/lookup/' + num);
+    const res = await fetch('/api/vat?number=' + encodeURIComponent(num));
     if (res.status === 404) {
       out.innerHTML = '<div class="vat-card vat-invalid"><div class="vat-status-row"><span class="vat-badge vat-badge-invalid">✗ Not registered</span></div><div class="vat-msg">VAT number <strong>GB' + escapeHtml(num) + '</strong> is not registered for VAT with HMRC.</div></div>';
       return;
