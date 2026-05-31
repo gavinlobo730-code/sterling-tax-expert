@@ -770,12 +770,12 @@ async function vatLookup() {
 
   try {
     const res = await fetch('/api/vat?number=' + encodeURIComponent(num));
-    if (res.status === 404) {
-      out.innerHTML = '<div class="vat-card vat-invalid"><div class="vat-status-row"><span class="vat-badge vat-badge-invalid">✗ Not registered</span></div><div class="vat-msg">VAT number <strong>GB' + escapeHtml(num) + '</strong> is not registered for VAT with HMRC.</div></div>';
+    const data = await res.json();
+    if (res.status === 404 || (res.status === 200 && !data.target)) {
+      out.innerHTML = '<div class="vat-card vat-invalid"><div class="vat-status-row"><span class="vat-badge vat-badge-invalid">✗ Not found in public register</span></div><div class="vat-msg">VAT number <strong>GB' + escapeHtml(num) + '</strong> was not found in HMRC\'s public VAT register. The number may be valid but opted out of public lookup, or may not be registered.</div></div>';
       return;
     }
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
+    if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + JSON.stringify(data));
     const t = data.target || {};
     const addr = t.address || {};
     const addrParts = [addr.line1, addr.line2, addr.line3, addr.line4, addr.line5, addr.postcode].filter(Boolean);

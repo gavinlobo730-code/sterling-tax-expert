@@ -26,11 +26,13 @@ export async function onRequestGet({ request }) {
   });
 
   const body = await upstream.text();
+  // Only cache successful responses — never cache 404s
+  const cacheControl = upstream.status === 200 ? 'public, max-age=3600' : 'no-store';
   return new Response(body, {
     status: upstream.status,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=3600',
+      'Cache-Control': cacheControl,
       ...corsHeaders(request)
     }
   });
