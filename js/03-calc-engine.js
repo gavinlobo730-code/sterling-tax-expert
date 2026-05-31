@@ -102,15 +102,22 @@ function recalc(){
 function _animateResults(wrap){
   // 1. Row-by-row stagger: each direct child slides up and fades in
   const children = Array.from(wrap.children);
-  children.forEach((el, i) => {
+  // Set start state synchronously so browser commits it before the transition frame
+  children.forEach((el) => {
+    el.style.willChange = 'opacity, transform';
     el.style.opacity = '0';
     el.style.transform = 'translateY(28px)';
     el.style.transition = 'none';
+  });
+  // Force a style flush so the start state is painted before we add transitions
+  void wrap.offsetHeight;
+  children.forEach((el, i) => {
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         el.style.transition = 'opacity 0.48s cubic-bezier(0.22,1,0.36,1) ' + (i * 70) + 'ms, transform 0.48s cubic-bezier(0.22,1,0.36,1) ' + (i * 70) + 'ms';
         el.style.opacity = '1';
         el.style.transform = 'none';
+        setTimeout(() => { el.style.willChange = 'auto'; }, 600 + i * 70);
       });
     });
   });
