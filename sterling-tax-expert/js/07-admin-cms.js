@@ -192,7 +192,6 @@ function renderAdminShell(){
         <div class="sb-i" data-tab="media" onclick="cmsTab('media')"><span class="sb-ic">🖼</span> Media library</div>
         <div class="sb-i" data-tab="categories" onclick="cmsTab('categories')"><span class="sb-ic">🏷</span> Categories</div>
         <div class="sb-section">Settings</div>
-        <div class="sb-i" data-tab="taxconfig" onclick="cmsTab('taxconfig')"><span class="sb-ic">⚖️</span> Tax configuration</div>
         <div class="sb-i" data-tab="seo" onclick="cmsTab('seo')"><span class="sb-ic">🔍</span> SEO defaults</div>
         <div class="sb-i" data-tab="account" onclick="cmsTab('account')"><span class="sb-ic">👤</span> Account</div>
         <div class="sb-sep"></div>
@@ -217,7 +216,6 @@ function cmsTab(tab){
   if (tab === 'categories') main.innerHTML = renderCategoriesTab();
   if (tab === 'seo') main.innerHTML = renderSEOTab();
   if (tab === 'account') main.innerHTML = renderAccountTab();
-  if (tab === 'taxconfig') main.innerHTML = window.renderTaxConfigTab ? window.renderTaxConfigTab() : '<div style="padding:24px;color:var(--t3)">Loading tax configuration…</div>';
 }
 
 // ── Dashboard ──────────────────────────────────────────────
