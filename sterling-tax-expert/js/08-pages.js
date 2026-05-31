@@ -398,6 +398,7 @@ function openServiceDetail(i){
 
   overlay.style.display = 'block';
   modal.style.display = 'block';
+  modal.style.padding = window.innerWidth < 480 ? '20px' : '36px';
   document.body.style.overflow = 'hidden';
 
   // Animate in

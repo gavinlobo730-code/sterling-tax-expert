@@ -829,6 +829,9 @@ tr:hover td{background:var(--g50)}
   .toast{left:14px;right:14px;bottom:14px;max-width:none}
   .acct-chip .acct-meta{display:none}
   .acct-menu{right:auto;left:0;width:230px}
+  .contact-grid{grid-template-columns:1fr!important}
+  .contact-grid aside{order:2}
+  .svc-modal-inner{padding:20px!important}
 }
 
 /* ═══════════════════════════════════════════════════════════
