@@ -362,6 +362,8 @@ footer{background:var(--navy)}
 .ci-header{background:var(--g50);padding:16px 20px;border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;gap:8px}
 .ci-title{font-size:13.5px;font-weight:700;color:var(--navy)}
 .ci-badge{background:var(--bluel);color:var(--blue);font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;white-space:nowrap}
+.ci-year-sel{font-size:11px;font-weight:600;color:var(--navy);border:1px solid var(--br2);border-radius:5px;padding:3px 20px 3px 7px;background:var(--w);appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23697390' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 5px center;cursor:pointer;outline:none}
+.ci-year-sel:focus{border-color:var(--indigo)}
 .ci-body{padding:18px 20px;display:flex;flex-direction:column;gap:14px;max-height:calc(100vh - 240px);overflow-y:auto}
 .ci-group{display:flex;flex-direction:column;gap:4px}
 .ci-label{font-size:11px;font-weight:700;color:var(--t2);letter-spacing:.2px;display:flex;align-items:center;justify-content:space-between;gap:8px}

@@ -86,6 +86,14 @@ function readState(calc){
   return state;
 }
 
+function setTaxYear(year){
+  window.SELECTED_TAX_YEAR = year;
+  window.TAX = window.TAX_RATES[year];
+  const badge = document.getElementById('ci-year-badge');
+  if (badge) badge.textContent = year;
+  recalc();
+}
+
 function recalc(){
   const calc = CALCS[CURRENT_CALC];
   if (!calc) return;
@@ -93,7 +101,10 @@ function recalc(){
   const results = calc.calculate(state);
   const wrap = document.getElementById('calc-results');
   if (!wrap) return;
-  wrap.innerHTML = calc.render(results, state) + `<div style="margin-top:18px;padding:12px 16px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;font-size:12px;color:#92400E;line-height:1.6"><strong>Estimate only.</strong> These figures are indicative and based on the inputs provided. They do not constitute tax advice. Always consult a qualified tax professional before making financial decisions. Rates are for the 2026/27 UK tax year.</div>`;
+  const yr = window.SELECTED_TAX_YEAR || window.TAX_YEAR;
+  const midYearNote = (window.TAX_RATES[yr] || {})._midYearNote;
+  const noteExtra = midYearNote ? ` <strong>Note:</strong> ${midYearNote}` : '';
+  wrap.innerHTML = calc.render(results, state) + `<div style="margin-top:18px;padding:12px 16px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;font-size:12px;color:#92400E;line-height:1.6"><strong>Estimate only.</strong> These figures are indicative and based on the inputs provided. They do not constitute tax advice. Always consult a qualified tax professional before making financial decisions. Rates are for the ${yr} UK tax year.${noteExtra}</div>`;
   window._lastCalc = { calc, state, results };
   if (calc.afterRecalc) calc.afterRecalc(state);
   _animateResults(wrap);
@@ -188,7 +199,16 @@ function mountCalc(id){
       <aside class="calc-inputs">
         <div class="ci-header">
           <span class="ci-title">Inputs</span>
-          <span class="ci-badge">${window.TAX_YEAR}</span>
+          <div style="display:flex;align-items:center;gap:8px">
+            <select class="ci-year-sel" id="tax-year-select" onchange="setTaxYear(this.value)">
+              <option value="2022/23" ${window.SELECTED_TAX_YEAR==='2022/23'?'selected':''}>2022/23</option>
+              <option value="2023/24" ${window.SELECTED_TAX_YEAR==='2023/24'?'selected':''}>2023/24</option>
+              <option value="2024/25" ${window.SELECTED_TAX_YEAR==='2024/25'?'selected':''}>2024/25</option>
+              <option value="2025/26" ${window.SELECTED_TAX_YEAR==='2025/26'?'selected':''}>2025/26</option>
+              <option value="2026/27" ${window.SELECTED_TAX_YEAR==='2026/27'?'selected':''}>2026/27 ★</option>
+            </select>
+            <span class="ci-badge" id="ci-year-badge">${window.SELECTED_TAX_YEAR || window.TAX_YEAR}</span>
+          </div>
         </div>
         <div class="ci-body" id="ci-body">${renderInputs(calc)}</div>
         <div class="ci-footer">

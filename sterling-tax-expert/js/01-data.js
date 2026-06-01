@@ -8,6 +8,7 @@
 
 window.TAX_YEAR = '2026/27';
 window.TAX_YEAR_LABEL = 'Updated for 2026/27 UK tax rules';
+window.SELECTED_TAX_YEAR = '2026/27';
 
 /* ── Income tax (England, Wales, NI) ── */
 window.TAX = {
@@ -151,6 +152,147 @@ window.TAX = {
   SCOT_INTER:   0.21,
   SCOT_HR:      0.42,
   SCOT_TOP:     0.48,
+};
+
+/* ── Historical tax year rates ─────────────────────────────
+   Each entry overrides only the fields that differ from 2026/27.
+   2022/23: NI changed twice mid-year — simplified annual rates used.
+   2023/24: Employee NI cut to 10% from 6 Jan 2024 — simplified at 12%.
+   ────────────────────────────────────────────────────────── */
+window.TAX_RATES = {
+  '2022/23': {
+    ...window.TAX,
+    // Income tax — additional rate threshold was still £150,000
+    HR_LIMIT: 150000,
+    // Employee NI — simplified: 13.25% Apr–Oct, 12% Nov–Apr; annual approx 12%
+    NI_PT: 12570,
+    NI_MAIN: 0.12,
+    NI_ADDL: 0.02,
+    // Employer NI — 15.05% Apr–Nov, 13.8% Nov–Apr; simplified at 13.8%
+    NI_ST: 9100,
+    NI_ER: 0.138,
+    EMPLOYMENT_ALLOWANCE: 5000,
+    // Class 4 — simplified; LPL was annualised £11,908 (PT rise mid-year)
+    CLASS4_LPL: 11908,
+    CLASS4_UPL: 50270,
+    CLASS4_MAIN: 0.0925,  // simplified blend of 10.25% / 9.73%
+    CLASS4_ADDL: 0.0275,
+    CLASS2_RATE: 3.15,
+    CLASS2_SPT: 6725,
+    // Dividends
+    DIV_ALLOWANCE: 2000,
+    DIV_BR: 0.0875, DIV_HR: 0.3375, DIV_AR: 0.3935,
+    // VAT
+    VAT_REG_THR: 85000,
+    VAT_DEREG: 83000,
+    // Student loans
+    SL: {
+      1: { thr: 20195, rate: 0.09 },
+      2: { thr: 27295, rate: 0.09 },
+      4: { thr: 25375, rate: 0.09 },
+      5: { thr: 25000, rate: 0.06 },
+      PG: { thr: 21000, rate: 0.06 },
+    },
+    // NMW (from Apr 2022)
+    NLW_21: 9.50, NMW_18_20: 9.18, NMW_U18: 6.83, NMW_APP: 4.81,
+    // Statutory pay
+    SSP_RATE: 99.35, SSP_PCT_CAP: null, SSP_QD: 3,
+    SMP_LOWER: 156.66, SPP_RATE: 156.66, SAP_RATE: 156.66, SHPP_RATE: 156.66,
+    LEL: 123, SSP_LEL: 123,
+    REDUNDANCY_WEEK_CAP: 571,
+    // Scottish income tax
+    SCOT_STARTER_LIMIT: 14732, SCOT_BASIC_LIMIT: 25688,
+    SCOT_INTER_LIMIT: 43662,   SCOT_HR_LIMIT: 150000,
+    SCOT_HR: 0.41, SCOT_TOP: 0.46,
+    _midYearNote: 'NI rates changed twice in 2022/23. Results use simplified annual rates — figures are approximate.',
+  },
+  '2023/24': {
+    ...window.TAX,
+    HR_LIMIT: 125140,
+    NI_PT: 12570, NI_MAIN: 0.12, NI_ADDL: 0.02,
+    NI_ST: 9100,  NI_ER: 0.138,
+    EMPLOYMENT_ALLOWANCE: 5000,
+    CLASS4_LPL: 12570, CLASS4_UPL: 50270,
+    CLASS4_MAIN: 0.09,   // simplified; cut to 8% from 6 Jan 2024
+    CLASS4_ADDL: 0.02,
+    CLASS2_RATE: 3.45, CLASS2_SPT: 6725,
+    DIV_ALLOWANCE: 1000,
+    DIV_BR: 0.0875, DIV_HR: 0.3375, DIV_AR: 0.3935,
+    VAT_REG_THR: 85000, VAT_DEREG: 83000,
+    SL: {
+      1: { thr: 22015, rate: 0.09 },
+      2: { thr: 27295, rate: 0.09 },
+      4: { thr: 27660, rate: 0.09 },
+      5: { thr: 25000, rate: 0.06 },
+      PG: { thr: 21000, rate: 0.06 },
+    },
+    NLW_21: 10.42, NMW_18_20: 10.18, NMW_U18: 7.49, NMW_APP: 5.28,
+    SSP_RATE: 109.40, SSP_PCT_CAP: null, SSP_QD: 3,
+    SMP_LOWER: 172.48, SPP_RATE: 172.48, SAP_RATE: 172.48, SHPP_RATE: 172.48,
+    LEL: 123, SSP_LEL: 123,
+    REDUNDANCY_WEEK_CAP: 643,
+    SCOT_STARTER_LIMIT: 14732, SCOT_BASIC_LIMIT: 25688,
+    SCOT_INTER_LIMIT: 43662,   SCOT_HR_LIMIT: 125140,
+    SCOT_HR: 0.42, SCOT_TOP: 0.47,
+    _midYearNote: 'Employee NI was cut from 12% to 10% from 6 Jan 2024. Results use simplified annual rate of 12%.',
+  },
+  '2024/25': {
+    ...window.TAX,
+    HR_LIMIT: 125140,
+    NI_PT: 12570, NI_MAIN: 0.08, NI_ADDL: 0.02,
+    NI_ST: 9100,  NI_ER: 0.138,
+    EMPLOYMENT_ALLOWANCE: 5000,
+    CLASS4_LPL: 12570, CLASS4_UPL: 50270,
+    CLASS4_MAIN: 0.06, CLASS4_ADDL: 0.02,
+    CLASS2_RATE: 3.45, CLASS2_SPT: 6725,
+    DIV_ALLOWANCE: 500,
+    DIV_BR: 0.0875, DIV_HR: 0.3375, DIV_AR: 0.3935,
+    VAT_REG_THR: 90000, VAT_DEREG: 88000,
+    SL: {
+      1: { thr: 24990, rate: 0.09 },
+      2: { thr: 27295, rate: 0.09 },
+      4: { thr: 31395, rate: 0.09 },
+      5: { thr: 25000, rate: 0.06 },
+      PG: { thr: 21000, rate: 0.06 },
+    },
+    NLW_21: 11.44, NMW_18_20: 8.60, NMW_U18: 6.40, NMW_APP: 6.40,
+    SSP_RATE: 116.75, SSP_PCT_CAP: null, SSP_QD: 3,
+    SMP_LOWER: 184.03, SPP_RATE: 184.03, SAP_RATE: 184.03, SHPP_RATE: 184.03,
+    LEL: 123, SSP_LEL: 123,
+    REDUNDANCY_WEEK_CAP: 643,
+    SCOT_STARTER_LIMIT: 14876, SCOT_BASIC_LIMIT: 26561,
+    SCOT_INTER_LIMIT: 43662,   SCOT_HR_LIMIT: 125140,
+    SCOT_HR: 0.42, SCOT_TOP: 0.48,
+  },
+  '2025/26': {
+    ...window.TAX,
+    HR_LIMIT: 125140,
+    NI_PT: 12570, NI_MAIN: 0.08, NI_ADDL: 0.02,
+    NI_ST: 5000,  NI_ER: 0.15,
+    EMPLOYMENT_ALLOWANCE: 10500,
+    CLASS4_LPL: 12570, CLASS4_UPL: 50270,
+    CLASS4_MAIN: 0.06, CLASS4_ADDL: 0.02,
+    CLASS2_RATE: 3.50, CLASS2_SPT: 6845,
+    DIV_ALLOWANCE: 500,
+    DIV_BR: 0.0875, DIV_HR: 0.3375, DIV_AR: 0.3935,
+    VAT_REG_THR: 90000, VAT_DEREG: 88000,
+    SL: {
+      1: { thr: 26065, rate: 0.09 },
+      2: { thr: 28470, rate: 0.09 },
+      4: { thr: 32745, rate: 0.09 },
+      5: { thr: 25000, rate: 0.06 },
+      PG: { thr: 21000, rate: 0.06 },
+    },
+    NLW_21: 12.21, NMW_18_20: 10.00, NMW_U18: 7.55, NMW_APP: 7.55,
+    SSP_RATE: 118.75, SSP_PCT_CAP: null, SSP_QD: 3,
+    SMP_LOWER: 187.18, SPP_RATE: 187.18, SAP_RATE: 187.18, SHPP_RATE: 187.18,
+    LEL: 125, SSP_LEL: 125,
+    REDUNDANCY_WEEK_CAP: 719,
+    SCOT_STARTER_LIMIT: 15397, SCOT_BASIC_LIMIT: 27491,
+    SCOT_INTER_LIMIT: 43662,   SCOT_HR_LIMIT: 125140,
+    SCOT_HR: 0.42, SCOT_TOP: 0.48,
+  },
+  '2026/27': window.TAX,
 };
 
 /* ── Tool registry ─────────────────────────────────────────
