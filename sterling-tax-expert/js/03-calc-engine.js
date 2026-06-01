@@ -198,7 +198,7 @@ function mountCalc(id){
       </aside>
       <main class="calc-results" id="calc-results"></main>
     </div>
-    <div style="max-width:1280px;margin:0 auto;padding:0 28px 56px">
+    <div style="max-width:1280px;margin:0 auto;padding:0 18px 56px">
       <div class="calc-related">
         <div class="calc-related-t">Related calculators</div>
         <div class="calc-related-grid">${renderRelated(calc)}</div>

@@ -785,7 +785,12 @@ tr:hover td{background:var(--g50)}
   .nl-inner{gap:24px}
   .nl-fw{padding:18px}
   .hmrc-lay{padding:0 18px}
-  .calc-layout{padding:16px 14px 40px;gap:14px}
+  .calc-layout{padding:16px 18px 40px;gap:14px}
+  .calc-hero-inner{padding:0 18px}
+  .sec-inner{padding:0 18px}
+  .about-hero-inner{padding:0 18px}
+  .pm-hero-content{padding:0 18px}
+  .pm-about-inner{padding:0 18px}
   .calc-inputs{border-radius:10px}
   .ci-body{padding:14px 16px}
   .ci-input{font-size:16px} /* prevent iOS zoom */
