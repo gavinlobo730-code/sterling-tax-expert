@@ -188,22 +188,21 @@
 <div class="page" id="page-privacy"></div>
 <div class="page" id="page-terms"></div>
 <!-- ═══ Configuration (edit js/config.js to go live) ═══ -->
-<script src="js/config.js"></script>
+<script src="js/config.js" defer></script>
 
 <!-- ═══ Application modules (load order matters) ═══ -->
-<script src="js/00-core.js"></script>
-<script src="js/01-data.js"></script>
-<script src="js/02-shell.js"></script>
-<script src="js/03-calc-engine.js"></script>
-<script src="js/04-calc-payroll.js"></script>
-<script src="js/04b-calc-payroll-master.js"></script>
-<script src="js/05-calc-compliance.js"></script>
-<script src="js/06-calc-extra.js"></script>
-<script src="js/06b-calc-healthcare.js"></script>
-<script src="js/07-admin-cms.js"></script>
-<script src="js/08-pages.js"></script>
-<script src="js/09-hero-anim.js"></script>
-<script src="js/10-insights.js"></script>
+<script src="js/00-core.js" defer></script>
+<script src="js/01-data.js" defer></script>
+<script src="js/02-shell.js" defer></script>
+<script src="js/03-calc-engine.js" defer></script>
+<script src="js/04-calc-payroll.js" defer></script>
+<script src="js/04b-calc-payroll-master.js" defer></script>
+<script src="js/05-calc-compliance.js" defer></script>
+<script src="js/06-calc-extra.js" defer></script>
+<script src="js/06b-calc-healthcare.js" defer></script>
+<script src="js/08-pages.js" defer></script>
+<script src="js/09-hero-anim.js" defer></script>
+<!-- 07-admin-cms.js and 10-insights.js load on demand (see navigate() in 02-shell.js) -->
 
 <!-- ═══ Boot: footer/CTA, EmailJS init, hero video, reveal motion ═══ -->
 <script>

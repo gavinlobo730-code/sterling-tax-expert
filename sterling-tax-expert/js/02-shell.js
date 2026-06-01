@@ -3,6 +3,16 @@
    Navigation, breadcrumbs, mobile nav, toast, loader, router
    ─────────────────────────────────────────────────────────── */
 
+// ── Lazy script loader ─────────────────────────────────────
+const _lazyLoaded = {};
+function _lazyLoad(src, cb){
+  if (_lazyLoaded[src]) { cb(); return; }
+  const s = document.createElement('script');
+  s.src = src;
+  s.onload = () => { _lazyLoaded[src] = true; cb(); };
+  document.head.appendChild(s);
+}
+
 // ── Routing state ──────────────────────────────────────────
 let CURRENT_PAGE = 'home';
 let CURRENT_CALC = null;
@@ -61,15 +71,15 @@ function navigate(page, param = null, opts = {}){
     if (page === 'home') mountHome();
     if (page === 'services') mountServices();
     if (page === 'tools') mountTools();
-    if (page === 'insights') mountInsights();
-    if (page === 'post') mountPost(param);
+    if (page === 'insights') _lazyLoad('js/10-insights.js', mountInsights);
+    if (page === 'post')     _lazyLoad('js/10-insights.js', () => mountPost(param));
     if (page === 'deadlines') mountDeadlines();
     if (page === 'scout')    mountScout();
     if (page === 'about') mountAbout();
     if (page === 'contact') mountContact();
     if (page === 'calc')    mountCalc(param);
     if (page === 'article') mountArticle(param);
-    if (page === 'admin')   mountAdmin();
+    if (page === 'admin')   _lazyLoad('js/07-admin-cms.js', mountAdmin);
     if (page === 'privacy') mountPrivacy();
     if (page === 'terms')   mountTerms();
 
