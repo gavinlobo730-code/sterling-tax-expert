@@ -789,6 +789,21 @@ function mountScout() {
                 </div>
               </div>
               <div class="ci-group">
+                <div class="ci-label">Daily countdown <span class="ci-hint">optional</span></div>
+                <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+                  <label class="ci-checkbox"><input type="checkbox" id="dlc-daily" onchange="document.getElementById('dlc-daily-wrap').style.display=this.checked?'flex':'none'"><span class="ci-checkbox-lbl">Remind me every day for the last</span></label>
+                  <div id="dlc-daily-wrap" style="display:none;align-items:center;gap:10px;padding-left:26px">
+                    <select class="ci-select" id="dlc-daily-days" style="width:100px">
+                      <option value="7">7 days</option>
+                      <option value="14" selected>14 days</option>
+                      <option value="30">30 days</option>
+                    </select>
+                    <span style="font-size:12.5px;color:var(--t2)">before the deadline</span>
+                  </div>
+                  <div style="font-size:11.5px;color:var(--t3);padding-left:26px">Works best with Apple Calendar &amp; Outlook</div>
+                </div>
+              </div>
+              <div class="ci-group">
                 <div class="ci-label">Notes <span class="ci-hint">optional</span></div>
                 <div class="ci-input-wrap">
                   <input class="ci-input no-prefix" id="dlc-notes" type="text" placeholder="Any extra detail for the calendar entry">
@@ -820,27 +835,44 @@ function mountScout() {
 }
 
 function dlcCreate() {
-  const name  = (document.getElementById('dlc-name')  || {}).value || '';
-  const date  = (document.getElementById('dlc-date')  || {}).value || '';
-  const notes = (document.getElementById('dlc-notes') || {}).value || '';
-  const r7    = (document.getElementById('dlc-r7')    || {}).checked;
-  const r14   = (document.getElementById('dlc-r14')   || {}).checked;
-  const r30   = (document.getElementById('dlc-r30')   || {}).checked;
-  const msg   = document.getElementById('dlc-msg');
+  const name      = (document.getElementById('dlc-name')        || {}).value || '';
+  const date      = (document.getElementById('dlc-date')        || {}).value || '';
+  const notes     = (document.getElementById('dlc-notes')       || {}).value || '';
+  const r7        = (document.getElementById('dlc-r7')          || {}).checked;
+  const r14       = (document.getElementById('dlc-r14')         || {}).checked;
+  const r30       = (document.getElementById('dlc-r30')         || {}).checked;
+  const daily     = (document.getElementById('dlc-daily')       || {}).checked;
+  const dailyDays = parseInt((document.getElementById('dlc-daily-days') || {}).value || '14');
+  const msg       = document.getElementById('dlc-msg');
 
   if (!name.trim()) { if (msg) msg.innerHTML = '<span style="color:var(--red)">Please enter a deadline name.</span>'; return; }
   if (!date)        { if (msg) msg.innerHTML = '<span style="color:var(--red)">Please select a due date.</span>'; return; }
 
-  const dt = date.replace(/-/g, '');
+  const dt  = date.replace(/-/g, '');
   const uid = 'dlc-' + dt + '-' + name.trim().replace(/\s+/g,'-').toLowerCase().replace(/[^a-z0-9-]/g,'') + '@sterling-tax-expert';
   const desc = notes.trim() ? notes.trim() + ' — via Sterling Tax Expert' : 'via Sterling Tax Expert';
 
+  // Single reminders
   const alarms = [];
-  if (r30) alarms.push(['TRIGGER:-P30D', 'DESCRIPTION:30-day reminder: ' + name.trim()]);
-  if (r14) alarms.push(['TRIGGER:-P14D', 'DESCRIPTION:14-day reminder: ' + name.trim()]);
-  if (r7)  alarms.push(['TRIGGER:-P7D',  'DESCRIPTION:7-day reminder: '  + name.trim()]);
+  if (r30) alarms.push(['TRIGGER:-P30D', '30-day reminder: ' + name.trim()]);
+  if (r14) alarms.push(['TRIGGER:-P14D', '14-day reminder: ' + name.trim()]);
+  if (r7)  alarms.push(['TRIGGER:-P7D',  '7-day reminder: '  + name.trim()]);
 
-  const alarmLines = alarms.flatMap(([t, d]) => ['BEGIN:VALARM','ACTION:DISPLAY', t, d, 'END:VALARM']);
+  // Daily countdown — one alarm per day from dailyDays down to 1
+  // Skip days already covered by single reminders to avoid duplicates
+  const singleDays = new Set([r30?30:null, r14?14:null, r7?7:null].filter(Boolean));
+  if (daily) {
+    for (let d = dailyDays; d >= 1; d--) {
+      if (!singleDays.has(d)) {
+        const daysLeft = d === 1 ? '1 day' : d + ' days';
+        alarms.push(['TRIGGER:-P' + d + 'D', daysLeft + ' to go: ' + name.trim()]);
+      }
+    }
+  }
+
+  const alarmLines = alarms.flatMap(([t, desc2]) => [
+    'BEGIN:VALARM', 'ACTION:DISPLAY', t, 'DESCRIPTION:' + desc2, 'END:VALARM'
+  ]);
 
   const lines = [
     'BEGIN:VCALENDAR',
@@ -859,9 +891,10 @@ function dlcCreate() {
     'END:VCALENDAR'
   ];
 
+  const totalAlarms = alarms.length;
   const filename = name.trim().replace(/[^a-z0-9]/gi,'-').toLowerCase() + '-deadline.ics';
   triggerDownload(lines.join('\r\n'), filename, 'text/calendar');
-  if (msg) msg.innerHTML = '<span style="color:#16A34A">✓ Downloaded — open the file to add to your calendar.</span>';
+  if (msg) msg.innerHTML = `<span style="color:#16A34A">✓ Downloaded — ${totalAlarms} reminder${totalAlarms!==1?'s':''} included. Open the file to add to your calendar.</span>`;
 }
 function setDLView(v){ CURRENT_DL_VIEW = v; mountDeadlines(); }
 function setDLCat(c){ CURRENT_DL_CAT = c; renderDLContent(); }
