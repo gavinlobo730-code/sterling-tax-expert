@@ -239,18 +239,11 @@ window.DEADLINES = [
   { date:'2026-06-19', name:'CIS300 monthly return',                cat:'CIS',       desc:'Monthly Construction Industry Scheme return for May 2026.',                       urgency:'blue'  },
   { date:'2026-07-19', name:'CIS300 monthly return',                cat:'CIS',       desc:'Monthly Construction Industry Scheme return for June 2026.',                      urgency:'blue'  },
 
-  // Corp tax
-  { date:'2026-10-01', name:'Corporation tax — Mar 2025 y/e',       cat:'Corp tax',  desc:'CT payable 9 months and 1 day after accounting period end.',                      urgency:'blue'  },
-  { date:'2026-12-31', name:'CT600 filing — Dec 2025 y/e',          cat:'Corp tax',  desc:'Company tax return due 12 months after end of accounting period.',                urgency:'blue'  },
-
   // Self assessment
   { date:'2026-07-31', name:'Second payment on account',            cat:'Self assessment', desc:'Second 2025/26 self-assessment payment on account.',                          urgency:'red'   },
   { date:'2026-10-05', name:'Register for self assessment',         cat:'Self assessment', desc:'Deadline to notify HMRC of new self-employment for 2025/26.',                 urgency:'amber' },
   { date:'2026-10-31', name:'Paper self assessment return',         cat:'Self assessment', desc:'Last day to file 2025/26 self assessment on paper.',                          urgency:'amber' },
   { date:'2027-01-31', name:'Self assessment — online filing',      cat:'Self assessment', desc:'Online filing and balancing payment for 2025/26 personal tax.',               urgency:'red'   },
-
-  // Pension / auto-enrol
-  { date:'2026-04-22', name:'Auto-enrol declaration of compliance', cat:'Pension',   desc:'Re-declare auto-enrolment compliance with the Pensions Regulator (3-yearly).',     urgency:'blue'  },
 ];
 
 /* ── Insights / Blog seed posts (in localStorage if absent) ── */

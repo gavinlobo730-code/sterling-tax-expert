@@ -711,6 +711,22 @@ function mountDeadlines(){
       </div>
       <div id="dl-content"></div>
     </div></div>
+
+    <div style="background:var(--g25);border-top:1px solid var(--br)">
+      <div style="max-width:1280px;margin:0 auto;padding:42px 28px">
+        <div class="eyebrow ey-blue" style="margin-bottom:6px">Need company-specific deadlines?</div>
+        <h2 style="font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-0.5px;margin-bottom:10px">Look up a company or create your own deadline</h2>
+        <p style="font-size:13.5px;color:var(--t2);max-width:600px;line-height:1.75;margin-bottom:22px">Corporation tax, confirmation statements and accounts filing deadlines vary by company. Use Scout to look up live deadlines for any UK company from Companies House — or create a custom deadline and download it to your calendar.</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-indigo" onclick="navigate('scout')">🔍 Look up a company →</button>
+          <button class="btn btn-ghost" onclick="navigate('scout')">📅 Create a custom deadline →</button>
+        </div>
+        <div style="margin-top:18px;padding:14px 16px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;font-size:12.5px;color:#92400E;max-width:600px;line-height:1.6">
+          <strong>Note on corporation tax deadlines:</strong> CT payment is due 9 months and 1 day after your accounting period ends. CT600 filing is due 12 months after period end. These vary by company — use Scout to look up your specific company's filing deadlines from Companies House.
+        </div>
+      </div>
+    </div>
+
     ${renderCTABand()}
     ${renderFooter()}
   `;
@@ -1367,7 +1383,7 @@ function mountContact(){
       <div style="display:grid;grid-template-columns:1fr;gap:24px;align-items:start" class="contact-grid">
         <div class="ta-left ta-d1" style="background:var(--w);border:1px solid var(--br);border-radius:13px;padding:28px">
           <div style="font-family:var(--sans);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:20px">Your details</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
+          <div class="name-row" style="display:grid;grid-template-columns:1fr 1fr;gap:11px">
             <div class="fg"><div class="fl">First name *</div><input class="fi" id="cf-fn" type="text" placeholder="Sarah"></div>
             <div class="fg"><div class="fl">Last name *</div><input class="fi" id="cf-ln" type="text" placeholder="Mitchell"></div>
           </div>

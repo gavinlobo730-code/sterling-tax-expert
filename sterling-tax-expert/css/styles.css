@@ -841,6 +841,7 @@ tr:hover td{background:var(--g50)}
 }
 @media(max-width:680px){
   .scout-grid{display:grid;grid-template-columns:1fr;gap:24px}
+  .name-row{grid-template-columns:1fr!important}
 }
 
 /* ═══════════════════════════════════════════════════════════
