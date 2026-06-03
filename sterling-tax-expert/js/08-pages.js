@@ -525,6 +525,11 @@ function mountInsights(){
   const wrap = document.getElementById('page-insights');
   if (!wrap) return;
   const posts = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).filter(p => p.st === 'Published');
+  if (posts.length === 0) {
+    wrap.innerHTML = `<div class="crumbs"></div><div class="sec sec-inner" style="text-align:center;padding:80px 24px"><div class="eyebrow ey-blue">Insights</div><h1 style="font-family:var(--sans);font-size:32px;font-weight:800;color:var(--navy);margin:12px 0 16px">Articles coming soon</h1><p style="color:var(--t2);max-width:480px;margin:0 auto">We're working on expert guides covering UK payroll, tax and compliance. Check back soon.</p></div>`;
+    updateBreadcrumbs('insights');
+    return;
+  }
   const featured = posts[0];
   const cats = ['All', ...new Set(posts.map(p => p.cat))];
   wrap.innerHTML = `
