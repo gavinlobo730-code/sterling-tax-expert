@@ -1,23 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   Sterling Tax Expert — Payroll Master Calculators (2026/27)
-   True Employment Cost Calculator  ·  Payslip Generator
-   ─────────────────────────────────────────────────────────── */
-
-/* ── DOM helpers for show/hide ──────────────────────────── */
-function _hide(id) {
-  var e = document.getElementById(id);
-  if (!e) return;
-  var w = e.closest('.ci-group') || e.closest('label');
-  if (w) w.style.display = 'none';
-}
-function _show(id) {
-  var e = document.getElementById(id);
-  if (!e) return;
-  var w = e.closest('.ci-group') || e.closest('label');
-  if (w) w.style.display = '';
-}
-
-/* ── Tax code parser ─────────────────────────────────────── */
 function parseTaxCode(raw) {
   var s = ((raw || '1257L') + '').toUpperCase().replace(/\s/g, '');
   var w1 = /(W1|M1)$|\/W1$|\/M1$|X$/.test(s);
@@ -33,45 +13,6 @@ function parseTaxCode(raw) {
   if (l) return { type:'L', pa:+l[1] * 10,   basis:basis };
   return { type:'L', pa:window.TAX.PA, basis:'cumulative' };
 }
-
-/* ── Period-level PAYE ───────────────────────────────────── */
-function periodPAYE(grossPd, ytdGross, ytdTax, pdNum, pdpy, tc) {
-  var T = window.TAX;
-  // Apply bands to taxable annual equivalent
-  function bandTax(t) {
-    var b1 = T.BR_LIMIT - T.PA;
-    var b2 = T.HR_LIMIT - T.BR_LIMIT;
-    if (t <= 0) return 0;
-    if (t > b1 + b2) return b1 * T.BR + b2 * T.HR + (t - b1 - b2) * T.AR;
-    if (t > b1)      return b1 * T.BR + (t - b1) * T.HR;
-    return t * T.BR;
-  }
-  if (tc.type === 'NT') return 0;
-  var totalGross = ytdGross + grossPd;
-
-  if (tc.basis === 'week1') {
-    var periodPa = tc.type === 'L' ? tc.pa / pdpy : 0;
-    if (tc.type === 'BR') return Math.max(0, grossPd) * T.BR;
-    if (tc.type === 'D0') return Math.max(0, grossPd) * T.HR;
-    if (tc.type === 'D1') return Math.max(0, grossPd) * T.AR;
-    if (tc.type === 'K') return bandTax((grossPd + Math.abs(tc.pa) / pdpy) * pdpy) / pdpy;
-    return bandTax(Math.max(0, grossPd - periodPa) * pdpy) / pdpy;
-  }
-  // Cumulative
-  if (tc.type === 'BR') return Math.max(0, Math.max(0, totalGross) * T.BR - ytdTax);
-  if (tc.type === 'D0') return Math.max(0, Math.max(0, totalGross) * T.HR - ytdTax);
-  if (tc.type === 'D1') return Math.max(0, Math.max(0, totalGross) * T.AR - ytdTax);
-  if (tc.type === 'K') {
-    var kAdj = Math.abs(tc.pa / pdpy) * pdNum;
-    return Math.max(0, bandTax(totalGross + kAdj) - ytdTax);
-  }
-  // L code
-  var freePay = (tc.pa / pdpy) * pdNum;
-  var cumTaxable = Math.max(0, totalGross - freePay);
-  return Math.max(0, bandTax(cumTaxable) - ytdTax);
-}
-
-/* ── Period-level NI ─────────────────────────────────────── */
 function periodEeNI(grossPd, pdpy, cat) {
   var T = window.TAX;
   if (cat === 'C' || cat === 'X' || cat === 'Z') return 0;
@@ -82,26 +23,16 @@ function periodEeNI(grossPd, pdpy, cat) {
   if (grossPd > uel) ni += (grossPd - uel) * T.NI_ADDL;
   return ni;
 }
-
 function periodErNI(grossPd, pdpy, cat) {
   var T = window.TAX;
   if (cat === 'X') return 0;
   var st = T.NI_ST / pdpy, uel = T.NI_UEL / pdpy;
-  // Under 21 (H/M) and apprentice (S): employer NI 0% up to UEL
   if (cat === 'H' || cat === 'M' || cat === 'S') {
     if (grossPd <= uel) return 0;
     return (grossPd - uel) * T.NI_ER;
   }
   return Math.max(0, grossPd - st) * T.NI_ER;
 }
-
-/* ── Period-level student loan ───────────────────────────── */
-function periodSL(grossPd, plan, pdpy) {
-  if (!plan || plan === '0') return 0;
-  return studentLoan(grossPd * pdpy, plan) / pdpy;
-}
-
-/* ── NHS pension employee rate ───────────────────────────── */
 function nhsEeRate(annualPay) {
   var T = window.TAX;
   if (T.NHS_PENSION_TIERS) {
@@ -116,18 +47,11 @@ function nhsEeRate(annualPay) {
   if (annualPay <= 67668) return 0.107;
   return 0.125;
 }
-
-/* ─────────────────────────────────────────────────────────
-   TRUE EMPLOYMENT COST CALCULATOR
-   Replaces: paye, employer-ni, net-to-gross, payroll-cost,
-             salary-sacrifice, gross-to-net
-   ───────────────────────────────────────────────────────── */
 CALCS['true-cost'] = {
   id: 'true-cost',
   title: 'True Employment Cost Calculator',
   subtitle: 'Enter a gross salary or a desired take-home — see exactly what the employee costs the business, what they take home, and every deduction in between. Pension, employer NI, student loan, apprenticeship levy and salary sacrifice all included.',
   metaBadges: ['Gross → Net', 'Net → Gross', 'Full employer cost'],
-
   inputs: [
     { id:'mode',       type:'toggle',  label:'Calculate from',                       default:'gross', options:[{v:'gross',l:'Gross salary'},{v:'net',l:'Desired take-home'}] },
     { id:'gross_in',   type:'currency',label:'Annual gross salary',                  default:45000,   hint:'Before any deductions' },
@@ -147,12 +71,9 @@ CALCS['true-cost'] = {
     { id:'levy',       type:'checkbox',label:'Apprenticeship Levy (pay-bill > £3m)',  default:false },
     { id:'benefits',   type:'currency',label:'Benefits & extras (annual)',            default:0,       hint:'Health insurance, car allowance, etc.' },
   ],
-
   afterRecalc: function(s) {
-    // Gross vs net mode
     if (s.mode === 'net') { _hide('gross_in'); _hide('freq_in'); } else { _show('gross_in'); _show('freq_in'); }
     if (s.mode === 'gross') _hide('net_in'); else _show('net_in');
-    // Pension fields
     var noPension = s.pensionType === 'none';
     if (noPension) {
       _hide('hasNI'); _hide('sacrifice'); _hide('eePct'); _hide('erPct');
@@ -161,7 +82,6 @@ CALCS['true-cost'] = {
       _show('sacrifice'); _show('eePct'); _show('erPct');
     }
   },
-
   calculate: function(s) {
     var T = window.TAX;
     var gross;
@@ -181,9 +101,7 @@ CALCS['true-cost'] = {
     }
     return this._result(gross, s, T);
   },
-
   _result: function(gross, s, T) {
-    // Pension amounts
     var eePension = 0, erPension = 0, aeQE = 0;
     if (s.pensionType !== 'none') {
       var eeRate = (s.eePct || 0) / 100;
@@ -197,29 +115,20 @@ CALCS['true-cost'] = {
         erPension = gross * erRate;
       }
     }
-    // Taxable gross (sacrifice reduces it)
     var taxableGross = (s.sacrifice && s.pensionType !== 'none') ? Math.max(0, gross - eePension) : gross;
-    // Tax
     var taxRes = s.regime === 'scotland' ? scottishIncomeTaxOn(taxableGross) : incomeTaxOn(taxableGross);
     var incomeTax = taxRes.tax, paUsed = taxRes.paUsed !== undefined ? taxRes.paUsed : T.PA;
-    // NI
     var empNI = employeeNI(taxableGross);
     var erNI  = employerNI(taxableGross, s.allowance);
-    // Student loan
     var sl = studentLoan(gross, s.plan);
-    // Employee pension net out-of-pocket (non-sacrifice)
     var eeNetCost = 0;
     if (!s.sacrifice && s.pensionType !== 'none') {
-      // Relief at source: pay 80% if has NI (HMRC adds 20%); else full 100%
       eeNetCost = (s.pensionType === 'ae' && s.hasNI) ? eePension * 0.80 : eePension;
     }
-    // Net pay
     var netPay = gross - (s.sacrifice ? eePension : 0) - incomeTax - empNI - eeNetCost - sl;
-    // Employer cost
     var levyAmt  = s.levy    ? gross * T.AL_RATE : 0;
     var benefAmt = s.benefits || 0;
     var empCost  = gross + erNI + erPension + levyAmt + benefAmt;
-    // Rates
     var totalEeDeductions = incomeTax + empNI + sl + (s.sacrifice ? eePension : eeNetCost);
     var effRate    = gross > 0 ? totalEeDeductions / gross * 100 : 0;
     var overheadPct = gross > 0 ? (empCost - gross) / gross * 100 : 0;
@@ -232,10 +141,8 @@ CALCS['true-cost'] = {
       hasNI: s.hasNI, regime: s.regime, plan: s.plan, mode: s.mode
     };
   },
-
   render: function(r) {
     var c = { net:'#16A34A', tax:'#C0392B', ni:'#C49A2E', pension:'#7C3AED', erPension:'#0EA5E9', sl:'#EA580C', levy:'#6B7280', gross:'#6B748F', employer:'#0B1E3D' };
-
     var donutEe = [
       { name:'Net pay',    val:r.netPay,   color:c.net },
       { name:'Income tax', val:r.incomeTax,color:c.tax },
@@ -244,7 +151,6 @@ CALCS['true-cost'] = {
     if (r.sacrifice && r.eePension > 0) donutEe.push({ name:'Pension (sacrifice)', val:r.eePension,    color:c.pension });
     else if (r.eeNetCost > 0)           donutEe.push({ name:'Pension (net cost)',  val:r.eeNetCost,    color:c.pension });
     if (r.sl > 0) donutEe.push({ name:'Student loan', val:r.sl, color:c.sl });
-
     var freqRow = function(lbl, d) {
       var dp = d >= 260 ? 2 : 0;
       return '<div class="ft-row">'
@@ -256,7 +162,6 @@ CALCS['true-cost'] = {
         + '<span style="color:var(--navy);font-weight:600">' + fmt(r.empCost / d, dp) + '</span>'
         + '</div>';
     };
-
     var pensionNote = '';
     if (r.pensionType === 'ae') {
       pensionNote = 'Auto-enrolment pension on qualifying earnings '
@@ -269,7 +174,6 @@ CALCS['true-cost'] = {
       pensionNote = 'Custom pension on full gross.'
         + (r.sacrifice ? ' Via <strong>salary sacrifice</strong>.' : ' Via <strong>relief at source</strong>.');
     }
-
     return kpiRow([
       kpi('Employee take-home',  fmt(r.netPay),   { color:'primary', sub: fmt(r.netPay / 12) + ' / month · ' + fmt(r.netPay / 52) + ' / week' }),
       kpi('Total employer cost', fmt(r.empCost),  { color:'navy',    sub: fmt(r.empCost / 12) + ' / month · ' + r.overheadPct.toFixed(1) + '% above salary' }),
@@ -325,18 +229,11 @@ CALCS['true-cost'] = {
   },
   related: ['payslip', 'auto-enrol', 'sal-vs-div', 'corp']
 };
-
-/* ─────────────────────────────────────────────────────────
-   PAYSLIP GENERATOR
-   For payroll providers and businesses verifying payslips.
-   Replaces: nhs-payroll (NHS folded in as pension type)
-   ───────────────────────────────────────────────────────── */
 CALCS['payslip'] = {
   id: 'payslip',
   title: 'Payslip Generator & Verifier',
   subtitle: 'Enter the tax code, NI category, YTD figures and pension scheme. The calculator produces a formatted payslip for any pay period — Standard PAYE or NHS pension. Cumulative and Week1/Month1 basis supported.',
   metaBadges: ['Standard PAYE', 'NHS pension', 'W1/M1 supported', 'Student loan'],
-
   inputs: [
     { id:'freq',       type:'select',  label:'Pay frequency',            default:'12',  options:[{v:'12',l:'Monthly'},{v:'52',l:'Weekly'},{v:'26',l:'Fortnightly'},{v:'13',l:'4-Weekly'}] },
     { id:'pdNum',      type:'number',  label:'Period number',            default:1, min:1, max:53, hint:'Month 1 = April, Month 6 = September' },
@@ -377,7 +274,6 @@ CALCS['payslip'] = {
     { type:'section',                  label:'Student loan' },
     { id:'plan',       type:'select',  label:'Student loan plan',        default:'0',   options:[{v:'0',l:'None'},{v:'1',l:'Plan 1 — £26,900'},{v:'2',l:'Plan 2 — £29,385'},{v:'4',l:'Plan 4 Scotland — £32,745'},{v:'5',l:'Plan 5 — £25,000'},{v:'PG',l:'Postgrad — £21,000'}] },
   ],
-
   afterRecalc: function(s) {
     var noPension  = s.pensionType === 'none';
     var isAe       = s.pensionType === 'ae';
@@ -393,7 +289,6 @@ CALCS['payslip'] = {
       if (isAe) _show('hasNI'); else _hide('hasNI');
     }
   },
-
   calculate: function(s) {
     var T   = window.TAX;
     var pdpy = parseInt(s.freq) || 12;
@@ -402,8 +297,6 @@ CALCS['payslip'] = {
     var grossPd = s.grossPd || 0;
     var sacPd   = Math.min(s.sacPd || 0, grossPd);
     var taxableGross = Math.max(0, grossPd - sacPd);
-
-    // Pension this period
     var eePensionPd = 0, erPensionPd = 0, nhsTierRate = 0, nhsAnnual = 0;
     if (s.pensionType === 'nhs') {
       nhsAnnual    = s.nhsAnnual || (grossPd * pdpy);
@@ -419,23 +312,10 @@ CALCS['payslip'] = {
       eePensionPd = taxableGross * ((s.eePct || 0) / 100);
       erPensionPd = taxableGross * ((s.erPct || 0) / 100);
     }
-
-    // PAYE this period
     var taxPd = periodPAYE(taxableGross, s.ytdGross || 0, s.ytdTax || 0, pdNum, pdpy, tc);
-
-    // Employee NI this period
     var eeNIPd = periodEeNI(taxableGross, pdpy, s.niCat || 'A');
-
-    // Employer NI this period
     var erNIPd = periodErNI(taxableGross, pdpy, s.niCat || 'A');
-
-    // Student loan this period
     var slPd = periodSL(taxableGross, s.plan, pdpy);
-
-    // Employee pension net cost (what leaves their pay)
-    // NHS: pre-tax occupational — deducted before income tax (already done in tax calc via salary sacrifice effect)
-    // AE relief at source: employee pays 80% (if has NI number), provider claims 20%
-    // AE sacrifice: already removed from gross
     var eeDeductPd;
     if (s.pensionType === 'nhs') {
       eeDeductPd = eePensionPd; // NHS occupational — full amount deducted
@@ -444,15 +324,10 @@ CALCS['payslip'] = {
     } else {
       eeDeductPd = eePensionPd; // custom or no NI number
     }
-
-    // Net pay this period
     var netPd = grossPd - sacPd - taxPd - eeNIPd - eeDeductPd - slPd;
-
-    // YTD totals (this period added)
     var ytdGrossNew = (s.ytdGross || 0) + grossPd;
     var ytdTaxNew   = (s.ytdTax   || 0) + taxPd;
     var ytdEeNINew  = (s.ytdEeNI  || 0) + eeNIPd;
-
     return {
       grossPd, sacPd, taxableGross,
       taxPd, eeNIPd, erNIPd,
@@ -467,11 +342,9 @@ CALCS['payslip'] = {
       regime: s.regime, plan: s.plan
     };
   },
-
   render: function(r) {
     var freqName = {12:'Month', 52:'Week', 26:'Fortnight', 13:'4-Wk'}[r.pdpy] || 'Period';
     var freqAdj  = {12:'Monthly', 52:'Weekly', 26:'Fortnightly', 13:'4-Weekly'}[r.pdpy] || 'Period';
-
     var tcDesc = {
       NT:'No tax deducted', BR:'All pay taxed at 20% — no personal allowance',
       D0:'All pay taxed at 40%', D1:'All pay taxed at 45%',
@@ -479,10 +352,7 @@ CALCS['payslip'] = {
       L:'Personal allowance £' + fmtInt(r.tc.pa) + '/yr (£' + fmt(r.tc.pa / r.pdpy, 0) + ' this ' + freqName.toLowerCase() + ')',
     }[r.tc.type] || 'Standard';
     tcDesc += ' · Basis: <strong>' + (r.tc.basis === 'week1' ? 'Week1/Month1 — non-cumulative' : 'Cumulative') + '</strong>';
-
     var totalDeductions = r.taxPd + r.eeNIPd + r.eeDeductPd + r.slPd;
-
-    // ── Payslip card ──────────────────────────────────────
     var ps = '<div class="payslip-card">'
       + '<div class="ps-header">'
         + '<div>'
@@ -527,8 +397,6 @@ CALCS['payslip'] = {
         + ' = <strong>' + fmt(r.grossPd + r.erNIPd + r.erPensionPd) + '</strong>'
       + '</div>'
     + '</div>';
-
-    // ── KPIs ──────────────────────────────────────────────
     var kpiItems = [
       kpi(freqAdj + ' net pay',  fmt(r.netPd),  { color:'primary', sub:'After all deductions' }),
       kpi('Income tax',          fmt(r.taxPd),  { color:'red',     sub:'PAYE this period' }),
@@ -537,7 +405,6 @@ CALCS['payslip'] = {
     var kpiItems2 = [kpi('Employer NI', fmt(r.erNIPd), {color:'navy', sub:'Period employer cost'})];
     if (r.eePensionPd > 0) kpiItems2.push(kpi('Employee pension', fmt(r.eeDeductPd), {color:'gold', sub: r.pensionType === 'nhs' ? 'NHS ' + (r.nhsTierRate*100).toFixed(1) + '%' : 'AE deduction'}));
     if (r.erPensionPd > 0) kpiItems2.push(kpi('Employer pension', fmt(r.erPensionPd), {color:'green', sub: r.pensionType === 'nhs' ? '14.38% NHS employer' : 'AE employer'}));
-
     return ps
       + kpiRow(kpiItems)
       + (kpiItems2.length > 0 ? kpiRow(kpiItems2) : '')

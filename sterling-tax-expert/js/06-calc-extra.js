@@ -1,11 +1,3 @@
-/* ═══════════════════════════════════════════════════════════
-   Sterling Tax Expert — Extra calculators (v4)
-   Employee NI, Gross-to-Net, Marginal Relief, SPP, SAP, ShPP
-   ─────────────────────────────────────────────────────────── */
-
-// ─────────────────────────────────────────────────────────
-// EMPLOYEE NI CALCULATOR (Class 1 primary, standalone)
-// ─────────────────────────────────────────────────────────
 CALCS['employee-ni'] = {
   id: 'employee-ni',
   title: 'Employee NI Calculator',
@@ -47,13 +39,6 @@ CALCS['employee-ni'] = {
   },
   related: ['paye','employer-ni','net-to-gross']
 };
-
-// ─────────────────────────────────────────────────────────
-// GROSS-TO-NET — multi-frequency converter
-// ─────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────
-// MARGINAL RELIEF — standalone CT marginal-relief explorer
-// ─────────────────────────────────────────────────────────
 CALCS['marginal'] = {
   id: 'marginal',
   title: 'Corporation Tax Marginal Relief Calculator',
@@ -108,10 +93,6 @@ CALCS['marginal'] = {
   },
   related: ['corp','sal-vs-div','self-assess']
 };
-
-// ─────────────────────────────────────────────────────────
-// SPP — Statutory Paternity Pay
-// ─────────────────────────────────────────────────────────
 CALCS['spp'] = {
   id: 'spp',
   title: 'Statutory Paternity Pay (SPP) Calculator',
@@ -146,10 +127,6 @@ CALCS['spp'] = {
   },
   related: ['smp','ssp','holiday']
 };
-
-// ─────────────────────────────────────────────────────────
-// SAP — Statutory Adoption Pay
-// ─────────────────────────────────────────────────────────
 CALCS['sap'] = {
   id: 'sap',
   title: 'Statutory Adoption Pay (SAP) Calculator',
@@ -191,10 +168,6 @@ CALCS['sap'] = {
   },
   related: ['smp','spp','shpp']
 };
-
-// ─────────────────────────────────────────────────────────
-// SHPP — Shared Parental Pay
-// ─────────────────────────────────────────────────────────
 CALCS['shpp'] = {
   id: 'shpp',
   title: 'Shared Parental Pay (ShPP) Calculator',
@@ -212,8 +185,6 @@ CALCS['shpp'] = {
     const eligibleB = s.aweB >= T.LEL;
     const rateA = eligibleA ? Math.min(s.aweA * 0.90, T.SHPP_RATE) : 0;
     const rateB = eligibleB ? Math.min(s.aweB * 0.90, T.SHPP_RATE) : 0;
-    // Cap weeks when over-allocated: Parent A takes priority, Parent B gets the remainder.
-    // This ensures the displayed total never exceeds the statutory 37-week maximum.
     const effectiveWeeksA = overAllocated ? Math.min(s.weeksA, 37) : s.weeksA;
     const effectiveWeeksB = overAllocated ? Math.min(s.weeksB, Math.max(0, 37 - effectiveWeeksA)) : s.weeksB;
     const totalWeeks = effectiveWeeksA + effectiveWeeksB;

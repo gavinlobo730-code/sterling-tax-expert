@@ -1,12 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   Sterling Tax Expert — Calculators (Payroll + Statutory)
-   All calculations use the 2026/27 UK tax-year constants in TAX.
-   ─────────────────────────────────────────────────────────── */
-
-// ── Shared tax functions ───────────────────────────────────
 function scottishIncomeTaxOn(gross){
-  // Scottish income tax 2026/27 — confirmed by Scottish Budget.
-  // Rates: starter 19%, basic 20%, intermediate 21%, higher 42%, top 48%.
   const T = window.TAX;
   let pa = T.PA;
   if (gross > T.PA_TAPER_START) {
@@ -26,9 +18,7 @@ function scottishIncomeTaxOn(gross){
   if (s5 > 0) tax += s5 * T.SCOT_TOP;
   return { tax: Math.max(0, tax), paUsed: pa };
 }
-
 function incomeTaxOn(gross){
-  // English/Welsh/NI rates. Personal allowance taper above £100k.
   const T = window.TAX;
   let pa = T.PA;
   if (gross > T.PA_TAPER_START) {
@@ -44,7 +34,6 @@ function incomeTaxOn(gross){
   }
   return { tax: Math.max(0, tax), paUsed: pa };
 }
-
 function employeeNI(gross){
   const T = window.TAX;
   let ni = 0;
@@ -54,7 +43,6 @@ function employeeNI(gross){
   }
   return ni;
 }
-
 function employerNI(gross, claimAllowance = false, payBillNI = null){
   const T = window.TAX;
   let ni = Math.max(0, gross - T.NI_ST) * T.NI_ER;
@@ -63,20 +51,12 @@ function employerNI(gross, claimAllowance = false, payBillNI = null){
   }
   return ni;
 }
-
 function studentLoan(gross, plan){
   if (!plan || plan === '0') return 0;
   const cfg = window.TAX.SL[plan];
   if (!cfg) return 0;
   return Math.max(0, gross - cfg.thr) * cfg.rate;
 }
-
-// ─────────────────────────────────────────────────────────
-// PAYE TAX & NI CALCULATOR
-// ─────────────────────────────────────────────────────────
-// ─────────────────────────────────────────────────────────
-// SSP CALCULATOR
-// ─────────────────────────────────────────────────────────
 CALCS['ssp'] = {
   id: 'ssp',
   title: 'Statutory Sick Pay (SSP) Calculator',
@@ -88,12 +68,9 @@ CALCS['ssp'] = {
   ],
   calculate(s){
     const T = window.TAX;
-    // 2026/27: SSP weekly amount = lower of the flat rate or 80% of AWE.
     const weeklyAmount = Math.min(T.SSP_RATE, s.awe * T.SSP_PCT_CAP);
     const cappedByAwe  = (s.awe * T.SSP_PCT_CAP) < T.SSP_RATE;
     const qDailyRate   = weeklyAmount / s.qdays;
-    // No waiting days from 6 Apr 2026 — every qualifying day is paid,
-    // up to the 28-week statutory maximum.
     const maxPaidDays  = T.SSP_MAX_WEEKS * s.qdays;
     const paidDays     = Math.min(s.days, maxPaidDays);
     const totalPaid    = paidDays * qDailyRate;
@@ -121,10 +98,6 @@ CALCS['ssp'] = {
   },
   related: ['smp','holiday','paye']
 };
-
-// ─────────────────────────────────────────────────────────
-// SMP CALCULATOR
-// ─────────────────────────────────────────────────────────
 CALCS['smp'] = {
   id: 'smp',
   title: 'Statutory Maternity Pay (SMP) Calculator',
@@ -137,10 +110,6 @@ CALCS['smp'] = {
   ],
   calculate(s){
     const T = window.TAX;
-    // ── Key maternity dates ──
-    // EWC = the Sunday on/before the due date (start of the expected week of childbirth).
-    // Qualifying week (QW) = the 15th week before the EWC.
-    // Continuous-employment test: at least 26 weeks' service into the QW.
     let ewcStart = null, qualWeek = null, earliestLeave = null, leaveDate = null, leaveTooEarly = false;
     if (s.due) {
       const due = new Date(s.due + 'T00:00:00');
@@ -152,21 +121,15 @@ CALCS['smp'] = {
         leaveTooEarly = leaveDate < earliestLeave;
       }
     }
-
-    // ── Eligibility ──
-    // Earnings test (>= LEL) AND continuous-employment test (>= 26 weeks by QW).
     const earnsEnough = s.awe >= T.LEL;
     const longEnough  = s.service >= 26;
     const eligible    = earnsEnough && longEnough;
-
-    // ── Payment ──
     const weeklyHigher = s.awe * T.SMP_HIGHER;                       // weeks 1-6: 90% AWE (uncapped)
     const weeklyLower  = Math.min(s.awe * T.SMP_HIGHER, T.SMP_LOWER); // weeks 7-39: lower of 90% AWE or flat rate
     const first6  = weeklyHigher * 6;
     const next33  = weeklyLower * 33;
     const total   = first6 + next33;
     const cappedByFlat = (s.awe * T.SMP_HIGHER) > T.SMP_LOWER;
-
     return {
       eligible, earnsEnough, longEnough,
       first6, weeklyHigher, weeklyLower, next33, total, cappedByFlat,
@@ -182,7 +145,6 @@ CALCS['smp'] = {
       • Earliest SMP/leave start (11 weeks before EWC): <strong>${fmtD(r.earliestLeave)}</strong>
       ${r.leaveDate ? `<br>• Chosen leave start: <strong>${fmtD(r.leaveDate)}</strong>${r.leaveTooEarly ? ' <span style="color:var(--red);font-weight:700">⚠ earlier than the 11-week limit</span>' : ' ✓'}` : ''}
     `) : notesCard('Tip', 'Enter the baby\'s due date to see the expected week of childbirth, qualifying week and earliest leave date worked out automatically.');
-
     if (!r.eligible) {
       const reasons = [];
       if (!r.earnsEnough) reasons.push(`average weekly earnings must be at least <strong>£${r.lel.toFixed(2)}/week</strong> (the Lower Earnings Limit for 2026/27)`);
@@ -212,10 +174,6 @@ CALCS['smp'] = {
   },
   related: ['ssp','holiday','paye']
 };
-
-// ─────────────────────────────────────────────────────────
-// HOLIDAY PAY CALCULATOR
-// ─────────────────────────────────────────────────────────
 CALCS['holiday'] = {
   id: 'holiday',
   title: 'Holiday Pay Calculator',
@@ -267,10 +225,6 @@ CALCS['holiday'] = {
   },
   related: ['ssp','smp','min-wage']
 };
-
-// ─────────────────────────────────────────────────────────
-// REDUNDANCY PAY CALCULATOR
-// ─────────────────────────────────────────────────────────
 CALCS['redundancy'] = {
   id: 'redundancy',
   title: 'Statutory Redundancy Pay Calculator',
@@ -285,7 +239,6 @@ CALCS['redundancy'] = {
     if (s.years < 2) return { eligible:false };
     const cappedYears = Math.min(s.years, T.REDUNDANCY_MAX_YEARS);
     const cappedWeek  = Math.min(s.weeklyPay, T.REDUNDANCY_WEEK_CAP);
-    // Walk back from current age, count weeks per year served.
     let weeks = 0;
     for (let i = 0; i < cappedYears; i++) {
       const ageAtYear = s.age - i - 1; // age at start of that year of service

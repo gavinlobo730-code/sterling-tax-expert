@@ -1,45 +1,31 @@
-/* ═══════════════════════════════════════════════════════════
-   Sterling Tax Expert — Hero Canvas: Constellation
-   Optimised: shadowBlur for glow, batched draws, capped count.
-   ─────────────────────────────────────────────────────────── */
 (function () {
   'use strict';
-
   var raf  = null;
   var tick = 0;
-
-  /* Background and vignette gradients are rebuilt only on resize */
   var bgGrad, vigGrad, bloomL, bloomR;
   var bgW = 0, bgH = 0;
-
   function start() {
     var canvas = document.getElementById('hero-canvas');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
     var W, H, pts;
     var goldPts, whitePts; /* pre-split so we can batch fill by colour */
-
     function buildStaticGrads() {
       bgGrad = ctx.createLinearGradient(0, 0, 0, H);
       bgGrad.addColorStop(0,    '#010207');
       bgGrad.addColorStop(0.45, '#05091B');
       bgGrad.addColorStop(1,    '#02040E');
-
       vigGrad = ctx.createRadialGradient(W*.5, H*.45, H*.1, W*.5, H*.45, H*.9);
       vigGrad.addColorStop(0, 'rgba(0,0,0,0)');
       vigGrad.addColorStop(1, 'rgba(1,2,10,0.80)');
-
       bloomL = ctx.createRadialGradient(W*.22, H*.5, 0, W*.22, H*.5, W*.48);
       bloomL.addColorStop(0,   'rgba(166,124,0,0.07)');
       bloomL.addColorStop(1,   'rgba(0,0,0,0)');
-
       bloomR = ctx.createRadialGradient(W*.78, H*.42, 0, W*.78, H*.42, W*.42);
       bloomR.addColorStop(0,   'rgba(99,102,241,0.07)');
       bloomR.addColorStop(1,   'rgba(0,0,0,0)');
-
       bgW = W; bgH = H;
     }
-
     function mkPt() {
       var angle = Math.random() * Math.PI * 2;
       var speed = 0.15 + Math.random() * 0.28;
@@ -56,11 +42,9 @@
         gold:   Math.random() < 0.28
       };
     }
-
     function resize() {
       W = canvas.width  = window.innerWidth;
       H = canvas.height = window.innerHeight;
-      /* ~300 particles on desktop — smooth at 60fps */
       var count = Math.min(1000, Math.max(450, Math.floor(W * H / 1440)));
       pts = [];
       for (var i = 0; i < count; i++) pts.push(mkPt());
@@ -68,21 +52,12 @@
       whitePts = pts.filter(function(p){ return !p.gold; });
       buildStaticGrads();
     }
-
     function frame() {
       tick++;
-
-      /* ── Background (pre-built gradient, no allocation) ── */
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, W, H);
-
-      /* Blooms — static gradients, just painted */
       ctx.fillStyle = bloomL; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = bloomR; ctx.fillRect(0, 0, W, H);
-
-      /* ── Particles — use shadowBlur for glow, not per-particle radialGradient ── */
-
-      /* White/indigo particles */
       ctx.shadowColor = 'rgba(190,205,255,1)';
       ctx.shadowBlur  = 16;
       ctx.fillStyle   = 'rgba(215,225,255,1)';
@@ -96,8 +71,6 @@
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       }
       ctx.fill();
-
-      /* Gold particles */
       ctx.shadowColor = 'rgba(255,200,60,1)';
       ctx.shadowBlur  = 18;
       ctx.fillStyle   = 'rgba(220,178,80,1)';
@@ -111,11 +84,8 @@
         ctx.arc(q.x, q.y, q.r, 0, Math.PI * 2);
       }
       ctx.fill();
-
       ctx.globalAlpha = 1;
       ctx.shadowBlur  = 0;
-
-      /* ── Move all particles ── */
       for (var k = 0; k < pts.length; k++) {
         var pt = pts[k];
         var va = Math.atan2(pt.vy, pt.vx) + pt.drift;
@@ -130,23 +100,17 @@
         if (pt.y < -m) pt.y = H + m;
         if (pt.y > H + m) pt.y = -m;
       }
-
-      /* ── Vignette ── */
       ctx.fillStyle = vigGrad;
       ctx.fillRect(0, 0, W, H);
-
       raf = requestAnimationFrame(frame);
     }
-
     window.addEventListener('resize', function () {
       clearTimeout(window._heroResizeTimer);
       window._heroResizeTimer = setTimeout(resize, 120);
     }, { passive: true });
-
     resize();
     frame();
   }
-
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', start);
   } else {

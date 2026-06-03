@@ -1,14 +1,4 @@
-/* ═══════════════════════════════════════════════════════════
-   Sterling Tax Expert — Page mounts
-   Home, Services, Tools, Insights, Post, Deadlines, About, Contact
-   ─────────────────────────────────────────────────────────── */
-
-// ─────────────────────────────────────────────────────────
-// HOME
-// ─────────────────────────────────────────────────────────
 function mountHome(){
-
-  // ── Section 1: Trust & Credibility ──────────────────────
   const trust = document.getElementById('home-trust');
   if (trust) trust.innerHTML = `
     <section class="hp-trust">
@@ -54,8 +44,6 @@ function mountHome(){
       </div>
     </section>
   `;
-
-  // ── Section 3: Who We Help ───────────────────────────────
   const audience = document.getElementById('home-audience');
   if (audience) {
     const groups = [
@@ -85,8 +73,6 @@ function mountHome(){
       </section>
     `;
   }
-
-  // ── Section 4: Why Sterling Tax Expert ──────────────────
   const why = document.getElementById('home-why');
   if (why) {
     const reasons = [
@@ -114,8 +100,6 @@ function mountHome(){
       </section>
     `;
   }
-
-  // ── Section 5: How We Work ───────────────────────────────
   const process = document.getElementById('home-process');
   if (process) {
     const steps = [
@@ -144,8 +128,6 @@ function mountHome(){
       </section>
     `;
   }
-
-  // ── Section 6: Final CTA ─────────────────────────────────
   const cta = document.getElementById('home-cta');
   if (cta) cta.innerHTML = `
     <section class="hp-cta">
@@ -162,17 +144,13 @@ function mountHome(){
       </div>
     </section>
   `;
-
   if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
-
-
 function daysUntil(dateStr){
   const today = new Date(); today.setHours(0,0,0,0);
   const target = new Date(dateStr); target.setHours(0,0,0,0);
   return Math.round((target - today) / (1000 * 60 * 60 * 24));
 }
-
 function toolCardHTML(t){
   return `<div class="tool-card ${t.color}" onclick="navigate('calc','${t.id}')">
     <span class="tool-badge ${t.badge}">${t.badgeText}</span>
@@ -182,7 +160,6 @@ function toolCardHTML(t){
     <div class="tool-tags">${t.tags.map(tag => `<span class="ttag">${tag}</span>`).join('')}</div>
   </div>`;
 }
-
 function blogCardHTML(a){
   const cc = catColor(a.cat);
   const ic = iconBg(a.cat);
@@ -201,13 +178,11 @@ function blogCardHTML(a){
     </div>
   </div>`;
 }
-
 function formatDate(s){
   if (!s) return '';
   try { return new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
   catch(e) { return s; }
 }
-
 function catColor(cat){
   return ({
     'Payroll':'#16A34A', 'VAT':'#EA580C', 'Self assessment':'var(--blue2)',
@@ -227,10 +202,6 @@ function iconBg(cat){
     'Business advisory':{bg:'#F0FDFA',    tint:'#CCFBF1'},
   })[cat] || {bg:'var(--bluel)', tint:'var(--bluel2)'};
 }
-
-// ─────────────────────────────────────────────────────────
-// SERVICES
-// ─────────────────────────────────────────────────────────
 const SERVICE_DETAILS = [
   {
     who: 'Businesses of any size with employees',
@@ -281,11 +252,9 @@ const SERVICE_DETAILS = [
     why: 'Most accountants deal with the past. We help you understand where your business is going — and how to structure it so you keep more of what you earn.'
   },
 ];
-
 function mountServices(){
   const wrap = document.getElementById('page-services');
   if (!wrap) return;
-
   wrap.innerHTML = `
     <div class="crumbs"></div>
     <div style="background:var(--g50);border-bottom:1px solid var(--br)">
@@ -300,7 +269,6 @@ function mountServices(){
         </div>
       </div>
     </div>
-
     <div class="sec"><div class="sec-inner">
       <p style="font-size:13px;color:var(--t3);margin-bottom:20px">Click any service to see full details.</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px" class="ta-stagger">
@@ -315,7 +283,6 @@ function mountServices(){
         `).join('')}
       </div>
     </div></div>
-
     <div style="background:var(--g25);border-top:1px solid var(--br);border-bottom:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:48px 28px">
         <div style="text-align:center;margin-bottom:32px">
@@ -335,10 +302,8 @@ function mountServices(){
         </div>
       </div>
     </div>
-
     ${renderCTABand()}
     ${renderFooter()}
-
     <!-- Service detail modal -->
     <div id="svc-modal-overlay" onclick="closeServiceDetail()" style="display:none;position:fixed;inset:0;background:rgba(11,30,61,.55);z-index:900;backdrop-filter:blur(3px)"></div>
     <div id="svc-modal" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(680px,95vw);max-height:88vh;overflow-y:auto;background:var(--w);border-radius:16px;box-shadow:0 24px 80px rgba(11,30,61,.22);z-index:901;padding:36px"></div>
@@ -346,7 +311,6 @@ function mountServices(){
   updateBreadcrumbs('services');
   if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
-
 function openServiceDetail(i){
   const s = (window.SVCS || [])[i];
   const det = SERVICE_DETAILS[i] || {};
@@ -354,7 +318,6 @@ function openServiceDetail(i){
   const modal = document.getElementById('svc-modal');
   const overlay = document.getElementById('svc-modal-overlay');
   if (!modal || !overlay) return;
-
   modal.innerHTML = `
     <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:24px">
       <div style="display:flex;align-items:center;gap:14px">
@@ -366,9 +329,7 @@ function openServiceDetail(i){
       </div>
       <button onclick="closeServiceDetail()" aria-label="Close" style="background:var(--g100);border:none;border-radius:8px;width:32px;height:32px;display:grid;place-items:center;cursor:pointer;flex-shrink:0;font-size:18px;color:var(--t2)">×</button>
     </div>
-
     ${det.long ? `<p style="font-size:13.5px;color:var(--t2);line-height:1.8;margin-bottom:22px">${det.long}</p>` : ''}
-
     ${det.includes ? `
     <div style="margin-bottom:22px">
       <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:10px">What's included</div>
@@ -383,25 +344,20 @@ function openServiceDetail(i){
         `).join('')}
       </ul>
     </div>` : ''}
-
     ${det.why ? `
     <div style="background:var(--bluel);border:1px solid var(--bluel2);border-radius:10px;padding:16px 18px;margin-bottom:24px">
       <div style="font-size:11px;font-weight:700;color:var(--blue2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Why it matters</div>
       <p style="font-size:13px;color:var(--t2);line-height:1.75;margin:0">${det.why}</p>
     </div>` : ''}
-
     <div style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn btn-indigo" onclick="closeServiceDetail();navigate('contact')" style="padding:11px 22px">Book a free consultation →</button>
       <button class="btn btn-ghost" onclick="closeServiceDetail()" style="padding:11px 18px">Back to services</button>
     </div>
   `;
-
   overlay.style.display = 'block';
   modal.style.display = 'block';
   modal.style.padding = window.innerWidth < 480 ? '20px' : '36px';
   document.body.style.overflow = 'hidden';
-
-  // Animate in
   modal.style.opacity = '0';
   modal.style.transform = 'translate(-50%,-50%) scale(0.96)';
   requestAnimationFrame(() => {
@@ -412,7 +368,6 @@ function openServiceDetail(i){
     });
   });
 }
-
 function closeServiceDetail(){
   const modal = document.getElementById('svc-modal');
   const overlay = document.getElementById('svc-modal-overlay');
@@ -426,10 +381,6 @@ function closeServiceDetail(){
     modal.style.transition = '';
   }, 200);
 }
-
-// ─────────────────────────────────────────────────────────
-// TOOLS HUB
-// ─────────────────────────────────────────────────────────
 let CURRENT_TOOL_CAT = 'All';
 function mountTools(){
   const wrap = document.getElementById('page-tools');
@@ -515,10 +466,6 @@ function filterTools(query) {
     card.style.display = (!q || text.indexOf(q) !== -1) ? '' : 'none';
   });
 }
-
-// ─────────────────────────────────────────────────────────
-// INSIGHTS / BLOG
-// ─────────────────────────────────────────────────────────
 let CURRENT_BLOG_CAT = 'All';
 let CURRENT_BLOG_QUERY = '';
 function mountInsights(){
@@ -584,7 +531,6 @@ function renderBlogGrid(){
     const q = CURRENT_BLOG_QUERY.toLowerCase();
     filtered = filtered.filter(p => p.t.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q) || stripHTML(p.bodyHTML || '').toLowerCase().includes(q));
   }
-  // Skip the featured one we already showed
   filtered = filtered.slice(CURRENT_BLOG_CAT === 'All' && !CURRENT_BLOG_QUERY ? 1 : 0);
   const grid = document.getElementById('blog-grid');
   if (!grid) return;
@@ -603,10 +549,6 @@ function searchBlog(v){
   CURRENT_BLOG_QUERY = v;
   renderBlogGrid();
 }
-
-// ─────────────────────────────────────────────────────────
-// POST (single article)
-// ─────────────────────────────────────────────────────────
 function mountPost(id){
   const wrap = document.getElementById('page-post');
   if (!wrap) return;
@@ -618,13 +560,9 @@ function mountPost(id){
   }
   const cc = catColor(post.cat);
   const ic = iconBg(post.cat);
-  // bump views
   post.v = (post.v || 0) + 1;
   cmsSavePosts(posts);
-
-  // related — same category
   const related = posts.filter(p => p.cat === post.cat && p.id !== post.id && p.st === 'Published').slice(0, 3);
-
   wrap.innerHTML = `
     <div class="crumbs"></div>
     <div class="post-head">
@@ -668,10 +606,6 @@ function mountPost(id){
   `;
   updateBreadcrumbs('post', id);
 }
-
-// ─────────────────────────────────────────────────────────
-// DEADLINES HUB
-// ─────────────────────────────────────────────────────────
 let CURRENT_DL_VIEW = 'list';
 let CURRENT_DL_CAT = 'All';
 function mountDeadlines(){
@@ -711,7 +645,6 @@ function mountDeadlines(){
       </div>
       <div id="dl-content"></div>
     </div></div>
-
     <div style="background:var(--g25);border-top:1px solid var(--br)">
       <div style="max-width:1280px;margin:0 auto;padding:42px 28px">
         <div class="eyebrow ey-blue" style="margin-bottom:6px">Need company-specific deadlines?</div>
@@ -726,15 +659,12 @@ function mountDeadlines(){
         </div>
       </div>
     </div>
-
     ${renderCTABand()}
     ${renderFooter()}
   `;
   renderDLContent();
   updateBreadcrumbs('deadlines');
 }
-
-// ── Scout page ─────────────────────────────────────────────
 function mountScout() {
   const wrap = document.getElementById('page-scout');
   if (!wrap) return;
@@ -747,11 +677,9 @@ function mountScout() {
         <p style="font-size:14px;color:var(--t2);max-width:600px;line-height:1.75">Look up live filing deadlines for any UK company — or create a custom deadline and download it straight to your calendar.</p>
       </div>
     </div>
-
     <div class="sec sec-sm">
       <div class="sec-inner">
         <div class="scout-grid" style="max-width:1100px">
-
           <div>
             <div class="eyebrow ey-blue" style="margin-bottom:10px">Companies House</div>
             <h2 style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin-bottom:8px">Company filing deadlines</h2>
@@ -762,7 +690,6 @@ function mountScout() {
             </div>
             <div id="ch-results"></div>
           </div>
-
           <div>
             <div class="eyebrow ey-blue" style="margin-bottom:10px">Deadline Creator</div>
             <h2 style="font-family:var(--sans);font-size:20px;font-weight:800;color:var(--navy);letter-spacing:-0.4px;margin-bottom:8px">Create a custom deadline</h2>
@@ -813,7 +740,6 @@ function mountScout() {
               <div id="dlc-msg" style="margin-top:10px;font-size:13px"></div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -821,7 +747,6 @@ function mountScout() {
     ${renderFooter()}
   `;
   updateBreadcrumbs('scout');
-  // Set default date to tomorrow
   setTimeout(() => {
     const q = document.getElementById('ch-query');
     if (q) q.addEventListener('keydown', e => { if (e.key === 'Enter') chSearch(); });
@@ -833,7 +758,6 @@ function mountScout() {
     }
   }, 100);
 }
-
 function dlcCreate() {
   const name      = (document.getElementById('dlc-name')        || {}).value || '';
   const date      = (document.getElementById('dlc-date')        || {}).value || '';
@@ -844,22 +768,15 @@ function dlcCreate() {
   const daily     = (document.getElementById('dlc-daily')       || {}).checked;
   const dailyDays = parseInt((document.getElementById('dlc-daily-days') || {}).value || '14');
   const msg       = document.getElementById('dlc-msg');
-
   if (!name.trim()) { if (msg) msg.innerHTML = '<span style="color:var(--red)">Please enter a deadline name.</span>'; return; }
   if (!date)        { if (msg) msg.innerHTML = '<span style="color:var(--red)">Please select a due date.</span>'; return; }
-
   const dt  = date.replace(/-/g, '');
   const uid = 'dlc-' + dt + '-' + name.trim().replace(/\s+/g,'-').toLowerCase().replace(/[^a-z0-9-]/g,'') + '@sterling-tax-expert';
   const desc = notes.trim() ? notes.trim() + ' — via Sterling Tax Expert' : 'via Sterling Tax Expert';
-
-  // Single reminders
   const alarms = [];
   if (r30) alarms.push(['TRIGGER:-P30D', '30-day reminder: ' + name.trim()]);
   if (r14) alarms.push(['TRIGGER:-P14D', '14-day reminder: ' + name.trim()]);
   if (r7)  alarms.push(['TRIGGER:-P7D',  '7-day reminder: '  + name.trim()]);
-
-  // Daily countdown — one alarm per day from dailyDays down to 1
-  // Skip days already covered by single reminders to avoid duplicates
   const singleDays = new Set([r30?30:null, r14?14:null, r7?7:null].filter(Boolean));
   if (daily) {
     for (let d = dailyDays; d >= 1; d--) {
@@ -869,11 +786,9 @@ function dlcCreate() {
       }
     }
   }
-
   const alarmLines = alarms.flatMap(([t, desc2]) => [
     'BEGIN:VALARM', 'ACTION:DISPLAY', t, 'DESCRIPTION:' + desc2, 'END:VALARM'
   ]);
-
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -890,7 +805,6 @@ function dlcCreate() {
     'END:VEVENT',
     'END:VCALENDAR'
   ];
-
   const totalAlarms = alarms.length;
   const filename = name.trim().replace(/[^a-z0-9]/gi,'-').toLowerCase() + '-deadline.ics';
   triggerDownload(lines.join('\r\n'), filename, 'text/calendar');
@@ -898,14 +812,11 @@ function dlcCreate() {
 }
 function setDLView(v){ CURRENT_DL_VIEW = v; mountDeadlines(); }
 function setDLCat(c){ CURRENT_DL_CAT = c; renderDLContent(); }
-
-// ── Companies House deadline lookup ───────────────────────
 async function chFetch(path) {
   const res = await fetch('/api/ch?path=' + encodeURIComponent(path));
   if (!res.ok) throw new Error('HTTP ' + res.status);
   return res.json();
 }
-
 async function chSearch() {
   const raw = (document.getElementById('ch-query') || {}).value || '';
   const q = raw.trim();
@@ -913,9 +824,7 @@ async function chSearch() {
   const out = document.getElementById('ch-results');
   if (!out) return;
   out.innerHTML = '<div style="color:var(--t2);font-size:14px">Searching…</div>';
-
   try {
-    // If it looks like a company number (8 digits, possibly with leading zeros) go direct
     const isNum = /^[0-9A-Za-z]{8}$/.test(q.replace(/\s/g,''));
     if (isNum) {
       await chLoadCompany(q.replace(/\s/g,'').toUpperCase(), out);
@@ -934,7 +843,6 @@ async function chSearch() {
     out.innerHTML = '<div style="color:var(--red);font-size:14px">Error: ' + escapeHtml(e.message) + '. Please try again.</div>';
   }
 }
-
 async function chLoadCompany(number, out) {
   out.innerHTML = '<div style="color:var(--t2);font-size:14px">Loading company details…</div>';
   try {
@@ -942,30 +850,23 @@ async function chLoadCompany(number, out) {
       chFetch('/company/' + number),
       chFetch('/company/' + number + '/filing-history?items_per_page=5')
     ]);
-
     const name = profile.company_name || number;
     const status = profile.company_status || '';
     const type = profile.type || '';
     const inc = profile.date_of_creation || '';
     const addr = profile.registered_office_address || {};
     const addrStr = [addr.address_line_1, addr.address_line_2, addr.locality, addr.postal_code].filter(Boolean).join(', ');
-
-    // Deadlines
     const deadlines = [];
     const ar = profile.annual_return || {};
     const acc = profile.accounts || {};
     const conf = profile.confirmation_statement || {};
-
     if (conf.next_due) deadlines.push({ label: 'Confirmation statement due', date: conf.next_due, overdue: conf.overdue, icon: '📋' });
     if (conf.next_made_up_to) deadlines.push({ label: 'Confirmation statement made up to', date: conf.next_made_up_to, overdue: false, icon: '📅', note: true });
     if (acc.next_due) deadlines.push({ label: 'Accounts due', date: acc.next_due, overdue: acc.overdue, icon: '📊' });
     if (acc.next_accounts && acc.next_accounts.due_on) deadlines.push({ label: 'Accounts due', date: acc.next_accounts.due_on, overdue: acc.next_accounts.overdue, icon: '📊' });
     if (acc.next_accounts && acc.next_accounts.period_end_on) deadlines.push({ label: 'Accounts period end', date: acc.next_accounts.period_end_on, overdue: false, icon: '📅', note: true });
-
-    // Remove duplicates by label
     const seen = new Set();
     const unique = deadlines.filter(d => { if (seen.has(d.label)) return false; seen.add(d.label); return true; });
-
     const dlRows = unique.length ? unique.map(d => {
       const dObj = new Date(d.date);
       const diff = Math.ceil((dObj - new Date()) / 86400000);
@@ -982,10 +883,7 @@ async function chLoadCompany(number, out) {
         </div>
       </div>`;
     }).join('') : '<div style="color:var(--t2);font-size:14px;padding:12px 0">No upcoming deadline data available for this company.</div>';
-
-    // Build .ics for this company's deadlines
     const exportable = unique.filter(d => !d.note && d.date);
-
     out.innerHTML = `
       <div class="ch-card">
         <div class="ch-card-header">
@@ -1010,7 +908,6 @@ async function chLoadCompany(number, out) {
     out.innerHTML = '<div style="color:var(--red);font-size:14px">Could not load company. Check the number and try again. (' + escapeHtml(e.message) + ')</div>';
   }
 }
-
 function chExportIcs(deadlines, companyName) {
   const lines = [
     'BEGIN:VCALENDAR',
@@ -1037,19 +934,15 @@ function chExportIcs(deadlines, companyName) {
   triggerDownload(lines.join('\r\n'), companyName.replace(/[^a-z0-9]/gi,'-').toLowerCase() + '-deadlines.ics', 'text/calendar');
   showToast('Calendar file downloaded');
 }
-
 function escapeHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-
-
 function filteredDLs(){
   return window.DEADLINES.filter(d => CURRENT_DL_CAT === 'All' || d.cat === CURRENT_DL_CAT)
     .map(d => ({ ...d, daysUntil: daysUntil(d.date) }))
     .filter(d => d.daysUntil >= -7)  // include recent past for context
     .sort((a,b) => a.daysUntil - b.daysUntil);
 }
-
 function renderDLContent(){
   const el = document.getElementById('dl-content');
   if (!el) return;
@@ -1088,19 +981,16 @@ function renderDLContent(){
       </div>`;
     }).join('')}</div>`;
   } else {
-    // Calendar view — next 12 weeks rolling
     el.innerHTML = renderCalendarView();
   }
 }
 function renderCalendarView(){
-  // 12-week grid starting from today
   const today = new Date(); today.setHours(0,0,0,0);
   const dow = today.getDay() === 0 ? 6 : today.getDay() - 1; // Mon = 0
   const start = new Date(today); start.setDate(start.getDate() - dow);
   const items = filteredDLs();
   const dlByDate = {};
   items.forEach(d => { (dlByDate[d.date] = dlByDate[d.date] || []).push(d); });
-
   const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const headers = days.map(d => `<div class="dh-cal-h">${d}</div>`).join('');
   const cells = [];
@@ -1123,11 +1013,6 @@ function renderCalendarView(){
   }
   return `<div class="dh-cal">${headers}${cells.join('')}</div>`;
 }
-
-// ── Calendar export — .ics, Google, Outlook, Apple ─────────
-// .ics works for Apple Calendar, Outlook desktop, and any standard
-// calendar app. Google and Outlook web get deep links instead.
-
 function downloadSingleIcs(date, name, desc){
   const ics = buildIcs([{ date, name, desc }]);
   triggerDownload(ics, icsFilename(name), 'text/calendar');
@@ -1139,10 +1024,7 @@ function downloadIcs(){
   triggerDownload(ics, 'sterling-tax-deadlines.ics', 'text/calendar');
   showToast(`${items.length} deadline${items.length!==1?'s':''} exported to .ics`, 'ok');
 }
-// Export every deadline in a given category (PAYE, VAT, RTI, etc.)
 function exportCategoryIcs(cat){
-  // "RTI" deadlines are PAYE real-time submissions — match PAYE rows that mention RTI/FPS/EPS,
-  // otherwise match the category exactly.
   let items;
   if (cat === 'RTI') {
     items = window.DEADLINES.filter(d =>
@@ -1156,8 +1038,6 @@ function exportCategoryIcs(cat){
   triggerDownload(ics, `sterling-${cat.toLowerCase().replace(/\s+/g,'-')}-deadlines.ics`, 'text/calendar');
   showToast(`${items.length} ${cat} deadline${items.length!==1?'s':''} exported`, 'ok');
 }
-
-// Google Calendar event link (all-day). Reminder is set by the user in Google.
 function addToGoogle(date, name, desc){
   const d = date.replace(/-/g,'');
   const next = new Date(date + 'T00:00:00'); next.setDate(next.getDate()+1);
@@ -1169,7 +1049,6 @@ function addToGoogle(date, name, desc){
     + '&ctz=Europe/London';
   window.open(url, '_blank', 'noopener');
 }
-// Outlook web compose link (all-day).
 function addToOutlook(date, name, desc){
   const start = date + 'T00:00:00';
   const next = new Date(date + 'T00:00:00'); next.setDate(next.getDate()+1);
@@ -1182,7 +1061,6 @@ function addToOutlook(date, name, desc){
     + '&body=' + encodeURIComponent((desc||'') + '\n\nvia Sterling Tax Expert deadlines hub');
   window.open(url, '_blank', 'noopener');
 }
-
 function icsFilename(name){
   return 'sterling-' + (name||'deadline').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,40) + '.ics';
 }
@@ -1209,13 +1087,11 @@ function buildIcs(items){
     lines.push(`SUMMARY:${icsEscape(it.name)}`);
     lines.push(`DESCRIPTION:${icsEscape((it.desc||'') + ' — via Sterling Tax Expert')}`);
     lines.push('TRANSP:TRANSPARENT');
-    // 7-day-ahead reminder
     lines.push('BEGIN:VALARM');
     lines.push('TRIGGER:-P7D');
     lines.push('ACTION:DISPLAY');
     lines.push(`DESCRIPTION:${icsEscape('Upcoming: ' + it.name)}`);
     lines.push('END:VALARM');
-    // 1-day-ahead reminder
     lines.push('BEGIN:VALARM');
     lines.push('TRIGGER:-P1D');
     lines.push('ACTION:DISPLAY');
@@ -1234,14 +1110,9 @@ function triggerDownload(text, filename, mime){
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-
-// ─────────────────────────────────────────────────────────
-// ABOUT
-// ─────────────────────────────────────────────────────────
 function mountAbout(){
   const wrap = document.getElementById('page-about');
   if (!wrap) return;
-
   const principles = [
     { icon:'✓', text:'Every calculator runs in your browser — nothing you enter leaves your device' },
     { icon:'✓', text:'Rates, thresholds and statutory amounts are sourced from HMRC, GOV.UK and Statutory Instruments' },
@@ -1250,27 +1121,22 @@ function mountAbout(){
     { icon:'✓', text:'Estimates and projections are flagged explicitly — nothing is presented as definitive advice' },
     { icon:'✓', text:'Free and accessible — no account, no paywall, no usage caps' },
   ];
-
   const audiences = [
     { label:'Small businesses', desc:'Run payroll calculations, check employer NI, track compliance deadlines and understand what you owe — without guesswork.' },
     { label:'Company directors', desc:'Model salary vs dividend decisions, understand corporation tax and marginal relief, and keep on top of filing obligations.' },
     { label:'Sole traders', desc:'Calculate self-assessment liability, payments on account, Class 2 and Class 4 NI, and statutory pay entitlements.' },
     { label:'Individuals', desc:'Check your take-home pay, understand your tax position, calculate student loan repayments and plan for the tax year ahead.' },
   ];
-
   const services = [
     { title:'Payroll', desc:'RTI submissions, P60s, P45s, auto-enrolment and monthly payroll management — fully aligned with 2026/27 rules.' },
     { title:'Accounting', desc:'Management accounts, year-end accounts and cloud bookkeeping, giving you a clear picture of your business throughout the year.' },
     { title:'Self Assessment', desc:'Personal tax returns filed accurately and on time, including sole traders, directors, landlords and those with complex income.' },
     { title:'Compliance', desc:'CIS management, VAT returns, corporation tax and HMRC liaison — keeping your business on the right side of every obligation.' },
   ];
-
   const toolCount = (window.TOOLS||[]).length;
   const dlCount   = (window.DEADLINES||[]).length;
-
   wrap.innerHTML = `
     <div class="crumbs"></div>
-
     <!-- ── Hero ── -->
     <div class="about-hero">
       <div class="about-hero-bg"></div>
@@ -1281,7 +1147,6 @@ function mountAbout(){
         <p class="about-hero-p ta-up ta-d3" style="margin-top:12px">Sterling Tax Expert exists to provide that access: practical tools, plain-English insights, and professional services — all built on the same foundation of accuracy and transparency.</p>
       </div>
     </div>
-
     <!-- ── Platform facts strip ── -->
     <div class="about-facts">
       <div class="about-facts-inner">
@@ -1310,7 +1175,6 @@ function mountAbout(){
         </div>
       </div>
     </div>
-
     <!-- ── Why this platform exists ── -->
     <div class="sec"><div class="sec-inner">
       <div class="about-split">
@@ -1336,7 +1200,6 @@ function mountAbout(){
         </div>
       </div>
     </div></div>
-
     <!-- ── Who it is for ── -->
     <div class="sec" style="background:var(--g50);border-top:1px solid var(--br);border-bottom:1px solid var(--br)">
       <div class="sec-inner">
@@ -1355,7 +1218,6 @@ function mountAbout(){
         </div>
       </div>
     </div>
-
     <!-- ── Services ── -->
     <div class="sec"><div class="sec-inner">
       <div class="row-hdr">
@@ -1376,7 +1238,6 @@ function mountAbout(){
         `).join('')}
       </div>
     </div></div>
-
     <!-- ── Transparency note ── -->
     <div class="about-transparency">
       <div class="about-transparency-inner">
@@ -1389,17 +1250,12 @@ function mountAbout(){
         </div>
       </div>
     </div>
-
     ${renderCTABand()}
     ${renderFooter()}
   `;
   updateBreadcrumbs('about');
   if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
-
-// ─────────────────────────────────────────────────────────
-// CONTACT
-// ─────────────────────────────────────────────────────────
 function mountContact(){
   const wrap = document.getElementById('page-contact');
   if (!wrap) return;
@@ -1456,10 +1312,6 @@ function mountContact(){
   updateBreadcrumbs('contact');
   if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
-
-// ─────────────────────────────────────────────────────────
-// PRIVACY POLICY
-// ─────────────────────────────────────────────────────────
 function mountPrivacy(){
   const wrap = document.getElementById('page-privacy');
   if (!wrap) return;
@@ -1474,34 +1326,25 @@ function mountPrivacy(){
     </div>
     <div class="sec"><div class="sec-inner" style="max-width:780px">
       <div style="font-size:14px;color:var(--t2);line-height:1.9">
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">1. Who we are</h2>
         <p>Sterling Tax Expert ("we", "us", "our") is a UK-based tax and payroll advisory service. Our website is <strong>sterlingtaxexpert.co.uk</strong>. For data-related queries, contact us at <a href="mailto:sterlingtaxexpert@gmail.com" style="color:var(--blue2)">sterlingtaxexpert@gmail.com</a>.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">2. What data we collect</h2>
         <p><strong>Contact form:</strong> When you submit an enquiry, we collect your name, email address, phone number (optional), and the message you provide. This data is used solely to respond to your enquiry.</p>
         <p style="margin-top:10px"><strong>Calculators and tools:</strong> All calculator inputs are processed entirely in your browser. We do not transmit, store or log any figures you enter into our free tools.</p>
         <p style="margin-top:10px"><strong>Analytics:</strong> We may use anonymised, aggregated analytics (such as page view counts) to understand how the site is used. No personally identifiable information is collected for this purpose.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">3. How we use your data</h2>
         <p>We use contact form data only to respond to your enquiry and, where relevant, to provide the services you have requested. We do not sell, rent or share your personal data with third parties for marketing purposes.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">4. Data retention</h2>
         <p>Enquiry data is retained for up to 24 months to allow us to maintain an accurate record of client communications, after which it is securely deleted. You may request deletion at any time by contacting us.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">5. Your rights</h2>
         <p>Under UK GDPR, you have the right to: access the personal data we hold about you; request correction or deletion; object to processing; and lodge a complaint with the Information Commissioner's Office (ICO) at <strong>ico.org.uk</strong>.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">6. Cookies</h2>
         <p>This website does not use tracking cookies. We do not use advertising cookies or third-party retargeting. Essential browser storage (such as session data for the admin area) is used only where strictly necessary to operate the site.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">7. Third-party services</h2>
         <p>We use <strong>EmailJS</strong> to deliver contact form submissions. Your form data is transmitted to EmailJS servers solely for delivery to our inbox. Please refer to the <a href="https://www.emailjs.com/legal/privacy-policy/" target="_blank" rel="noopener noreferrer" style="color:var(--blue2)">EmailJS Privacy Policy</a> for further detail.</p>
         <p style="margin-top:10px">Companies House data displayed in our Scout feature is fetched via the official Companies House public API. No personal data is transmitted in these requests beyond the company name or number you enter.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">8. Contact</h2>
         <p>For any questions about this policy or your data, please email <a href="mailto:sterlingtaxexpert@gmail.com" style="color:var(--blue2)">sterlingtaxexpert@gmail.com</a>.</p>
-
       </div>
       <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--br)">
         <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Back to home</button>
@@ -1512,10 +1355,6 @@ function mountPrivacy(){
   updateBreadcrumbs('privacy');
   if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
-
-// ─────────────────────────────────────────────────────────
-// TERMS OF USE
-// ─────────────────────────────────────────────────────────
 function mountTerms(){
   const wrap = document.getElementById('page-terms');
   if (!wrap) return;
@@ -1530,35 +1369,25 @@ function mountTerms(){
     </div>
     <div class="sec"><div class="sec-inner" style="max-width:780px">
       <div style="font-size:14px;color:var(--t2);line-height:1.9">
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">1. Acceptance</h2>
         <p>By accessing or using sterlingtaxexpert.co.uk ("the Site"), you agree to these Terms of Use. If you do not agree, please do not use the Site.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">2. Calculator outputs — important disclaimer</h2>
         <p>All calculators and tools on this Site provide <strong>estimates only</strong>. They are built on current HMRC rates and statutory figures, but their outputs are indicative and do not constitute tax advice, legal advice or professional guidance of any kind.</p>
         <p style="margin-top:10px">You should not make financial, tax or payroll decisions based solely on calculator outputs. Always consult a qualified tax professional for advice specific to your circumstances. Sterling Tax Expert accepts no liability for any loss arising from reliance on calculator results.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">3. Intellectual property</h2>
         <p>All content on this Site — including text, code, tool logic, design and graphics — is the property of Sterling Tax Expert and is protected by UK copyright law. You may not reproduce, distribute or modify any part of the Site without prior written consent.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">4. Accuracy of information</h2>
         <p>We take care to ensure all rates, thresholds and statutory figures are current and correct for the 2026/27 UK tax year. However, tax law changes frequently and we cannot guarantee that all information is complete, accurate or up to date at all times. We accept no liability for errors or omissions.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">5. Third-party content</h2>
         <p>Where we link to or retrieve data from third-party sources (including Companies House), we are not responsible for the accuracy, completeness or availability of that content.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">6. Limitation of liability</h2>
         <p>To the fullest extent permitted by law, Sterling Tax Expert shall not be liable for any direct, indirect or consequential loss arising from your use of the Site or reliance on its content.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">7. Governing law</h2>
         <p>These terms are governed by the laws of England and Wales. Any disputes shall be subject to the exclusive jurisdiction of the courts of England and Wales.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">8. Changes to these terms</h2>
         <p>We may update these terms from time to time. Continued use of the Site after any changes constitutes acceptance of the revised terms.</p>
-
         <h2 style="font-size:18px;font-weight:700;color:var(--navy);margin:32px 0 10px">9. Contact</h2>
         <p>Questions about these terms? Email us at <a href="mailto:sterlingtaxexpert@gmail.com" style="color:var(--blue2)">sterlingtaxexpert@gmail.com</a>.</p>
-
       </div>
       <div style="margin-top:40px;padding-top:24px;border-top:1px solid var(--br)">
         <button class="btn btn-ghost btn-sm" onclick="navigate('home')">← Back to home</button>
@@ -1569,10 +1398,6 @@ function mountTerms(){
   updateBreadcrumbs('terms');
   if (typeof window.initReveal === 'function') setTimeout(window.initReveal, 50);
 }
-
-// ─────────────────────────────────────────────────────────
-// Shared bands
-// ─────────────────────────────────────────────────────────
 function renderCTABand(){
   return `<div class="cta-band">
     <div class="cta-bi">
@@ -1587,7 +1412,6 @@ function renderCTABand(){
     </div>
   </div>`;
 }
-
 function renderFooter(){
   return `<footer>
     <div class="f-main">
