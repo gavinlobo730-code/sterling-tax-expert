@@ -1,10 +1,10 @@
 # Cloudflare Pages — cache headers
-# JS and CSS: cache for 1 year (filenames change when content changes)
+# JS and CSS: cache for 5 minutes, then revalidate
 /js/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=300, must-revalidate
 
 /css/*
-  Cache-Control: public, max-age=31536000, immutable
+  Cache-Control: public, max-age=300, must-revalidate
 
 # HTML: always revalidate so users get the latest version
 /*
