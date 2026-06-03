@@ -1,3 +1,7 @@
+/* ═══════════════════════════════════════════════════════════
+   Sterling Tax Expert — Calculators (Compliance + Tax)
+   ─────────────────────────────────────────────────────────── */
+
 CALCS['min-wage'] = {
   id: 'min-wage',
   title: 'Minimum Wage Checker',
@@ -42,6 +46,10 @@ CALCS['min-wage'] = {
   },
   related: ['paye','holiday','payroll-cost']
 };
+
+// ─────────────────────────────────────────────────────────
+// APPRENTICESHIP LEVY CALCULATOR
+// ─────────────────────────────────────────────────────────
 CALCS['apprenticeship'] = {
   id: 'apprenticeship',
   title: 'Apprenticeship Levy Calculator',
@@ -72,6 +80,10 @@ CALCS['apprenticeship'] = {
   },
   related: ['employer-ni','payroll-cost']
 };
+
+// ─────────────────────────────────────────────────────────
+// CIS DEDUCTION CALCULATOR
+// ─────────────────────────────────────────────────────────
 CALCS['cis'] = {
   id: 'cis',
   title: 'CIS Deduction Calculator',
@@ -119,6 +131,10 @@ CALCS['cis'] = {
   },
   related: ['vat','paye']
 };
+
+// ─────────────────────────────────────────────────────────
+// CORPORATION TAX
+// ─────────────────────────────────────────────────────────
 CALCS['corp'] = {
   id: 'corp',
   title: 'Corporation Tax Calculator',
@@ -158,7 +174,7 @@ CALCS['corp'] = {
       ${kpiRow([
         kpi('Corporation tax due', fmt(r.ct),          { color:'red',     sub:`${r.effRate.toFixed(2)}% effective rate` }),
         kpi('Profit after tax',    fmt(r.profitAfter), { color:'green',   sub:'Available for dividends / retention' }),
-        kpi('Rate band applied',   `<span style="color:${bandColor}">${r.band}</span>`, { color:'primary', sub:`Profit: ${fmt(r.taxableProfit)}` }),
+        kpi('Rate band applied',   r.band,             { color:'primary', sub:`Profit: ${fmt(r.taxableProfit)}` }),
       ])}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="paye-charts">
         <div class="chart-section">
@@ -211,6 +227,10 @@ CALCS['corp'] = {
   },
   related: ['marginal','sal-vs-div','vat','dividend']
 };
+
+// ─────────────────────────────────────────────────────────
+// VAT CALCULATOR
+// ─────────────────────────────────────────────────────────
 CALCS['vat'] = {
   id: 'vat',
   title: 'VAT Calculator',
@@ -242,6 +262,10 @@ CALCS['vat'] = {
   },
   related: ['vat-flat','corp','cis']
 };
+
+// ─────────────────────────────────────────────────────────
+// FLAT RATE VAT
+// ─────────────────────────────────────────────────────────
 CALCS['vat-flat'] = {
   id: 'vat-flat',
   title: 'Flat Rate VAT Calculator',
@@ -254,12 +278,15 @@ CALCS['vat-flat'] = {
     { id:'lcost',   type:'checkbox', label:'Limited-cost trader (16.5%)',    default:false },
   ],
   calculate(s){
+    // Standard scheme — assumes all turnover at 20%. See caveat note in render.
     const net = s.turnover / 1.20;
     const outputVat = s.turnover - net;
     const standardOwed = outputVat - s.inputs;
+    // Flat rate
     const effectiveRate = s.lcost ? 16.5 : (s.flatRate - (s.firstYear ? 1 : 0));
     const frsOwed = s.turnover * (effectiveRate / 100);
     const saving = standardOwed - frsOwed;
+    // FRS ceiling: £150,000 net (VAT-exclusive) turnover per HMRC VAT Notice 733 para 3.1
     const overFrsCeiling = (s.turnover / 1.20) > 150000;
     return { net, outputVat, standardOwed, frsOwed, saving, effectiveRate, overFrsCeiling };
   },
@@ -283,6 +310,10 @@ CALCS['vat-flat'] = {
   },
   related: ['vat','corp']
 };
+
+// ─────────────────────────────────────────────────────────
+// DIVIDEND TAX
+// ─────────────────────────────────────────────────────────
 CALCS['dividend'] = {
   id: 'dividend',
   title: 'Dividend Tax Calculator',
@@ -293,14 +324,19 @@ CALCS['dividend'] = {
   ],
   calculate(s){
     const T = window.TAX;
+    // 1. Determine personal allowance utilisation against other income first.
     const totalIncome = s.salary + s.dividends;
     let pa = T.PA;
     if (totalIncome > T.PA_TAPER_START) pa = Math.max(0, T.PA - Math.floor((totalIncome - T.PA_TAPER_START) / 2));
+    // PA used by other income first.
     const paUsedBySalary = Math.min(s.salary, pa);
     const paLeft = Math.max(0, pa - paUsedBySalary);
+    // Of the dividends, paLeft is tax-free, then £500 dividend allowance, then taxed by band.
     let remainingDiv = Math.max(0, s.dividends - paLeft);
     const allowanceUsed = Math.min(T.DIV_ALLOWANCE, remainingDiv);
     remainingDiv -= allowanceUsed;
+    // Bands are defined on total taxable income above PA.
+    // Salary occupies (s.salary - paUsedBySalary) of the basic-rate band first.
     const taxableSalary = Math.max(0, s.salary - paUsedBySalary);
     const brRoom = Math.max(0, T.BR_LIMIT - T.PA - taxableSalary);
     const hrRoom = Math.max(0, T.HR_LIMIT - T.PA - taxableSalary - brRoom);
@@ -334,6 +370,10 @@ CALCS['dividend'] = {
   },
   related: ['sal-vs-div','paye','corp']
 };
+
+// ─────────────────────────────────────────────────────────
+// SALARY VS DIVIDEND — DIRECTOR
+// ─────────────────────────────────────────────────────────
 CALCS['sal-vs-div'] = {
   id: 'sal-vs-div',
   title: 'Salary vs Dividend Calculator',
@@ -344,11 +384,19 @@ CALCS['sal-vs-div'] = {
     { id:'allowance', type:'checkbox', label:'Company eligible for Employment Allowance',            default:false, },
   ],
   calculate(s){
+    const T = window.TAX;
+    // The company pays salary (deductible) + employer NI on salary, then CT on remaining profit, then dividend.
+    // From a "total cash leaving company" budget, work out what the director takes home.
     const erNI = employerNI(s.salary, s.allowance);
+    // Profit available for dividend = totalDraw - salary - erNI
     const profitForDiv = Math.max(0, s.totalDraw - s.salary - erNI);
+    // The company has paid CT on that profit already (assumed; we add it back to show pre-CT impact)
+    // We treat totalDraw as post-CT cash. So dividend = profitForDiv.
     const dividend = profitForDiv;
+    // Director's income tax + NI on salary
     const { tax: salaryTax } = incomeTaxOn(s.salary);
     const empNI = employeeNI(s.salary);
+    // Dividend tax on top
     const div = CALCS['dividend'].calculate({ salary: s.salary, dividends: dividend });
     const totalTax = salaryTax + empNI + div.tax;
     const netTakeHome = (s.salary - salaryTax - empNI) + (dividend - div.tax);
@@ -383,6 +431,10 @@ CALCS['sal-vs-div'] = {
   },
   related: ['paye','dividend','corp','employer-ni']
 };
+
+// ─────────────────────────────────────────────────────────
+// SELF ASSESSMENT (Sole Trader)
+// ─────────────────────────────────────────────────────────
 CALCS['self-assess'] = {
   id: 'self-assess',
   title: 'Self Assessment Calculator',
@@ -398,7 +450,14 @@ CALCS['self-assess'] = {
     const T = window.TAX;
     const totalIncome = s.profit + s.other;
     const { tax: incomeTax } = incomeTaxOn(totalIncome);
+
+    // Class 2 NI (2026/27 rules — changed from April 2024):
+    // • Profits >= SPT (£7,105): CREDITED automatically by HMRC — no cash payment required.
+    // • Profits < SPT: VOLUNTARY payment of £3.65/week (£189.80/yr) available to protect
+    //   State Pension and benefit entitlements. Shown here as it is typically worthwhile.
     const class2 = s.profit < T.CLASS2_SPT ? T.CLASS2_RATE * 52 : 0;
+
+    // Class 4 NI
     let class4 = 0;
     if (s.profit > T.CLASS4_LPL) {
       class4 += (Math.min(s.profit, T.CLASS4_UPL) - T.CLASS4_LPL) * T.CLASS4_MAIN;
@@ -406,6 +465,8 @@ CALCS['self-assess'] = {
     }
     const sl = studentLoan(totalIncome, s.studentPlan);
     const total = incomeTax + class2 + class4 + sl;
+    // Payments on account are based on income tax + Class 4 only — student loan and Class 2
+    // are NOT included in the POA base (HMRC SA payment on account rules).
     const poa = (incomeTax + class4) / 2;
     const netProfit = s.profit - (incomeTax + class4 + class2);
     return { incomeTax, class2, class4, sl, total, poa, netProfit, totalIncome };

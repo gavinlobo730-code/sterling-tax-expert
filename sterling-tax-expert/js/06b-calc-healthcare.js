@@ -1,3 +1,11 @@
+/* ═══════════════════════════════════════════════════════════
+   Sterling Tax Expert — Healthcare Calculators
+   NHS Payroll & Pension Calculator (2026/27)
+   ─────────────────────────────────────────────────────────── */
+
+// scottishIncomeTaxOn() is defined in 04-calc-payroll.js (loads first).
+
+// ── NHS pension tier lookup ────────────────────────────────
 function nhsPensionTier(pensionablePay) {
   const tiers = window.TAX.NHS_PENSION_TIERS;
   for (let i = 0; i < tiers.length; i++) {
@@ -5,6 +13,8 @@ function nhsPensionTier(pensionablePay) {
   }
   return { tierIndex: tiers.length - 1, rate: tiers[tiers.length - 1].rate, to: Infinity };
 }
+
+// ── Tab switching helper (rendered inline, no external deps) ─
 function nhsTabHTML(tab1, tab2, tab3) {
   return `
     <div class="nhs-tabs">
@@ -17,6 +27,8 @@ function nhsTabHTML(tab1, tab2, tab3) {
     <div id="nhs-t3" class="nhs-panel" style="display:none">${tab3}</div>
   `;
 }
+
+// nhsShowTab is called by inline onclick — must be on window
 window.nhsShowTab = function(btn, panelId) {
   btn.closest('.calc-results').querySelectorAll('.nhs-tab').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -24,11 +36,20 @@ window.nhsShowTab = function(btn, panelId) {
   const panel = document.getElementById(panelId);
   if (panel) panel.style.display = '';
 };
+
+
+/* ─────────────────────────────────────────────────────────
+   NHS TRUE EMPLOYMENT COST CALCULATOR
+   Gross → Net or Net → Gross for NHS staff.
+   NHS pension occupational (pre-tax), employee tier rate,
+   employer 14.38%, employer NI at 15%.
+   ───────────────────────────────────────────────────────── */
 CALCS['nhs-true-cost'] = {
   id: 'nhs-true-cost',
   title: 'NHS True Employment Cost Calculator',
   subtitle: 'Enter a gross NHS salary or desired take-home. See the employee\'s net pay, their NHS pension contribution tier, and the full employer cost including 14.38% pension and employer NI.',
   metaBadges: ['NHS pension tiers', 'Gross → Net', 'Net → Gross'],
+
   inputs: [
     { id:'mode',      type:'toggle',  label:'Calculate from',             default:'gross', options:[{v:'gross',l:'Gross salary'},{v:'net',l:'Desired take-home'}] },
     { id:'gross_in',  type:'currency',label:'Annual gross salary',        default:45000,   hint:'Full-time equivalent, before deductions' },
@@ -39,10 +60,12 @@ CALCS['nhs-true-cost'] = {
     { id:'plan',      type:'select',  label:'Student loan plan',          default:'0',     options:[{v:'0',l:'None'},{v:'1',l:'Plan 1'},{v:'2',l:'Plan 2'},{v:'4',l:'Plan 4'},{v:'5',l:'Plan 5'},{v:'PG',l:'Postgrad'}] },
     { id:'allowance', type:'checkbox',label:'Employment Allowance (£10,500/yr)', default:false, hint:'Most NHS trusts are not eligible' },
   ],
+
   afterRecalc: function(s) {
     if (s.mode === 'net') _hide('gross_in'); else _show('gross_in');
     if (s.mode === 'gross') _hide('net_in'); else _show('net_in');
   },
+
   calculate: function(s) {
     var T = window.TAX;
     var gross;
@@ -62,14 +85,17 @@ CALCS['nhs-true-cost'] = {
     }
     return this._calc(gross, s, T);
   },
+
   _calc: function(gross, s, T) {
     var optedIn = s.nhs_opt === 'yes';
     var tier = nhsPensionTier(gross);
     var eePension  = optedIn ? gross * tier.rate : 0;
     var erPension  = optedIn ? gross * 0.1438 : 0; // payroll employer rate
+    // NHS pension is occupational pre-tax — reduces taxable pay
     var taxableGross = Math.max(0, gross - eePension);
     var taxRes = s.regime === 'scotland' ? scottishIncomeTaxOn(taxableGross) : incomeTaxOn(taxableGross);
     var incomeTax = taxRes.tax;
+    // NI is on total gross (NHS pension does NOT reduce NI base)
     var empNI = employeeNI(gross);
     var erNI  = employerNI(gross, s.allowance);
     var sl = studentLoan(gross, s.plan);
@@ -84,8 +110,10 @@ CALCS['nhs-true-cost'] = {
       optedIn, regime: s.regime, paUsed: taxRes.paUsed
     };
   },
+
   render: function(r) {
     var c = { net:'#16A34A', tax:'#C0392B', ni:'#C49A2E', pension:'#2563EB', erPension:'#0EA5E9', gross:'#6B748F', employer:'#0B1E3D' };
+
     var donutData = [
       { name:'Net pay',    val:r.netPay,    color:c.net },
       { name:'Income tax', val:r.incomeTax, color:c.tax },
@@ -93,6 +121,7 @@ CALCS['nhs-true-cost'] = {
     ];
     if (r.eePension > 0) donutData.push({ name:'NHS pension (ee)', val:r.eePension, color:c.pension });
     if (r.sl > 0) donutData.push({ name:'Student loan', val:r.sl, color:'#EA580C' });
+
     var freqRow = function(lbl, d) {
       var dp = d >= 260 ? 2 : 0;
       return '<div class="ft-row">'
@@ -104,6 +133,7 @@ CALCS['nhs-true-cost'] = {
         + '<span style="color:var(--navy);font-weight:600">' + fmt(r.empCost / d, dp) + '</span>'
         + '</div>';
     };
+
     return kpiRow([
       kpi('Employee take-home',  fmt(r.netPay),   { color:'primary', sub: fmt(r.netPay / 12) + ' / month · ' + fmt(r.netPay / 52) + ' / week' }),
       kpi('Total employer cost', fmt(r.empCost),  { color:'navy',    sub: fmt(r.empCost / 12) + ' / month · ' + r.overheadPct.toFixed(1) + '% above salary' }),
@@ -149,11 +179,18 @@ CALCS['nhs-true-cost'] = {
   },
   related: ['nhs-payslip', 'nhs-payroll', 'payslip', 'true-cost']
 };
+
+/* ─────────────────────────────────────────────────────────
+   NHS PAYSLIP GENERATOR
+   Monthly NHS payslip. Tier-based employee pension,
+   14.38% employer pension, full tax code & NI support.
+   ───────────────────────────────────────────────────────── */
 CALCS['nhs-payslip'] = {
   id: 'nhs-payslip',
   title: 'NHS Payslip Generator & Verifier',
   subtitle: 'Generate or verify a monthly NHS payslip. Enter the tax code, NI category, annual pensionable pay and YTD figures — the correct NHS pension tier is applied automatically.',
   metaBadges: ['NHS pension tiers', 'Monthly payslip', 'W1/M1 supported'],
+
   inputs: [
     { id:'pdNum',    type:'number',  label:'Month number (1 = April)',   default:1, min:1, max:12, hint:'Month 1 = April, Month 6 = September' },
     { type:'section',                label:'Employee & tax details' },
@@ -187,25 +224,42 @@ CALCS['nhs-payslip'] = {
     { type:'section',                label:'Student loan' },
     { id:'plan',     type:'select',  label:'Student loan plan',          default:'0', options:[{v:'0',l:'None'},{v:'1',l:'Plan 1'},{v:'2',l:'Plan 2'},{v:'4',l:'Plan 4'},{v:'5',l:'Plan 5'},{v:'PG',l:'Postgrad'}] },
   ],
+
   calculate: function(s) {
+    var T = window.TAX;
     var pdpy = 12;
     var pdNum = Math.max(1, s.pdNum || 1);
     var tc = parseTaxCode(s.taxCode);
     var grossPd = s.grossPd || 0;
     var optedIn = s.nhs_opt === 'yes';
+
+    // NHS pension: pre-tax occupational
     var nhsAnnual = s.nhsAnnual || (grossPd * 12);
     var tier = nhsPensionTier(nhsAnnual);
     var eePensionPd = optedIn ? grossPd * tier.rate : 0;
     var erPensionPd = optedIn ? grossPd * 0.1438 : 0;
+
+    // Taxable gross = gross minus NHS pension contribution
     var taxableGross = Math.max(0, grossPd - eePensionPd);
+
+    // PAYE — on taxable gross
     var taxPd = periodPAYE(taxableGross, s.ytdGross || 0, s.ytdTax || 0, pdNum, pdpy, tc);
+
+    // NI — on full gross (NHS pension does not reduce NI base)
     var eeNIPd = periodEeNI(grossPd, pdpy, s.niCat || 'A');
     var erNIPd = periodErNI(grossPd, pdpy, s.niCat || 'A');
+
+    // Student loan — on full gross
     var slPd = periodSL(grossPd, s.plan, pdpy);
+
+    // Net pay
     var netPd = grossPd - eePensionPd - taxPd - eeNIPd - slPd;
+
+    // YTD updated
     var ytdGrossNew = (s.ytdGross || 0) + grossPd;
     var ytdTaxNew   = (s.ytdTax   || 0) + taxPd;
     var ytdEeNINew  = (s.ytdEeNI  || 0) + eeNIPd;
+
     return {
       grossPd, taxableGross,
       eePensionPd, erPensionPd,
@@ -217,10 +271,12 @@ CALCS['nhs-payslip'] = {
       regime: s.regime, plan: s.plan
     };
   },
+
   render: function(r) {
     var totalDeductions = r.taxPd + r.eeNIPd + r.eePensionPd + r.slPd;
     var tcDesc = { NT:'No tax deducted', BR:'Basic rate 20% on all pay', D0:'Higher rate 40% on all pay', D1:'Additional rate 45% on all pay', K:'K code — negative allowance', L:'Personal allowance £' + fmtInt(r.tc.pa) + '/yr (£' + fmt(r.tc.pa / 12, 0) + '/month)' }[r.tc.type] || '';
     tcDesc += ' · <strong>' + (r.tc.basis === 'week1' ? 'W1/M1 non-cumulative' : 'Cumulative') + '</strong>';
+
     var ps = '<div class="payslip-card">'
       + '<div class="ps-header">'
         + '<div>'
@@ -261,6 +317,7 @@ CALCS['nhs-payslip'] = {
         + ' = <strong>' + fmt(r.grossPd + r.erNIPd + r.erPensionPd) + '</strong>'
       + '</div>'
     + '</div>';
+
     return ps
       + kpiRow([
         kpi('Monthly net pay',    fmt(r.netPd),       { color:'primary', sub:'After all deductions' }),

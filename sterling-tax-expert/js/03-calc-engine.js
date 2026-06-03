@@ -1,4 +1,16 @@
+/* ═══════════════════════════════════════════════════════════
+   Sterling Tax Expert — Calculator engine
+   ───────────────────────────────────────────────────────────
+   Each calculator is a config object describing its inputs,
+   a `calculate(state)` function returning a results object,
+   and a `render(results, state)` function returning HTML.
+   The shell takes care of inputs/results layout, live recalc,
+   the print button, and the "related calculators" cross-links.
+   ─────────────────────────────────────────────────────────── */
+
 const CALCS = {}; // populated by calcs-*.js
+
+// ── Input widget renderers ─────────────────────────────────
 function input_currency(id, label, value, opts = {}){
   return `<div class="ci-group">
     <div class="ci-label">${label}${opts.hint ? `<span class="ci-hint">${opts.hint}</span>` : ''}</div>
@@ -52,6 +64,7 @@ function input_section(label){
   return `<div class="ci-section-label">${label}</div>`;
 }
 function input_divider(){ return '<div class="ci-divider"></div>'; }
+
 function toggleSet(id, value){
   const hidden = document.getElementById(id);
   hidden.value = value;
@@ -59,6 +72,8 @@ function toggleSet(id, value){
   wrap.querySelectorAll('.ci-tog-btn').forEach(b => b.classList.toggle('on', b.dataset.val === value));
   recalc();
 }
+
+// ── State + recalc ─────────────────────────────────────────
 function readState(calc){
   const state = {};
   for (const i of calc.inputs) {
@@ -70,6 +85,7 @@ function readState(calc){
   }
   return state;
 }
+
 function setTaxYear(year){
   window.SELECTED_TAX_YEAR = year;
   window.TAX = window.TAX_RATES[year];
@@ -77,6 +93,7 @@ function setTaxYear(year){
   if (badge) badge.textContent = year;
   recalc();
 }
+
 function recalc(){
   const calc = CALCS[CURRENT_CALC];
   if (!calc) return;
@@ -92,14 +109,18 @@ function recalc(){
   if (calc.afterRecalc) calc.afterRecalc(state);
   _animateResults(wrap);
 }
+
 function _animateResults(wrap){
+  // 1. Row-by-row stagger: each direct child slides up and fades in
   const children = Array.from(wrap.children);
+  // Set start state synchronously so browser commits it before the transition frame
   children.forEach((el) => {
     el.style.willChange = 'opacity, transform';
     el.style.opacity = '0';
     el.style.transform = 'translateY(28px)';
     el.style.transition = 'none';
   });
+  // Force a style flush so the start state is painted before we add transitions
   void wrap.offsetHeight;
   children.forEach((el, i) => {
     requestAnimationFrame(() => {
@@ -111,8 +132,11 @@ function _animateResults(wrap){
       });
     });
   });
+
+  // 2. Number roll: count up £ figures inside .kpi-value elements
   wrap.querySelectorAll('.kpi-value').forEach((el, idx) => {
     const raw = el.textContent.trim();
+    // Match values like £12,345.67 or £1,234 or −£567
     const match = raw.match(/^(−?)£([\d,]+\.?\d*)(%?)$/);
     if (!match) return;
     const negative = match[1] === '−';
@@ -124,9 +148,11 @@ function _animateResults(wrap){
     const delay = idx * 55;
     const start = performance.now() + delay;
     const original = el.textContent; // fallback
+
     function tick(now){
       if (now < start) { requestAnimationFrame(tick); return; }
       const elapsed = Math.min(now - start, duration);
+      // ease-out cubic
       const t = 1 - Math.pow(1 - elapsed / duration, 3);
       const current = target * t;
       el.textContent = (negative ? '−' : '') + '£' + current.toLocaleString('en-GB', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
@@ -136,12 +162,15 @@ function _animateResults(wrap){
     requestAnimationFrame(tick);
   });
 }
+
 function resetCalc(){
   const calc = CALCS[CURRENT_CALC];
   if (!calc) return;
   mountCalc(calc.id);
   showToast('Reset to defaults');
 }
+
+// ── Mount calculator into the shared shell ─────────────────
 function mountCalc(id){
   const calc = CALCS[id];
   const shell = document.getElementById('page-calc');
@@ -197,8 +226,10 @@ function mountCalc(id){
     </div>
   `;
   updateBreadcrumbs('calc', id);
+  // Initial render only — results update on Recalculate button click, not on every input
   setTimeout(() => { recalc(); }, 50);
 }
+
 function renderInputs(calc){
   return calc.inputs.map(i => {
     if (i.type === 'section') return input_section(i.label);
@@ -212,9 +243,11 @@ function renderInputs(calc){
     return '';
   }).join('');
 }
+
 function renderRelated(calc){
   const related = (calc.related || []).slice(0, 6);
   if (related.length === 0) {
+    // fallback to siblings in same category
     const cat = (window.TOOLS.find(t => t.id === calc.id) || {}).cat;
     return window.TOOLS
       .filter(t => t.cat === cat && t.id !== calc.id)
@@ -232,6 +265,8 @@ function relCard(t){
     <div><div class="crel-t">${t.title}</div><div class="crel-s">${t.cat}</div></div>
   </div>`;
 }
+
+// ── Shared result fragments ────────────────────────────────
 function kpi(label, value, opts = {}){
   return `<div class="kpi kpi-${opts.color||'primary'}">
     <div class="kpi-label">${label}</div>
