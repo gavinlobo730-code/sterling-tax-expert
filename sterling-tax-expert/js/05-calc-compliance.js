@@ -158,7 +158,7 @@ CALCS['corp'] = {
       ${kpiRow([
         kpi('Corporation tax due', fmt(r.ct),          { color:'red',     sub:`${r.effRate.toFixed(2)}% effective rate` }),
         kpi('Profit after tax',    fmt(r.profitAfter), { color:'green',   sub:'Available for dividends / retention' }),
-        kpi('Rate band applied',   r.band,             { color:'primary', sub:`Profit: ${fmt(r.taxableProfit)}` }),
+        kpi('Rate band applied',   `<span style="color:${bandColor}">${r.band}</span>`, { color:'primary', sub:`Profit: ${fmt(r.taxableProfit)}` }),
       ])}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px" class="paye-charts">
         <div class="chart-section">
@@ -344,7 +344,6 @@ CALCS['sal-vs-div'] = {
     { id:'allowance', type:'checkbox', label:'Company eligible for Employment Allowance',            default:false, },
   ],
   calculate(s){
-    const T = window.TAX;
     const erNI = employerNI(s.salary, s.allowance);
     const profitForDiv = Math.max(0, s.totalDraw - s.salary - erNI);
     const dividend = profitForDiv;

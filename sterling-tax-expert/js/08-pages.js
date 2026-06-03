@@ -62,7 +62,7 @@ function mountHome(){
             <h2 class="hp-h2 hp-h2-center ta-up ta-d1">From sole traders to multi-entity businesses —<br>we understand the full range of UK tax complexity</h2>
           </div>
           <div class="hp-audience-row ta-stagger">
-            ${groups.map((g, i) => `
+            ${groups.map((g) => `
               <div class="hp-audience-tile ta-up">
                 <div class="hp-audience-icon">${g.icon}</div>
                 <div class="hp-audience-label">${g.label}</div>
@@ -89,7 +89,7 @@ function mountHome(){
             <h2 class="hp-h2 hp-h2-light ta-left ta-d1">Why clients choose<br>Sterling Tax Expert</h2>
           </div>
           <div class="hp-why-grid ta-stagger">
-            ${reasons.map((r, i) => `
+            ${reasons.map((r) => `
               <div class="hp-why-item ta-up">
                 <div class="hp-why-heading">${r.h}</div>
                 <p class="hp-why-body">${r.b}</p>
@@ -115,7 +115,7 @@ function mountHome(){
             <h2 class="hp-h2 hp-h2-center ta-up ta-d1">A straightforward process</h2>
           </div>
           <div class="hp-process-steps ta-stagger">
-            ${steps.map((s, i) => `
+            ${steps.map((s) => `
               <div class="hp-step ta-up">
                 <div class="hp-step-num">${s.n}</div>
                 <div class="hp-step-rule"></div>
@@ -181,7 +181,7 @@ function blogCardHTML(a){
 function formatDate(s){
   if (!s) return '';
   try { return new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
-  catch(e) { return s; }
+  catch { return s; }
 }
 function catColor(cat){
   return ({
@@ -553,7 +553,7 @@ function mountPost(id){
   const wrap = document.getElementById('page-post');
   if (!wrap) return;
   const posts = window.cmsPosts ? cmsPosts() : (window.SEED_POSTS || []);
-  const post = posts.find(p => p.id == id) || posts[0];
+  const post = posts.find(p => String(p.id) === String(id)) || posts[0];
   if (!post) {
     wrap.innerHTML = `<div class="crumbs"></div><div class="sec"><h1 class="sec-h">Article not found</h1></div>`;
     return;
@@ -846,7 +846,7 @@ async function chSearch() {
 async function chLoadCompany(number, out) {
   out.innerHTML = '<div style="color:var(--t2);font-size:14px">Loading company details…</div>';
   try {
-    const [profile, filing] = await Promise.all([
+    const [profile] = await Promise.all([
       chFetch('/company/' + number),
       chFetch('/company/' + number + '/filing-history?items_per_page=5')
     ]);
@@ -857,7 +857,6 @@ async function chLoadCompany(number, out) {
     const addr = profile.registered_office_address || {};
     const addrStr = [addr.address_line_1, addr.address_line_2, addr.locality, addr.postal_code].filter(Boolean).join(', ');
     const deadlines = [];
-    const ar = profile.annual_return || {};
     const acc = profile.accounts || {};
     const conf = profile.confirmation_statement || {};
     if (conf.next_due) deadlines.push({ label: 'Confirmation statement due', date: conf.next_due, overdue: conf.overdue, icon: '📋' });

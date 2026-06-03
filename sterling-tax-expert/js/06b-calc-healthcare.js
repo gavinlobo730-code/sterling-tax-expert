@@ -188,7 +188,6 @@ CALCS['nhs-payslip'] = {
     { id:'plan',     type:'select',  label:'Student loan plan',          default:'0', options:[{v:'0',l:'None'},{v:'1',l:'Plan 1'},{v:'2',l:'Plan 2'},{v:'4',l:'Plan 4'},{v:'5',l:'Plan 5'},{v:'PG',l:'Postgrad'}] },
   ],
   calculate: function(s) {
-    var T = window.TAX;
     var pdpy = 12;
     var pdNum = Math.max(1, s.pdNum || 1);
     var tc = parseTaxCode(s.taxCode);

@@ -136,7 +136,7 @@ function updateBreadcrumbs(page, param){
 }
 function postTitle(id){
   const posts = window.cmsPosts ? window.cmsPosts() : (window.SEED_POSTS || []);
-  const post = posts.find(p => p.id == id);
+  const post = posts.find(p => String(p.id) === String(id));
   return post ? post.t : 'Article';
 }
 function truncate(s, n){ return s && s.length > n ? s.slice(0, n - 1) + '…' : s; }
@@ -247,7 +247,6 @@ async function submitContact(){
   }
   function onFail(errMsg) {
     if (btn) { btn.textContent = 'Send enquiry →'; btn.disabled = false; btn.style.opacity = '1'; }
-    const msg2 = errMsg || 'Something went wrong. Please email <a href="mailto:sterlingtaxexpert@gmail.com">sterlingtaxexpert@gmail.com</a> directly.';
     showToast('Could not send — please email us directly.', 'err');
     const suc = document.getElementById('cf-suc');
     if (suc) {
