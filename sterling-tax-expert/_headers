@@ -1,0 +1,17 @@
+# Cloudflare Pages — cache headers
+# JS and CSS: cache for 1 year (filenames change when content changes)
+/js/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/css/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# HTML: always revalidate so users get the latest version
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Security headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
