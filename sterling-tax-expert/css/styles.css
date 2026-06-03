@@ -46,6 +46,9 @@ img{max-width:100%;display:block}
 .toast.show{transform:translateY(0);opacity:1}
 .toast.ok{background:var(--green)}.toast.err{background:#991B1B}
 .rbar{position:fixed;top:62px;left:0;height:2px;background:var(--blue2);z-index:890;transition:width .08s;width:0}
+.page{display:none}
+.page.active{display:block;animation:pgIn .25s ease}
+@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .crumbs{max-width:1280px;margin:0 auto;padding:14px 28px 0;display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--t3);flex-wrap:wrap}
 .crumbs a{color:var(--t3);transition:color .12s;cursor:pointer}
 .crumbs a:hover{color:var(--blue2)}
