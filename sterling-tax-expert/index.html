@@ -6,13 +6,22 @@
 <meta name="description" content="UK payroll, tax and compliance platform — 25 free HMRC-aligned calculators for the 2026/27 tax year, the full statutory deadlines hub with calendar exports, and plain-English insights.">
 <meta name="theme-color" content="#0B1E3D">
 <meta name="google-site-verification" content="c77qSfFovIL1sqaG-azmFnOTP75jANtAPhtsD3f8uu4">
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-L86ZJX87Y5"></script>
+<!-- Google Analytics — loaded 3 s after page load so it doesn't affect LCP/FID scores -->
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-L86ZJX87Y5');
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=G-L86ZJX87Y5';
+      document.head.appendChild(s);
+      s.onload = function(){
+        gtag('js', new Date());
+        gtag('config', 'G-L86ZJX87Y5', { send_page_view: true });
+      };
+    }, 3000);
+  });
 </script>
 <title>Sterling Tax Expert — UK Payroll, Tax &amp; Compliance Platform</title>
 
@@ -44,7 +53,7 @@
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 
 <!-- Stylesheet -->
-<link rel="stylesheet" href="css/styles.css?v=7">
+<link rel="stylesheet" href="css/styles.css?v=8">
 
 <!-- EmailJS (real contact-form email delivery, no backend) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js" defer></script>
@@ -190,20 +199,20 @@
 <div class="page" id="page-privacy"></div>
 <div class="page" id="page-terms"></div>
 <!-- ═══ Configuration (edit js/config.js to go live) ═══ -->
-<script src="js/config.js?v=7" defer></script>
+<script src="js/config.js?v=8" defer></script>
 
 <!-- ═══ Application modules (load order matters) ═══ -->
-<script src="js/00-core.js?v=7" defer></script>
-<script src="js/01-data.js?v=7" defer></script>
-<script src="js/02-shell.js?v=7" defer></script>
-<script src="js/03-calc-engine.js?v=7" defer></script>
-<script src="js/04-calc-payroll.js?v=7" defer></script>
-<script src="js/04b-calc-payroll-master.js?v=7" defer></script>
-<script src="js/05-calc-compliance.js?v=7" defer></script>
-<script src="js/06-calc-extra.js?v=7" defer></script>
-<script src="js/06b-calc-healthcare.js?v=7" defer></script>
-<script src="js/08-pages.js?v=7" defer></script>
-<script src="js/09-hero-anim.js?v=7" defer></script>
+<script src="js/00-core.js?v=8" defer></script>
+<script src="js/01-data.js?v=8" defer></script>
+<script src="js/02-shell.js?v=8" defer></script>
+<script src="js/03-calc-engine.js?v=8" defer></script>
+<script src="js/04-calc-payroll.js?v=8" defer></script>
+<script src="js/04b-calc-payroll-master.js?v=8" defer></script>
+<script src="js/05-calc-compliance.js?v=8" defer></script>
+<script src="js/06-calc-extra.js?v=8" defer></script>
+<script src="js/06b-calc-healthcare.js?v=8" defer></script>
+<script src="js/08-pages.js?v=8" defer></script>
+<script src="js/09-hero-anim.js?v=8" defer></script>
 <!-- 07-admin-cms.js and 10-insights.js load on demand (see navigate() in 02-shell.js) -->
 
 <!-- ═══ Boot: footer/CTA, EmailJS init, hero video, reveal motion ═══ -->
@@ -283,20 +292,28 @@
     })();
   });
 </script>
-<!--Start of Tawk.to Script — delayed 5s so it doesn't compete with page load-->
-<script type="text/javascript">
-window.addEventListener('load', function(){
-  setTimeout(function(){
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/6a1c11fb33b64c1c2ac9093d/1jpuqcfqa';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-  }, 5000);
-});
+<!-- Tawk.to — loads on first user interaction (scroll/mouse/touch) to avoid
+     190 KB of chat JS competing with page load. Fires at most once. -->
+<script>
+(function(){
+  var loaded = false;
+  function loadTawk(){
+    if (loaded) return;
+    loaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://embed.tawk.to/6a1c11fb33b64c1c2ac9093d/1jpuqcfqa';
+    s.charset = 'UTF-8';
+    s.setAttribute('crossorigin','*');
+    document.head.appendChild(s);
+  }
+  /* Load on first scroll, mouse move, or touch — whichever comes first */
+  ['scroll','mousemove','touchstart','keydown'].forEach(function(evt){
+    window.addEventListener(evt, loadTawk, { once: true, passive: true });
+  });
+  /* Fallback: load after 10 s regardless, in case user never interacts */
+  window.addEventListener('load', function(){ setTimeout(loadTawk, 10000); });
+})();
 </script>
-<!--End of Tawk.to Script-->
 </body>
 </html>
