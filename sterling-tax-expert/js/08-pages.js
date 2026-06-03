@@ -8,6 +8,20 @@
 // ─────────────────────────────────────────────────────────
 function mountHome(){
 
+  // ── Hero ─────────────────────────────────────────────────
+  const hero = document.getElementById('pm-hero-content');
+  if (hero && !hero.hasChildNodes()) {
+    hero.innerHTML = `
+      <div class="pm-hero-kicker">Sterling Tax Expert</div>
+      <h1 class="pm-hero-h1">We Handle the Tax.<br><em>You Run the Business.</em></h1>
+      <p class="pm-hero-sub">Professional UK tax, payroll and compliance services for individuals, contractors, SMEs and complex business structures. Practical advice, personal service and dependable support — whatever your scale.</p>
+      <div class="pm-hero-acts">
+        <button class="btn btn-indigo" onclick="navigate('contact')">Book a Consultation</button>
+        <button class="pm-hero-ghost" onclick="navigate('contact')">Contact Us</button>
+      </div>
+    `;
+  }
+
   // ── Section 1: Trust & Credibility ──────────────────────
   const trust = document.getElementById('home-trust');
   if (trust) trust.innerHTML = `

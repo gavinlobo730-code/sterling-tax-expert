@@ -1069,7 +1069,7 @@ td,th { font-family:var(--sans) !important; }
   .ta-up.ta-in,.ta-left.ta-in,.ta-right.ta-in,.ta-fade.ta-in,.ta-scale.ta-in {
     opacity:1 !important; transform:none !important; animation:none !important;
   }
-  .pm-hero-kicker,.pm-hero-h1,.pm-hero-sub,.pm-hero-acts {
+  .pm-hero-content,.pm-hero-kicker,.pm-hero-h1,.pm-hero-sub,.pm-hero-acts {
     opacity:1 !important; animation:none !important;
   }
 }
