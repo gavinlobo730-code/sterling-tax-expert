@@ -472,6 +472,10 @@ function mountInsights(){
   const wrap = document.getElementById('page-insights');
   if (!wrap) return;
   const posts = (window.cmsPosts ? cmsPosts() : window.SEED_POSTS || []).filter(p => p.st === 'Published');
+  if (posts.length === 0) {
+    wrap.innerHTML = `<div class="crumbs"></div><div class="sec sec-inner" style="text-align:center;padding:80px 24px"><div style="font-size:48px;margin-bottom:16px">✍️</div><h1 class="sec-h" style="margin-bottom:12px">Coming soon</h1><p class="sec-p" style="max-width:480px;margin:0 auto 28px">We're working on in-depth articles covering UK payroll, tax and compliance. Check back soon.</p><button class="btn btn-navy" onclick="navigate('tools')">Explore our free tools →</button></div>`;
+    return;
+  }
   const featured = posts[0];
   const cats = ['All', ...new Set(posts.map(p => p.cat))];
   wrap.innerHTML = `
