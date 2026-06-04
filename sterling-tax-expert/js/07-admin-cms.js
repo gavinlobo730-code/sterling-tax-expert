@@ -435,7 +435,7 @@ function renderEditor(){
             <div class="fg">
               <div class="fl">Category</div>
               <select class="fi fsel" id="ep-category">
-                ${(window.CATEGORIES || []).map(c => `<option ${c===post.cat?'selected':''}>${c}</option>`).join('')}
+                ${cmsLoadCategories().map(c => `<option ${c===post.cat?'selected':''}>${c}</option>`).join('')}
               </select>
             </div>
             <div class="fg">
@@ -694,33 +694,125 @@ function cmsUpload(){
   inp.click();
 }
 
-// ── Categories ─────────────────────────────────────────────
+// ── Categories — localStorage-backed CRUD ──────────────────
+const STERLING_CATS_KEY = 'ste_categories_v1';
+
+function cmsLoadCategories(){
+  try {
+    const raw = localStorage.getItem(STERLING_CATS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  // Fall back to seed list from data.js
+  return (window.CATEGORIES || []).slice();
+}
+
+function cmsSaveCategories(cats){
+  localStorage.setItem(STERLING_CATS_KEY, JSON.stringify(cats));
+}
+
+function cmsAddCategory(){
+  const input = document.getElementById('new-cat-input');
+  const name  = (input ? input.value : '').trim();
+  if (!name) { showToast('Enter a category name', 'err'); return; }
+  const cats = cmsLoadCategories();
+  if (cats.some(c => c.toLowerCase() === name.toLowerCase())) {
+    showToast('Category already exists', 'err'); return;
+  }
+  cats.push(name);
+  cmsSaveCategories(cats);
+  input.value = '';
+  showToast(`"${name}" added`, 'ok');
+  document.getElementById('cms-main').innerHTML = renderCategoriesTab();
+}
+
+function cmsRenameCategory(oldName){
+  const newName = prompt(`Rename "${oldName}" to:`, oldName);
+  if (!newName || newName.trim() === oldName) return;
+  const trimmed = newName.trim();
+  const cats    = cmsLoadCategories();
+  if (cats.some(c => c.toLowerCase() === trimmed.toLowerCase() && c !== oldName)) {
+    showToast('A category with that name already exists', 'err'); return;
+  }
+  // Update category list
+  const idx = cats.indexOf(oldName);
+  if (idx >= 0) cats[idx] = trimmed;
+  cmsSaveCategories(cats);
+  // Update all posts that used the old category name
+  const posts = cmsLoadPosts().map(p => p.cat === oldName ? { ...p, cat: trimmed } : p);
+  cmsSavePosts(posts);
+  showToast(`Renamed to "${trimmed}"`, 'ok');
+  document.getElementById('cms-main').innerHTML = renderCategoriesTab();
+}
+
+function cmsMoveUpCategory(name){
+  const cats = cmsLoadCategories();
+  const i = cats.indexOf(name);
+  if (i <= 0) return;
+  [cats[i-1], cats[i]] = [cats[i], cats[i-1]];
+  cmsSaveCategories(cats);
+  document.getElementById('cms-main').innerHTML = renderCategoriesTab();
+}
+
+function cmsMoveDownCategory(name){
+  const cats = cmsLoadCategories();
+  const i = cats.indexOf(name);
+  if (i < 0 || i >= cats.length - 1) return;
+  [cats[i], cats[i+1]] = [cats[i+1], cats[i]];
+  cmsSaveCategories(cats);
+  document.getElementById('cms-main').innerHTML = renderCategoriesTab();
+}
+
+function cmsDeleteCategory(name){
+  const posts = cmsLoadPosts();
+  const inUse = posts.filter(p => p.cat === name).length;
+  if (inUse > 0) {
+    showToast(`Cannot delete — ${inUse} post${inUse > 1 ? 's use' : ' uses'} this category`, 'err');
+    return;
+  }
+  if (!confirm(`Delete category "${name}"? This cannot be undone.`)) return;
+  const cats = cmsLoadCategories().filter(c => c !== name);
+  cmsSaveCategories(cats);
+  showToast(`"${name}" deleted`, 'ok');
+  document.getElementById('cms-main').innerHTML = renderCategoriesTab();
+}
+
 function renderCategoriesTab(){
   const posts = cmsLoadPosts();
-  const cats = window.CATEGORIES || [];
+  const cats  = cmsLoadCategories();
   const counts = {};
-  cats.forEach(c => counts[c] = posts.filter(p => p.cat === c).length);
+  cats.forEach(c => { counts[c] = posts.filter(p => p.cat === c).length; });
   return `
     <div class="adm-bar">
-      <div class="adm-t">Categories & tags</div>
+      <div class="adm-t">Categories</div>
     </div>
-    <div class="adm-tbl">
+    <div class="adm-tbl" style="margin-bottom:24px">
       <div class="adm-th"><div class="adm-tt">Categories — ${cats.length}</div></div>
       <div class="adm-tbl-scroll">
         <table>
           <thead><tr><th>Name</th><th>Posts</th><th>Slug</th><th>Actions</th></tr></thead>
           <tbody>
-            ${cats.map(c => `<tr>
-              <td style="font-weight:600;color:var(--navy)">${c}</td>
-              <td>${counts[c]}</td>
-              <td style="font-family:var(--mono);font-size:11.5px;color:var(--t3)">/insights/${c.toLowerCase().replace(/[^a-z0-9]/g,'-')}</td>
+            ${cats.map((c, i) => `<tr>
+              <td style="font-weight:600;color:var(--navy)">${escapeHTML(c)}</td>
+              <td>${counts[c] || 0}</td>
+              <td style="font-family:var(--mono);font-size:11.5px;color:var(--t3)">/insights/${c.toLowerCase().replace(/[^a-z0-9]+/g,'-')}</td>
               <td><div class="pa">
-                <button class="pa-b" onclick="showToast('Rename in production — categories are seed data here')">Rename</button>
-                <button class="pa-b" onclick="navigate('insights');setTimeout(()=>setCatFilter('${c}'),300)">View</button>
+                <button class="pa-b" onclick="cmsRenameCategory(${JSON.stringify(c)})">Rename</button>
+                <button class="pa-b" onclick="cmsMoveUpCategory(${JSON.stringify(c)})" ${i===0?'disabled':''} title="Move up">↑</button>
+                <button class="pa-b" onclick="cmsMoveDownCategory(${JSON.stringify(c)})" ${i===cats.length-1?'disabled':''} title="Move down">↓</button>
+                <button class="pa-b" onclick="navigate('insights');setTimeout(()=>setCatFilter(${JSON.stringify(c)}),300)">View</button>
+                <button class="pa-b pa-b-red" onclick="cmsDeleteCategory(${JSON.stringify(c)})" ${counts[c]>0?'disabled title="Has posts — reassign first"':''}>Delete</button>
               </div></td>
             </tr>`).join('')}
           </tbody>
         </table>
+      </div>
+    </div>
+    <div class="adm-tbl">
+      <div class="adm-th"><div class="adm-tt">Add category</div></div>
+      <div style="padding:16px 20px;display:flex;gap:10px;align-items:center">
+        <input class="fi" id="new-cat-input" type="text" placeholder="e.g. Capital Gains" style="max-width:280px;margin:0"
+               onkeydown="if(event.key==='Enter')cmsAddCategory()">
+        <button class="btn btn-navy btn-sm" onclick="cmsAddCategory()">Add category</button>
       </div>
     </div>
   `;
