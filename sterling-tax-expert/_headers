@@ -6,6 +6,39 @@
 /css/*
   Cache-Control: public, max-age=300, must-revalidate
 
+# Favicon and PWA assets: cache 1 week (stable, versioned by filename)
+/favicon.ico
+  Cache-Control: public, max-age=604800, must-revalidate
+  Content-Type: image/x-icon
+
+/favicon.svg
+  Cache-Control: public, max-age=604800, must-revalidate
+  Content-Type: image/svg+xml
+
+/favicon-32x32.png
+  Cache-Control: public, max-age=604800, must-revalidate
+  Content-Type: image/png
+
+/favicon-192x192.png
+  Cache-Control: public, max-age=604800, must-revalidate
+  Content-Type: image/png
+
+/favicon-512x512.png
+  Cache-Control: public, max-age=604800, must-revalidate
+  Content-Type: image/png
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=604800, must-revalidate
+  Content-Type: image/png
+
+/og-image.png
+  Cache-Control: public, max-age=604800, must-revalidate
+  Content-Type: image/png
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=3600, must-revalidate
+  Content-Type: application/manifest+json
+
 # HTML: always revalidate so users get the latest version
 /*
   Cache-Control: public, max-age=0, must-revalidate
